@@ -53,5 +53,5 @@ include_directories(
 
 # THESE 2 COMMANDDS TO BE MODIFIED WITH OUR ACUTAL ENTRY POINT OF THE PROGRAM AND THE LIBRARY
 
-#add_executable(EX32_TEXTURED_MATERIAL source/examples/ex32_textured_material.cpp ${COMMON_SOURCES} ${VENDOR_SOURCES})
-#target_link_libraries(EX32_TEXTURED_MATERIAL glfw)
+add_executable(Game source/application/application.cpp ${COMMON_SOURCES} ${VENDOR_SOURCES})
+target_link_libraries(Game glfw)

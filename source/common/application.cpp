@@ -4,7 +4,7 @@
 #include <string>
 #include <iomanip>
 #include <ctime>
-
+//#include <sstream>
 // Include the Dear ImGui implementation headers
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD2
 #include <imgui_impl/imgui_impl_glfw.h>
@@ -233,18 +233,18 @@ int gameTemp::Application::run() {
 #endif
 
         // If F12 is pressed, take a screenshot
-        if(keyboard.justPressed(GLFW_KEY_F12)){
-            glViewport(0, 0, frame_buffer_size.x, frame_buffer_size.y);
-            std::stringstream stream;
-            auto time = std::time(nullptr);
-            auto localtime = std::localtime(&time);
-            stream << "screenshots/screenshot-" << std::put_time(localtime, "%Y-%m-%d-%H-%M-%S") << ".png";
-            if(gameTemp::screenshot_png(stream.str())){
-                std::cout << "Screenshot saved to: " << stream.str() << std::endl;
-            } else {
-                std::cerr << "Failed to save a Screenshot" << std::endl;
-            }
-        }
+        // if(keyboard.justPressed(GLFW_KEY_F12)){
+        //     glViewport(0, 0, frame_buffer_size.x, frame_buffer_size.y);
+        //     std::stringstream stream;
+        //     auto time = std::time(nullptr);
+        //     auto localtime = std::localtime(&time);
+        //     stream << "screenshots/screenshot-" << std::put_time(localtime, "%Y-%m-%d-%H-%M-%S") << ".png";
+        //     if(gameTemp::screenshot_png(stream.str())){
+        //         std::cout << "Screenshot saved to: " << stream.str() << std::endl;
+        //     } else {
+        //         std::cerr << "Failed to save a Screenshot" << std::endl;
+        //     }
+        // }
 
         // Swap the frame buffers
         glfwSwapBuffers(window);
