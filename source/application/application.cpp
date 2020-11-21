@@ -1,6 +1,6 @@
 #include <application.hpp>
 #include <shader.hpp>
-
+#include "../common/components/transformationComponent.hpp"
 
 class UniformsApplication : public gameTemp::Application {
 
