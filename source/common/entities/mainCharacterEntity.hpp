@@ -3,8 +3,9 @@
 
 #include "../components/transformationComponent.hpp"
 
-struct mainCharacterEntity {
-    struct tranformationComponent TC;
+struct mainCharacterEntity
+{
+    transformationComponent TC;
     int health = 100;
     int damage = 1;
 };
