@@ -6,16 +6,16 @@
 class transformationComponent
 {
 private:
-    int entityId;
+    transformationComponent *parent;
     glm::mat4 position;
 
 public:
-    transformationComponent(int Id, glm::mat4 initialPos) : entityId(Id), position(initialPos){};
+    transformationComponent(transformationComponent myParent, glm::mat4 initialPos) : parent(&myParent), position(initialPos){};
 
-    void transform(struct transformationComponent *component, const glm::mat4 &transformationMatrix)
+    /*void transform(struct transformationComponent *component, const glm::mat4 &transformationMatrix)
     {
         this->position *= transformationMatrix;
-    }
+    }*/
 
     void transform(const glm::vec3 &translation = {0, 0, 0},
                    const glm::vec3 &rotation = {0, 0, 0},

@@ -3,11 +3,17 @@
 
 #include "../components/transformationComponent.hpp"
 
-struct mainCharacterEntity
+/*struct mainCharacterEntity
 {
     transformationComponent TC;
     int health = 100;
     int damage = 1;
-};
+};*/
+
+class Entity {
+    private:
+    //array of components
+
+}
 
 #endif
