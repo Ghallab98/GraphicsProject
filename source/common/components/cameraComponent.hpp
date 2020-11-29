@@ -24,7 +24,7 @@ private:
     glm::mat4 V{}, P{}, VP{};
 
 public:
-    Camera()
+    CameraComponent()
     {
         dirtyFlags = V_DIRTY | P_DIRTY | VP_DIRTY;
         up = {0, 1, 0};
