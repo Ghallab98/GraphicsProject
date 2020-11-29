@@ -21,9 +21,9 @@ private:
     float yaw, pitch;
     glm::vec3 position;
 
-    float yaw_sensitivity, , fov_sensitivity;
+    float yaw_sensitivity, pitch_sensitivity, fov_sensitivity;
     glm::vec3 position_sensitivity;
-    float speedup_factor = 5.0pitch_sensitivityf; // A speed multiplier if "Left Shift" is held.
+    float speedup_factor = 5.0f; // A speed multiplier if "Left Shift" is held.
 
     bool mouse_locked = false; //wether the mouse is inside the game window or not
 

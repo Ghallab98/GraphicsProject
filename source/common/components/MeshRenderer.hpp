@@ -11,44 +11,32 @@
 #define SPHERE 2
 #define OTHER 3
 
-class MeshRenderer : Component
+using namespace gameTemp;
+
+class MeshRenderer : public Component
 {
     private:
-        Mesh* pMesh;
-        ShaderProgram* program;
-        Entity* myEntity;
+        gameTemp::ShaderProgram *program;
+        gameTemp::Mesh *pMesh;
     public:
-        MeshRenderer(Mesh* pMesh, ShaderProgram* program,Entity* myEntity)
+        MeshRenderer(gameTemp::Mesh *pMesh = nullptr, gameTemp::ShaderProgram *program = nullptr)
         {
             this->pMesh = pMesh;
             this->program = program;
-            this->myEntity = myEntity;
-            Set();
         }
-        void Draw(glm::mat4 transformMatrix) override
+        void setMesh(gameTemp::Mesh *pMesh){
+            this->pMesh = pMesh; 
+        }
+        void setProgram(gameTemp::ShaderProgram *program){
+            this->program = program; 
+        }
+        void Draw(glm::mat4 transformMatrix)
         {
-            glUseProgram(&program);
+            glUseProgram(*program);
 
             program->set("tint", glm::vec4(1,1,1,1));
             program->set("transform", transformMatrix);
             pMesh->draw();
-        }
-        void Set()
-        {
-            switch (myEntity->myType){
-                case CUBOID: 
-                    mesh_utils::Cuboid(&pMesh,true);
-                    break;
-                case PLANE: 
-                    mesh_utils::Plane(&pMesh, {1,1}, true);
-                    break;
-                case SPHERE:
-                    mesh_utils::Sphere(&pMesh, {32,16},true);
-                    break;
-                case OTHER:
-                    mesh_utils::loadOBJ(&pMesh, myEntity->filePath);
-                    break;
-            }
         }
 };
 

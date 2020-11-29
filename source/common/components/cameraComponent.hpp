@@ -138,7 +138,6 @@ public:
         return VP;
     }
 
-    CameraType getType() { return type; }
     [[nodiscard]] float getVerticalFieldOfView() const { return field_of_view_y; }
     [[nodiscard]] float getHorizontalFieldOfView() const { return field_of_view_y * aspect_ratio; }
     [[nodiscard]] float getAspectRatio() const { return aspect_ratio; }

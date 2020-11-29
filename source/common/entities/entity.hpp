@@ -1,10 +1,10 @@
-#ifndef MAIN_CHARACTER_HPP
-#define MAIN_CHARACTER_HPP
+#ifndef ENTITY_HPP
+#define ENTITY_HPP
 
 #include "../components/transformationComponent.hpp"
-#include "./components/cameraComponent.hpp"
-#include "./components/cameraControllerComponent.hpp"
-#include "./components/MeshRenderer.hpp"
+#include "../components/cameraComponent.hpp"
+#include "../components/cameraControllerComponent.hpp"
+#include "../components/MeshRenderer.hpp"
 
 class Entity
 {
@@ -18,7 +18,10 @@ private:
 public:
     Entity(int id) : id(id)
     {
-        transform = camera = mesh = cameraController = nullptr;
+        transform = nullptr;
+        camera = nullptr;
+        mesh = nullptr;
+        cameraController = nullptr;
     }
 
     void setTransformationComponent(TransformationComponent *TC)
