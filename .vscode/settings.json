@@ -15,7 +15,9 @@
         "span": "cpp",
         "regex": "cpp",
         "utility": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "vector": "cpp",
+        "filesystem": "cpp"
     },
     "editor.formatOnSave": true
 }

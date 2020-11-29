@@ -53,5 +53,5 @@ include_directories(
 
 # THESE 2 COMMANDDS TO BE MODIFIED WITH OUR ACUTAL ENTRY POINT OF THE PROGRAM AND THE LIBRARY
 
-add_executable(Game source/application/application.cpp ${COMMON_SOURCES} ${VENDOR_SOURCES})
+add_executable(Game source/common/source.cpp ${COMMON_SOURCES} ${VENDOR_SOURCES})
 target_link_libraries(Game glfw)
