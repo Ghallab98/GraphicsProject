@@ -2,27 +2,28 @@
 #define TRANSFORMATION_COMPONENT_HPP
 
 #include <glm/glm.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
-class transformationComponent
+#include "./component.hpp"
+
+class TransformationComponent : Component
 {
 private:
-    transformationComponent *parent;
-    glm::mat4 position;
+    TransformationComponent *parent;
+    glm::mat4 transfomrationMatrix = glm::mat4(1.0f);
 
 public:
-    transformationComponent(transformationComponent myParent, glm::mat4 initialPos) : parent(&myParent), position(initialPos){};
-
-    /*void transform(struct transformationComponent *component, const glm::mat4 &transformationMatrix)
+    transformationComponent(TransformationComponent *myParent)
     {
-        this->position *= transformationMatrix;
-    }*/
+        parent = myParent;
+    }
 
     void transform(const glm::vec3 &translation = {0, 0, 0},
                    const glm::vec3 &rotation = {0, 0, 0},
                    const glm::vec3 &scale = {1, 1, 1})
     {
         glm::mat4 transformationMatrix = getTransformationMatrix(translation, rotation, scale);
-        this->position *= transformationMatrix;
+        this->transfomrationMatrix = transformationMatrix;
     }
 
     static glm::mat4 getTransformationMatrix(
