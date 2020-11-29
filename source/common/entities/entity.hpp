@@ -1,46 +1,64 @@
 #ifndef MAIN_CHARACTER_HPP
 #define MAIN_CHARACTER_HPP
 
-#include <map>
-#include <string>
 #include "../components/transformationComponent.hpp"
-#include "../components/component.hpp"
-
-using std::map;
-
-#define CUBOID 0
-#define PLANE 1
-#define SPHERE 2
-#define OTHER 3
+#include "./components/cameraComponent.hpp"
+#include "./components/cameraControllerComponent.hpp"
+#include "./components/MeshRenderer.hpp"
 
 class Entity
 {
 private:
     int id;
-    std::string filePath;
-    int myType;
-    map<int, Component *> componentsContainer;
+    TransformationComponent *transform;
+    CameraComponent *camera;
+    CameraControllerComponent *cameraController;
+    MeshRenderer *mesh;
 
 public:
-    Entity(int id, Entity *parent, int entityType, std::string file = "") : id(id), myType(entityType), filePath(file)
+    Entity(int id) : id(id)
     {
-        componentsContainer[TRANFORMATION_COMPONENT] =
-            new TransformationComponent(dynamic_cast<TransformationComponent *>(parent->getComponent(TRANFORMATION_COMPONENT)));
+        transform = camera = mesh = cameraController = nullptr;
     }
 
-    void addComponent(int componentType, Component *component)
+    void setTransformationComponent(TransformationComponent *TC)
     {
-        componentsContainer.insert(std::pair<int, Component *>(componentType, component));
+        transform = TC;
     }
 
-    Component *getComponent(int componentType)
+    void setCameraComponent(CameraComponent *CC)
     {
-        return componentsContainer[componentType];
+        camera = CC;
     }
 
-    void removeComponent(int componentType)
+    void setCameraComponentController(CameraControllerComponent *CC)
     {
-        componentsContainer.erase(componentType);
+        cameraController = CC;
+    }
+
+    void setMeshRendrer(MeshRenderer *MR)
+    {
+        mesh = MR;
+    }
+
+    TransformationComponent *getTransformationComponent()
+    {
+        return transform;
+    }
+
+    CameraComponent *getCameraComponent()
+    {
+        return camera;
+    }
+
+    CameraControllerComponent *getCameraComponentController()
+    {
+        return cameraController;
+    }
+
+    MeshRenderer *getMeshRendrer()
+    {
+        return mesh;
     }
 };
 
