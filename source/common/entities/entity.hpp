@@ -25,12 +25,12 @@ public:
     Entity(int id, Entity *parent, int entityType, std::string file = "") : id(id), myType(entityType), filePath(file)
     {
         componentsContainer[TRANFORMATION_COMPONENT] =
-            new transformationComponent(parent->getComponent(TRANFORMATION_COMPONENT));
+            new TransformationComponent(dynamic_cast<TransformationComponent *>(parent->getComponent(TRANFORMATION_COMPONENT)));
     }
 
     void addComponent(int componentType, Component *component)
     {
-        componentsContainer.insert(pair<int, Component *>(componentType, component));
+        componentsContainer.insert(std::pair<int, Component *>(componentType, component));
     }
 
     Component *getComponent(int componentType)
@@ -42,6 +42,6 @@ public:
     {
         componentsContainer.erase(componentType);
     }
-}
+};
 
 #endif

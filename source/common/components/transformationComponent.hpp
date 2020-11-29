@@ -7,14 +7,14 @@
 
 #include "./component.hpp"
 
-class TransformationComponent : Component
+class TransformationComponent : public Component
 {
 private:
     std::vector<TransformationComponent *> children;
     glm::mat4 transfomrationMatrix;
 
 public:
-    transformationComponent(TransformationComponent *parent)
+    TransformationComponent(TransformationComponent *parent)
     {
         if (parent)
         {
