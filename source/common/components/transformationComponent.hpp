@@ -3,30 +3,60 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/euler_angles.hpp>
+#include <vector>
 
 #include "./component.hpp"
 
 class TransformationComponent : Component
 {
 private:
-    TransformationComponent *parent;
-    glm::mat4 transfomrationMatrix = glm::mat4(1.0f);
+    std::vector<TransformationComponent *> children;
+    glm::mat4 transfomrationMatrix;
 
 public:
-    transformationComponent(TransformationComponent *myParent)
+    transformationComponent(TransformationComponent *parent)
     {
-        parent = myParent;
+        if (parent)
+        {
+            parent->children.push_back(this);
+            this->transfomrationMatrix = parent->transfomrationMatrix;
+        }
+        else
+            transfomrationMatrix = glm::mat4(1.0f);
+    }
+
+    bool hasChildren()
+    {
+        return children.size() == 0;
     }
 
     void transform(const glm::vec3 &translation = {0, 0, 0},
                    const glm::vec3 &rotation = {0, 0, 0},
                    const glm::vec3 &scale = {1, 1, 1})
     {
-        glm::mat4 transformationMatrix = getTransformationMatrix(translation, rotation, scale);
-        this->transfomrationMatrix = transformationMatrix;
+        glm::mat4 transformationMatrix = calculateTransformationMatrix(translation, rotation, scale);
+        tranformChildren(this, transfomrationMatrix);
     }
 
-    static glm::mat4 getTransformationMatrix(
+    void tranformChildren(TransformationComponent *parent, glm::mat4 &transformationMatrix)
+    {
+        parent->transfomrationMatrix *= transformationMatrix; // M
+
+        // Base condition
+        if (!(parent->hasChildren()))
+            return;
+
+        // General case
+        for (int i = 0; i < parent->children.size(); i++)
+            tranformChildren(parent->children[i], transfomrationMatrix);
+    }
+
+    const glm::mat4 getTransformationMatrix()
+    {
+        return transfomrationMatrix;
+    }
+
+    static glm::mat4 calculateTransformationMatrix(
         const glm::vec3 &translation = {0, 0, 0},
         const glm::vec3 &rotation = {0, 0, 0},
         const glm::vec3 &scale = {1, 1, 1})
