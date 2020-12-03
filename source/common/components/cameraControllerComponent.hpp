@@ -33,6 +33,22 @@ private:
 public:
     CameraControllerComponent(Application *application, Entity *myEntity)
     {
+        this->app = application;
+        int width, height = 0;
+        glm::ivec2 wh = app->getFrameBufferSize();
+        width = wh.x;
+        height = wh.y;
+        camera = myEntity->getCameraComponent();
+        camera->setupPerspective(glm::pi<float>() / 2, static_cast<float>(width) / height, 0.1f, 100.0f);
+        yaw_sensitivity = pitch_sensitivity = 0.01f;
+        position_sensitivity = {3.0f, 3.0f, 3.0f};
+        fov_sensitivity = glm::pi<float>() / 10;
+
+        position = camera->getEyePosition();
+        auto direction = camera->getDirection();
+        yaw = glm::atan(-direction.z, direction.x);
+        float base_length = glm::sqrt(direction.x * direction.x + direction.z * direction.z);
+        pitch = glm::atan(direction.y, base_length);
     }
     void Initialize(Application *application, Entity *myEntity)
     {
