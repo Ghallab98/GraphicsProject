@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 #include "./component.hpp"
+#include <iostream>
+using namespace std;
 
 class CameraComponent : public Component
 {
@@ -15,11 +17,11 @@ private:
     uint8_t dirtyFlags = 0;
 
     // The camera position, camera forward direction and camera up direction
-    glm::vec3 eye = {0, 0, 0}, direction = {0, 0, -1}, up = {0, 1, 0};
+    glm::vec3 eye = {10, 10, 10}, direction = {0, 0, -1}, up = {0, 1, 0};
 
     // The field_of_view_y is in radians and is only used for perspective cameras
     // The orthographic_height is only used for orthographic cameras
-    float field_of_view_y = glm::radians(90.0f), aspect_ratio = 1.0f, near = 0.01f, far = 100.0f;
+    float field_of_view_y = glm::radians(90.0f), aspect_ratio = 1.0f, near = 0.1f, far = 100.0f;
 
     glm::mat4 V{}, P{}, VP{};
 
@@ -76,6 +78,7 @@ public:
     {
         if (this->eye != eye)
         {
+
             dirtyFlags |= V_DIRTY | VP_DIRTY;
             this->eye = eye;
         }

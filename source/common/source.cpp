@@ -11,6 +11,9 @@
 #include "./components/cameraComponent.hpp"
 #include "./components/cameraControllerComponent.hpp"
 
+#include <iostream>
+using namespace std;
+
 struct Transform
 {
     glm::vec3 translation, rotation, scale;
@@ -86,8 +89,8 @@ class CameraProjectionApplication : public gameTemp::Application
         // camera_view.up = {0, 1, 0};
 
         // // Set the camera projection matrix data.
-        int width, height;
-        glfwGetFramebufferSize(window, &width, &height);
+        //int width, height;
+        //glfwGetFramebufferSize(window, &width, &height);
         // camera_projection.is_perspective = true;
         // camera_projection.near = 0.1f;
         // camera_projection.far = 100.0f;
@@ -96,13 +99,17 @@ class CameraProjectionApplication : public gameTemp::Application
         // camera_projection.orthographic_height = 20.0f;
         CameraComponent *Cam = new CameraComponent;
         myCamera.setCameraComponent(Cam);
+
+        // Cam->setEyePosition({0, 10, 10});
+        // Cam->setTarget({0, 0, 0});
+        // Cam->setUp({0, 1, 0});
+        // Cam->setupPerspective(glm::pi<float>() / 2, static_cast<float>(width) / height, 0.1f, 100.0f);
+        // Cam->setNearPlane(0.1f);
+        // Cam->setFarPlane(100.0f);
+        // Cam->setAspectRatio(static_cast<float>(width) / height);
+        // Cam->setVerticalFieldOfView(glm::pi<float>() / 2);
         CameraControllerComponent *CamController = new CameraControllerComponent(this, &myCamera);
-
-        Cam->setEyePosition({10, 10, 10});
-        Cam->setTarget({0, 0, 0});
-        Cam->setUp({0, 1, 0});
-        Cam->setupPerspective(glm::pi<float>() / 2, static_cast<float>(width) / height, 0.1f, 100.0f);
-
+        CamController->Initialize(this, &myCamera);
         myCamera.setCameraControllerComponent(CamController);
 
         glClearColor(0, 0, 0, 0);

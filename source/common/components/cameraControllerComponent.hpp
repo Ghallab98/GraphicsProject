@@ -10,6 +10,9 @@
 #include "./cameraComponent.hpp"
 // #include "../entities/entity.hpp"
 
+#include <iostream>
+using namespace std;
+
 using gameTemp::Application;
 
 class CameraControllerComponent : public Component
@@ -30,8 +33,16 @@ private:
 public:
     CameraControllerComponent(Application *application, Entity *myEntity)
     {
-        app = application;
+    }
+    void Initialize(Application *application, Entity *myEntity)
+    {
+        this->app = application;
+        int width, height = 0;
+        glm::ivec2 wh = app->getFrameBufferSize();
+        width = wh.x;
+        height = wh.y;
         camera = myEntity->getCameraComponent();
+        camera->setupPerspective(glm::pi<float>() / 2, static_cast<float>(width) / height, 0.1f, 100.0f);
         yaw_sensitivity = pitch_sensitivity = 0.01f;
         position_sensitivity = {3.0f, 3.0f, 3.0f};
         fov_sensitivity = glm::pi<float>() / 10;

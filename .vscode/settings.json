@@ -17,7 +17,8 @@
         "utility": "cpp",
         "valarray": "cpp",
         "vector": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "iostream": "cpp"
     },
     "editor.formatOnSave": true
 }
