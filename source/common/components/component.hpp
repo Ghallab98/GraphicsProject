@@ -6,12 +6,13 @@
 #define CAMERA_COMPONENT 2
 #define PHYSICS_COMPONENT 3
 
-class Entity;
+#include "../entities/entity.hpp"
+// class Entity;
 
 class Component
 {
 protected:
-    Entity * myEntity;
+    Entity *myEntity;
 
 public:
     Component() {}

@@ -8,7 +8,7 @@
 
 #include <application.hpp>
 #include "./cameraComponent.hpp"
-#include "../entities/entity.hpp"
+// #include "../entities/entity.hpp"
 
 using gameTemp::Application;
 
@@ -31,7 +31,7 @@ public:
     CameraControllerComponent(Application *application, Entity *myEntity)
     {
         app = application;
-        camera = myEntity->getCameraComponentController();
+        camera = myEntity->getCameraComponent();
         yaw_sensitivity = pitch_sensitivity = 0.01f;
         position_sensitivity = {3.0f, 3.0f, 3.0f};
         fov_sensitivity = glm::pi<float>() / 10;

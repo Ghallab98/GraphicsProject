@@ -1,10 +1,15 @@
 #ifndef ENTITY_HPP
 #define ENTITY_HPP
 
-#include "../components/transformationComponent.hpp"
-#include "../components/cameraComponent.hpp"
-#include "../components/cameraControllerComponent.hpp"
-#include "../components/MeshRenderer.hpp"
+// #include "../components/transformationComponent.hpp"
+// #include "../components/cameraComponent.hpp"
+// #include "../components/cameraControllerComponent.hpp"
+// #include "../components/MeshRenderer.hpp"
+
+class TransformationComponent;
+class CameraComponent;
+class CameraControllerComponent;
+class MeshRenderer;
 
 class Entity
 {
@@ -16,6 +21,14 @@ private:
     MeshRenderer *mesh;
 
 public:
+    Entity()
+    {
+        id = 1;
+        transform = nullptr;
+        camera = nullptr;
+        mesh = nullptr;
+        cameraController = nullptr;
+    }
     Entity(int id) : id(id)
     {
         transform = nullptr;
@@ -34,7 +47,7 @@ public:
         camera = CC;
     }
 
-    void setCameraComponentController(CameraControllerComponent *CC)
+    void setCameraControllerComponent(CameraControllerComponent *CC)
     {
         cameraController = CC;
     }
