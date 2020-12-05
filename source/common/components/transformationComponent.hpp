@@ -1,11 +1,12 @@
 #ifndef TRANSFORMATION_COMPONENT_HPP
 #define TRANSFORMATION_COMPONENT_HPP
 
-#include <glm/glm.hpp>
+#include<glm/glm.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <vector>
-
+#include <iostream>
 #include "./component.hpp"
+using namespace std;
 
 class TransformationComponent : public Component
 {
@@ -19,15 +20,22 @@ public:
         if (parent)
         {
             parent->children.push_back(this);
-            this->transfomrationMatrix = parent->transfomrationMatrix;
+            this->setTransformationMatrix( parent->transfomrationMatrix);
         }
         else
             transfomrationMatrix = glm::mat4(1.0f);
     }
 
+//    bool hasChildren()
+//    {
+//        return (children.size() == 0);
+//    }
     bool hasChildren()
     {
-        return children.size() == 0;
+        if (this->children.size() > 0)
+            return true;
+        else
+            return false;
     }
 
     void transform(const glm::vec3 &translation = {0, 0, 0},
@@ -35,42 +43,48 @@ public:
                    const glm::vec3 &scale = {1, 1, 1})
     {
         glm::mat4 transformationMatrix = calculateTransformationMatrix(translation, rotation, scale);
+        setTransformationMatrix(transformationMatrix);
 
-        std::cout << transformationMatrix[0][0] << " " << transformationMatrix[0][1] << " " << transformationMatrix[0][2] << " " << transformationMatrix[0][3] << endl;
-        std::cout << transformationMatrix[1][0] << " " << transformationMatrix[1][1] << " " << transformationMatrix[1][2] << " " << transformationMatrix[1][3] << endl;
-        std::cout << transformationMatrix[2][0] << " " << transformationMatrix[2][1] << " " << transformationMatrix[2][2] << " " << transformationMatrix[2][3] << endl;
-        std::cout << transformationMatrix[3][0] << " " << transformationMatrix[3][1] << " " << transformationMatrix[3][2] << " " << transformationMatrix[3][3] << endl;
-        std::cout << endl;
-        transformChildren(this, transfomrationMatrix);
+        if (!(this->hasChildren()))
+            return;
+        for(int i =0;i<children.size();i++)
+        {
+            transformChildren(children[i], this->transfomrationMatrix);
+        }
     }
 
-    void transformChildren(TransformationComponent *parent, glm::mat4 &transformationMatrix2)
+    void transformChildren(TransformationComponent *parent, glm::mat4 transformationMatrix2)
     {
-
-        std::cout << transformationMatrix2[0][0] << " " << transformationMatrix2[0][1] << " " << transformationMatrix2[0][2] << " " << transformationMatrix2[0][3] << endl;
-        std::cout << transformationMatrix2[1][0] << " " << transformationMatrix2[1][1] << " " << transformationMatrix2[1][2] << " " << transformationMatrix2[1][3] << endl;
-        std::cout << transformationMatrix2[2][0] << " " << transformationMatrix2[2][1] << " " << transformationMatrix2[2][2] << " " << transformationMatrix2[2][3] << endl;
-        std::cout << transformationMatrix2[3][0] << " " << transformationMatrix2[3][1] << " " << transformationMatrix2[3][2] << " " << transformationMatrix2[3][3] << endl;
-        std::cout << endl;
-        parent->transfomrationMatrix *= transformationMatrix2; // M
-        glm::mat4 temp = parent->getTransformationMatrix();
-        std::cout << temp[0][0] << " " << temp[0][1] << " " << temp[0][2] << " " << temp[0][3] << endl;
-        std::cout << temp[1][0] << " " << temp[1][1] << " " << temp[1][2] << " " << temp[1][3] << endl;
-        std::cout << temp[2][0] << " " << temp[2][1] << " " << temp[2][2] << " " << temp[2][3] << endl;
-        std::cout << temp[3][0] << " " << temp[3][1] << " " << temp[3][2] << " " << temp[3][3] << endl;
-        std::cout << endl;
+        //parent->transfomrationMatrix *= transformationMatrix2; // M
+        parent->setTransformationMatrix(this->transfomrationMatrix * transformationMatrix2);
         // Base condition
         if (!(parent->hasChildren()))
             return;
-
         // General case
         for (int i = 0; i < parent->children.size(); i++)
-            transformChildren(parent->children[i], transfomrationMatrix);
+            transformChildren(parent->children[i], parent->transfomrationMatrix);
     }
+//    void transformChildren(TransformationComponent *parent, glm::mat4 &transformationMatrix2)
+//    {
+//        parent->transfomrationMatrix *= transformationMatrix2; // M
+//        // el mafrood nenady setTransformationMatrix hena kaman 3alshan el childeren n-set feehom el value el sa7
+//        //
+//        // Base condition
+//        if (!(this->hasChildren()))
+//            return;
+//        // General case
+//        for (int i = 0; i < parent->children.size(); i++)
+//            transformChildren(parent->children[i], transfomrationMatrix);
+//    }
 
     const glm::mat4 getTransformationMatrix()
     {
         return transfomrationMatrix;
+    }
+
+    void setTransformationMatrix(glm::mat4 matrix)
+    {
+        this->transfomrationMatrix = matrix;
     }
 
     static glm::mat4 calculateTransformationMatrix(

@@ -27,6 +27,10 @@ class MeshRenderer : public Component
         void setMesh(gameTemp::Mesh *pMesh){
             this->pMesh = pMesh; 
         }
+        const gameTemp::Mesh* getMesh()
+        {
+            return this->pMesh;
+        }
         void setProgram(gameTemp::ShaderProgram *program){
             this->program = program; 
         }
