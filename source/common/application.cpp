@@ -262,7 +262,7 @@ int gameTemp::Application::run(int currentState) {
             if(keyboard.isPressed(GLFW_KEY_ENTER)){
                 break;
             }
-            else if(keyboard.isPressed(GLFW_KEY_ESCAPE)){
+            else if(keyboard.isPressed(GLFW_KEY_ESCAPE) || glfwWindowShouldClose(window)){
                 this->nextStateId=-1;
                 break;
             }
@@ -271,6 +271,10 @@ int gameTemp::Application::run(int currentState) {
         else if(currentState==GAME_STATE_ID){
             if(keyboard.isPressed(GLFW_KEY_ESCAPE)){ //return to the menu state
                 myCurrentState=GAME_STATE_ID;
+                break;
+            }
+            else if(glfwWindowShouldClose(window)){
+                this->nextStateId=-1;
                 break;
             }
         }

@@ -85,7 +85,7 @@ class MenuState : public gameTemp::Application
         {
             this->nextStateId = GAME_STATE_ID;
         }
-       /* else if (keyboard.isPressed(GLFW_KEY_ESCAPE))
+        /*else if (keyboard.isPressed(GLFW_KEY_ESCAPE))
         {
             this->nextStateId = -1;
         }*/
