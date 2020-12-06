@@ -1,11 +1,14 @@
+#ifndef MENUSTATE
+#define MENUSTATE
+
 #include <application.hpp>
 #include <shader.hpp>
 
+#include<iostream>
+class GameState;
 
-
-class UniformsApplication : public gameTemp::Application
+class MenuState : public gameTemp::Application
 {
-
     gameTemp::ShaderProgram programS, programH, programP, programG;
 
     gameTemp::Mouse &mouse = this->getMouse();
@@ -50,6 +53,7 @@ class UniformsApplication : public gameTemp::Application
 
     void onDraw(double deltaTime) override
     {
+        
         glClear(GL_COLOR_BUFFER_BIT);
 
         GLuint mouse_uniform_location = glGetUniformLocation(programS, "mouseCoord");
@@ -77,7 +81,14 @@ class UniformsApplication : public gameTemp::Application
         {
             glUseProgram(programG);
         }
-
+        else if (keyboard.isPressed(GLFW_KEY_ENTER))
+        {
+            this->nextStateId = GAME_STATE_ID;
+        }
+       /* else if (keyboard.isPressed(GLFW_KEY_ESCAPE))
+        {
+            this->nextStateId = -1;
+        }*/
         glBindVertexArray(vertex_array);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
@@ -90,10 +101,10 @@ class UniformsApplication : public gameTemp::Application
         programP.destroy();
         programG.destroy();
         glDeleteVertexArrays(1, &vertex_array);
+
     }
+
 };
 
-int main(int argc, char **argv)
-{
-    return UniformsApplication().run();
-}
+#endif
+

@@ -1,10 +1,6 @@
 #ifndef ENTITY_HPP
 #define ENTITY_HPP
 
-// #include "../components/transformationComponent.hpp"
-// #include "../components/cameraComponent.hpp"
-// #include "../components/cameraControllerComponent.hpp"
-// #include "../components/MeshRenderer.hpp"
 
 class TransformationComponent;
 class CameraComponent;
