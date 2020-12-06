@@ -15,7 +15,7 @@
 #include <iostream>
 using namespace std;
 
- struct Transform
+struct Transform
  {
      glm::vec3 translation, rotation, scale;
 
@@ -63,8 +63,6 @@ class GameState : public gameTemp::Application
                 TransformationComponent *TC = Entities[i]->getTransformationComponent();
                 glm::mat4 transformationMatrix = TC->getTransformationMatrix();
                 MeshRenderer* R = Entities[i]->getMeshRendrer();
-//                R->setMesh(Entities[i]->getMeshRendrer()->getMesh());
-//                R->setProgram(Entities[i]->getMeshRendrer()->getShaderProgram());
                 glm::mat4 matrix = cameraMatrix *transformationMatrix;
                 R->Draw(matrix);
             }
@@ -73,8 +71,8 @@ class GameState : public gameTemp::Application
     void onInitialize() override
     {
         program.create();
-        program.attach("../assets/shaders/transform.vert", GL_VERTEX_SHADER);
-        program.attach("../assets/shaders/tint.frag", GL_FRAGMENT_SHADER);
+        program.attach("assets/shaders/transform.vert", GL_VERTEX_SHADER);
+        program.attach("assets/shaders/tint.frag", GL_FRAGMENT_SHADER);
         program.link();
         gameTemp::mesh_utils::Cuboid(model, true);           
         gameTemp::mesh_utils::Sphere(model1, {32, 16}, true);
@@ -124,7 +122,7 @@ class GameState : public gameTemp::Application
         Cam->setUp({0, 1, 0});
         CameraControllerComponent *CamController = new CameraControllerComponent(this, &myCamera);
         myCamera.setCameraControllerComponent(CamController);
-
+        glEnable(GL_CULL_FACE);
         glClearColor(0, 0, 0, 0);
     }
 
@@ -136,6 +134,12 @@ class GameState : public gameTemp::Application
 
         myCamera.getCameraComponentController()->update(deltaTime);
         glm::mat4 camera_matrix = myCamera.getCameraComponent()->getVPMatrix();
+
+        //TCcubeParent->transform(objects[0].translation,objects[0].rotation,objects[0].scale);
+       // TCcubeChild->transform(objects[1].translation,objects[1].rotation,objects[1].scale);
+        //TCSphere->transform(objects[2].translation,objects[2].rotation,objects[2].scale);
+
+
 
         // We use the created camera matrix to render the object.
         rendererSystem(EntitiesContainer,camera_matrix);
@@ -159,7 +163,6 @@ class GameState : public gameTemp::Application
              ImGui::DragFloat3("Translation", glm::value_ptr(transform.translation), 1.0f);
              ImGui::DragFloat3("Rotation", glm::value_ptr(transform.rotation), 0.1f);
              ImGui::DragFloat3("Scale", glm::value_ptr(transform.scale), 0.1f);
-             if ()
          },
          [this](size_t index){
                     objects.insert(objects.begin() + index, Transform());
