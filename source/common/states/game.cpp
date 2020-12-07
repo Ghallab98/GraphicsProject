@@ -1,6 +1,8 @@
 #ifndef GAME_STATE
 #define GAME_STATE
 
+#define PI 3.1415926535897932384626433832795
+
 #include <application.hpp>
 #include <shader.hpp>
 #include <imgui-utils/utils.hpp>
@@ -93,6 +95,9 @@ class GameState : public gameTemp::Application
         program.set("tint", glm::vec4(1, 1, 1, 1));
 
         ///////////////// INFO: PROTOTYPING BLOCK
+        glm::vec3 rotation = {0.0f, 0.1 * glm::sin(2 * PI * deltaTime), 0.0f};
+        cubeParent->getTransformationComponent()->transform({0, 0, 0}, rotation);
+
         glm::vec3 translation_sensitivity = {20.0f, 20.0f, 20.0f};
         glm::vec3 translation;
 
