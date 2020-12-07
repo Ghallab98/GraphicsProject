@@ -27,9 +27,9 @@ class GameState : public gameTemp::Application
     vector<Entity *> entities;
     RendererSystem rendererSystem;
 
-    Entity *cubeParent = new Entity;
-    Entity *cubeChild = new Entity;
-    Entity *sphere = new Entity;
+    Entity *cubeParent;
+    Entity *cubeChild;
+    Entity *sphere;
 
     gameTemp::WindowConfiguration getWindowConfiguration() override
     {
@@ -42,6 +42,11 @@ class GameState : public gameTemp::Application
         program.attach("assets/shaders/transform.vert", GL_VERTEX_SHADER);
         program.attach("assets/shaders/tint.frag", GL_FRAGMENT_SHADER);
         program.link();
+
+        // -- Initializing entities
+        cubeParent = new Entity;
+        cubeChild = new Entity;
+        sphere = new Entity;
 
         // -- Initializing mesh components
         gameTemp::mesh_utils::Cuboid(cuboidModel, true);
@@ -144,6 +149,7 @@ class GameState : public gameTemp::Application
         for (int i = 0; i < entities.size(); i++)
             delete entities[i];
 
+        entities.clear();
         sphereModel.destroy();
         cuboidModel.destroy();
         program.destroy();

@@ -29,12 +29,12 @@ public:
         glClear(GL_COLOR_BUFFER_BIT);
         for (int i = 0; i < Entities->size(); i++)
         {
-            if (!Entities->at(i)->getMeshRendrer())
+            if (!(*Entities)[i]->getMeshRendrer())
                 continue;
 
-            TransformationComponent *TC = Entities->at(i)->getTransformationComponent();
+            TransformationComponent *TC = (*Entities)[i]->getTransformationComponent();
             glm::mat4 transformationMatrix = TC->getTransformationMatrix();
-            MeshRenderer *R = Entities->at(i)->getMeshRendrer();
+            MeshRenderer *R = (*Entities)[i]->getMeshRendrer();
             glm::mat4 matrix = cameraMatrix * transformationMatrix;
             R->Draw(matrix);
         }
