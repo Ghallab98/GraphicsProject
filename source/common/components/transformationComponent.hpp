@@ -5,7 +5,7 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <vector>
 
-#include "./component.hpp"
+#include <component.hpp>
 
 class TransformationComponent : public Component
 {
@@ -24,6 +24,7 @@ public:
         else
             transformationMatrix = glm::mat4(1.0f);
     }
+
     bool hasChildren()
     {
         return children.size() != 0;
@@ -34,19 +35,13 @@ public:
                    const glm::vec3 &scale = {1, 1, 1})
     {
         glm::mat4 transformationMatrix = calculateTransformationMatrix(translation, rotation, scale);
-        this->transformationMatrix = transformationMatrix;
         transformChildren(this, transformationMatrix);
     }
 
-    void transformChildren(TransformationComponent *parent, glm::mat4 &transformationMatrix2)
+    void transformChildren(TransformationComponent *parent, glm::mat4 &transformationMatrix)
     {
-        parent->transformationMatrix *= transformationMatrix2; // M
-        glm::mat4 temp = parent->getTransformationMatrix();
-        // Base condition
-        if (!(parent->hasChildren()))
-            return;
+        parent->transformationMatrix *= transformationMatrix;
 
-        // General case
         for (int i = 0; i < parent->children.size(); i++)
             transformChildren(parent->children[i], transformationMatrix);
     }

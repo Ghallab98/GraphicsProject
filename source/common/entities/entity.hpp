@@ -1,7 +1,6 @@
 #ifndef ENTITY_HPP
 #define ENTITY_HPP
 
-
 class TransformationComponent;
 class CameraComponent;
 class CameraControllerComponent;
@@ -10,7 +9,6 @@ class MeshRenderer;
 class Entity
 {
 private:
-    int id;
     TransformationComponent *transform;
     CameraComponent *camera;
     CameraControllerComponent *cameraController;
@@ -18,14 +16,6 @@ private:
 
 public:
     Entity()
-    {
-        id = 1;
-        transform = nullptr;
-        camera = nullptr;
-        mesh = nullptr;
-        cameraController = nullptr;
-    }
-    Entity(int id) : id(id)
     {
         transform = nullptr;
         camera = nullptr;

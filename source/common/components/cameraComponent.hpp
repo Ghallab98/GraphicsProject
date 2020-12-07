@@ -2,8 +2,8 @@
 #define CAMERA_COMPONENT_HPP
 
 #include <glm/glm.hpp>
-#include "./component.hpp"
-#include <iostream>
+#include <component.hpp>
+
 using namespace std;
 
 class CameraComponent : public Component
@@ -29,7 +29,6 @@ public:
     CameraComponent()
     {
         dirtyFlags = V_DIRTY | P_DIRTY | VP_DIRTY;
-        up = {0, 1, 0};
     }
 
     // Setup the camera as a perspective camera
@@ -50,6 +49,7 @@ public:
             this->field_of_view_y = field_of_view_y;
         }
     }
+
     void setAspectRatio(float aspect_ratio)
     {
         if (this->aspect_ratio != aspect_ratio)
@@ -58,6 +58,7 @@ public:
             this->aspect_ratio = aspect_ratio;
         }
     }
+
     void setNearPlane(float near)
     {
         if (this->near != near)
@@ -66,6 +67,7 @@ public:
             this->near = near;
         }
     }
+
     void setFarPlane(float far)
     {
         if (this->far != far)
@@ -74,6 +76,7 @@ public:
             this->far = far;
         }
     }
+
     void setEyePosition(glm::vec3 eye)
     {
         if (this->eye != eye)
@@ -83,6 +86,7 @@ public:
             this->eye = eye;
         }
     }
+
     void setDirection(glm::vec3 direction)
     {
         if (this->direction != direction)
@@ -91,6 +95,7 @@ public:
             this->direction = direction;
         }
     }
+
     void setTarget(glm::vec3 target)
     {
         glm::vec3 direction = target - eye;
@@ -100,6 +105,7 @@ public:
             this->direction = direction;
         }
     }
+
     void setUp(glm::vec3 up)
     {
         if (this->up != up)
@@ -156,26 +162,31 @@ public:
         getViewMatrix();
         return {V[0][0], V[1][0], V[2][0]};
     }
+
     glm::vec3 Left()
     {
         getViewMatrix();
         return {-V[0][0], -V[1][0], -V[2][0]};
     }
+
     glm::vec3 Up()
     {
         getViewMatrix();
         return {V[0][1], V[1][1], V[2][1]};
     }
+
     glm::vec3 Down()
     {
         getViewMatrix();
         return {-V[0][1], -V[1][1], -V[2][1]};
     }
+
     glm::vec3 Forward()
     {
         getViewMatrix();
         return {-V[0][2], -V[1][2], -V[2][2]};
     }
+
     glm::vec3 Backward()
     {
         getViewMatrix();

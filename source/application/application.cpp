@@ -1,8 +1,6 @@
 #include <application.hpp>
 #include <shader.hpp>
 
-
-
 class UniformsApplication : public gameTemp::Application
 {
 

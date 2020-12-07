@@ -7,10 +7,8 @@
 #include <glm/gtx/fast_trigonometry.hpp>
 
 #include <application.hpp>
-#include "./cameraComponent.hpp"
-// #include "../entities/entity.hpp"
+#include <cameraComponent.hpp>
 
-#include <iostream>
 using namespace std;
 
 using gameTemp::Application;
@@ -34,10 +32,12 @@ public:
     CameraControllerComponent(Application *application, Entity *myEntity)
     {
         this->app = application;
+
         int width, height = 0;
         glm::ivec2 wh = app->getFrameBufferSize();
         width = wh.x;
         height = wh.y;
+
         camera = myEntity->getCameraComponent();
         camera->setupPerspective(glm::pi<float>() / 2, static_cast<float>(width) / height, 0.1f, 100.0f);
         yaw_sensitivity = pitch_sensitivity = 0.01f;
@@ -50,13 +50,15 @@ public:
         float base_length = glm::sqrt(direction.x * direction.x + direction.z * direction.z);
         pitch = glm::atan(direction.y, base_length);
     }
+
     void Initialize(Application *application, Entity *myEntity)
-    {
+    { //REVIEW: Remove this
         this->app = application;
         int width, height = 0;
         glm::ivec2 wh = app->getFrameBufferSize();
         width = wh.x;
         height = wh.y;
+
         camera = myEntity->getCameraComponent();
         camera->setupPerspective(glm::pi<float>() / 2, static_cast<float>(width) / height, 0.1f, 100.0f);
         yaw_sensitivity = pitch_sensitivity = 0.01f;
@@ -78,6 +80,7 @@ public:
             app->getMouse().unlockMouse(app->getWindow());
         }
     }
+
     void update(double delta_time)
     {
         if (app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && !mouse_locked)
@@ -145,6 +148,7 @@ public:
     {
         this->yaw = glm::wrapAngle(_yaw);
     }
+
     void setPitch(float _pitch)
     {
         const float v = 0.99f * glm::pi<float>() / 2;
@@ -154,6 +158,7 @@ public:
             _pitch = -v;
         this->pitch = _pitch;
     }
+
     void setPosition(glm::vec3 _pos)
     {
         this->position = _pos;

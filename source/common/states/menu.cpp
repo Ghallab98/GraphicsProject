@@ -4,7 +4,7 @@
 #include <application.hpp>
 #include <shader.hpp>
 
-#include<iostream>
+#include <iostream>
 class GameState;
 
 class MenuState : public gameTemp::Application
@@ -53,7 +53,7 @@ class MenuState : public gameTemp::Application
 
     void onDraw(double deltaTime) override
     {
-        
+
         glClear(GL_COLOR_BUFFER_BIT);
 
         GLuint mouse_uniform_location = glGetUniformLocation(programS, "mouseCoord");
@@ -101,10 +101,7 @@ class MenuState : public gameTemp::Application
         programP.destroy();
         programG.destroy();
         glDeleteVertexArrays(1, &vertex_array);
-
     }
-
 };
 
 #endif
-
