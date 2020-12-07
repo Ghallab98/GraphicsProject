@@ -7,27 +7,27 @@
 #include <mesh/mesh.hpp>
 #include <mesh/mesh-utils.hpp>
 
-#include "./entities/entity.hpp"
+#include <entities/entity.hpp>
 
 #include <MeshRenderer.hpp>
 #include <cameraComponent.hpp>
 #include <cameraControllerComponent.hpp>
 #include <transformationComponent.hpp>
 
-#include "../Renderer/RendererSystem.hpp"
+#include <Renderer/RendererSystem.hpp>
 
 class GameState : public gameTemp::Application
 {
     gameTemp::ShaderProgram program;
-    gameTemp::Mesh model, model1;
+    gameTemp::Mesh cuboidModel, sphereModel;
 
     Entity myCamera;
+    vector<Entity *> entities;
+    RendererSystem rendererSystem;
+
     Entity *cubeParent = new Entity;
     Entity *cubeChild = new Entity;
     Entity *sphere = new Entity;
-
-    vector<Entity *> Entities;
-    RendererSystem rendererSystem;
 
     gameTemp::WindowConfiguration getWindowConfiguration() override
     {
@@ -42,41 +42,30 @@ class GameState : public gameTemp::Application
         program.link();
 
         // -- Initializing mesh components
-        gameTemp::mesh_utils::Cuboid(model, true);
-        gameTemp::mesh_utils::Sphere(model1, {32, 16}, true);
-        gameTemp::Mesh *ptrCube;
-        gameTemp::Mesh *ptrSphere;
-        gameTemp::ShaderProgram *ptrShader;
+        gameTemp::mesh_utils::Cuboid(cuboidModel, true);
+        gameTemp::mesh_utils::Sphere(sphereModel, {32, 16}, true);
 
-        ptrCube = &model;
-        ptrSphere = &model1;
-        ptrShader = &program;
-
-        MeshRenderer *meshCubeParent = new MeshRenderer(ptrCube, ptrShader);
-        MeshRenderer *meshCubeChild = new MeshRenderer(ptrCube, ptrShader);
-        MeshRenderer *meshSPhere = new MeshRenderer(ptrSphere, ptrShader);
-
-        cubeParent->setMeshRendrer(meshCubeParent);
-        cubeChild->setMeshRendrer(meshCubeChild);
-        sphere->setMeshRendrer(meshSPhere);
+        cubeParent->setMeshRendrer(new MeshRenderer(&cuboidModel, &program));
+        cubeChild->setMeshRendrer(new MeshRenderer(&cuboidModel, &program));
+        sphere->setMeshRendrer(new MeshRenderer(&sphereModel, &program));
 
         // -- Initializing transformation components
         TransformationComponent *TCcubeParent = new TransformationComponent(nullptr);
         TransformationComponent *TCcubeChild = new TransformationComponent(TCcubeParent);
         TransformationComponent *TCSphere = new TransformationComponent(TCcubeChild);
 
-        TCcubeParent->transform({-2, 1, -2}, {0, 0, 0}, {2, 2, 2});
-        TCcubeChild->transform({2, 2, -2}, {0, 0, 0}, {1, 1, 1});
-        TCSphere->transform({-2, 1, 2}, {0, 0, 0}, {2, 2, 2});
-
         cubeParent->setTransformationComponent(TCcubeParent);
         cubeChild->setTransformationComponent(TCcubeChild);
         sphere->setTransformationComponent(TCSphere);
 
+        cubeParent->getTransformationComponent()->transform({-2, 1, -2}, {0, 0, 0}, {2, 2, 2});
+        cubeChild->getTransformationComponent()->transform({2, 2, -2}, {0, 0, 0}, {1, 1, 1});
+        sphere->getTransformationComponent()->transform({-2, 1, 2}, {0, 0, 0}, {2, 2, 2});
+
         // -- Storing entities
-        Entities.push_back(cubeParent);
-        Entities.push_back(cubeChild);
-        Entities.push_back(sphere);
+        entities.push_back(cubeParent);
+        entities.push_back(cubeChild);
+        entities.push_back(sphere);
 
         // -- Initializing the camera
         CameraComponent *Cam = new CameraComponent;
@@ -89,9 +78,7 @@ class GameState : public gameTemp::Application
         myCamera.setCameraControllerComponent(CamController);
 
         // -- Initializing the renderer
-        rendererSystem.setEntitiesVector(&Entities);
-
-        // -- GL options
+        rendererSystem.setEntitiesVector(&entities);
         glEnable(GL_CULL_FACE);
         glClearColor(0, 0, 0, 0);
     }
@@ -149,8 +136,12 @@ class GameState : public gameTemp::Application
 
     void onDestroy() override
     {
+        for (int i = 0; i < entities.size(); i++)
+            delete entities[i];
+
+        sphereModel.destroy();
+        cuboidModel.destroy();
         program.destroy();
-        model.destroy();
     }
 };
 

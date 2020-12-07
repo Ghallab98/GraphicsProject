@@ -49,6 +49,8 @@ public:
         program->set("transform", transformMatrix);
         pMesh->draw();
     }
+
+    ~MeshRenderer() {}
 };
 
 #endif

@@ -9,28 +9,28 @@ class MeshRenderer;
 class Entity
 {
 private:
-    TransformationComponent *transform;
-    CameraComponent *camera;
+    TransformationComponent *transformComponent;
+    CameraComponent *cameraComponent;
     CameraControllerComponent *cameraController;
     MeshRenderer *mesh;
 
 public:
     Entity()
     {
-        transform = nullptr;
-        camera = nullptr;
+        transformComponent = nullptr;
+        cameraComponent = nullptr;
         mesh = nullptr;
         cameraController = nullptr;
     }
 
     void setTransformationComponent(TransformationComponent *TC)
     {
-        transform = TC;
+        transformComponent = TC;
     }
 
     void setCameraComponent(CameraComponent *CC)
     {
-        camera = CC;
+        cameraComponent = CC;
     }
 
     void setCameraControllerComponent(CameraControllerComponent *CC)
@@ -45,12 +45,12 @@ public:
 
     TransformationComponent *getTransformationComponent()
     {
-        return transform;
+        return transformComponent;
     }
 
     CameraComponent *getCameraComponent()
     {
-        return camera;
+        return cameraComponent;
     }
 
     CameraControllerComponent *getCameraComponentController()
@@ -61,6 +61,21 @@ public:
     MeshRenderer *getMeshRendrer()
     {
         return mesh;
+    }
+
+    ~Entity()
+    {
+        if (transformComponent)
+            delete transformComponent;
+
+        if (cameraComponent)
+            delete cameraComponent;
+
+        if (cameraController)
+            delete cameraController;
+
+        if (mesh)
+            delete mesh;
     }
 };
 

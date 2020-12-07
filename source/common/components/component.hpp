@@ -1,7 +1,7 @@
 #ifndef COMPONENT_HPP
 #define COMPONENT_HPP
 
-#include "../entities/entity.hpp"
+#include <entities/entity.hpp>
 
 class Component
 {
