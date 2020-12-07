@@ -11,6 +11,7 @@
 #include <glad/gl.h>
 #include <imgui.h>
 #include <glm/common.hpp>
+#include "./components/transformationComponent.hpp"
 
 namespace gameTemp {
 

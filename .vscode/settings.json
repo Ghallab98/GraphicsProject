@@ -18,7 +18,28 @@
         "valarray": "cpp",
         "vector": "cpp",
         "filesystem": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "algorithm": "cpp",
+        "locale": "cpp",
+        "ostream": "cpp",
+        "xiosbase": "cpp"
     },
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "todohighlight.keywords": [
+        "FIXME:", 
+        "REVIEW:",
+        "TODO:",
+        {
+            "text": "INFO:",
+            "color": "white",
+            "backgroundColor": "green",
+            "border": "none",
+        },
+        {
+            "text": "PROTOTYPING:",
+            "color": "white",
+            "backgroundColor": "pink",
+            "border": "none",
+        }
+    ]
 }

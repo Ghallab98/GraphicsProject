@@ -16,6 +16,7 @@ add_subdirectory(vendor/glfw)                       # Build the GLFW project to 
 
 # A variable with all the source files of GLAD
 set(GLAD_SOURCE vendor/glad/src/gl.c)
+
 # A variables with all the source files of Dear ImGui
 set(IMGUI_SOURCES
         vendor/imgui/imgui.cpp
@@ -35,11 +36,23 @@ set(COMMON_SOURCES
         source/common/shader.cpp
         source/common/mesh/mesh-utils.cpp
         source/common/texture/texture-utils.cpp
-        source/common/texture/screenshot.cpp)
+        source/common/texture/screenshot.cpp
+
+        )
+
+# A variable with all the game components
+set(COMPONENTS_SOURCES
+        source/common/components/transformationComponent.hpp
+        source/common/components/meshRenderer.hpp
+        source/common/components/cameraControllerComponent.hpp
+        source/common/components/cameraComponent.hpp
+        source/common/components/component.hpp
+)
 
 # Define the directories in which to search for the included headers
 include_directories(
         source/common
+        source/common/components
         vendor/glfw/include
         vendor/glad/include
         vendor/glm
@@ -50,8 +63,5 @@ include_directories(
 # For each example, we add an executable target
 # Each target compiles one example source file and the common & vendor source files
 # Then we link GLFW with each target
-
-# THESE 2 COMMANDDS TO BE MODIFIED WITH OUR ACUTAL ENTRY POINT OF THE PROGRAM AND THE LIBRARY
-
-add_executable(Game source/common/source.cpp ${COMMON_SOURCES} ${VENDOR_SOURCES})
+add_executable(Game source/common/source.cpp ${COMMON_SOURCES} ${VENDOR_SOURCES} ${COMPONENTS_SOURCES})
 target_link_libraries(Game glfw)
