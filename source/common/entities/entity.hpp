@@ -1,6 +1,10 @@
 #ifndef ENTITY_HPP
 #define ENTITY_HPP
 
+#include <vector>
+using std::vector;
+
+class Component;
 class TransformationComponent;
 class CameraComponent;
 class CameraControllerComponent;
@@ -9,74 +13,18 @@ class MeshRenderer;
 class Entity
 {
 private:
-    TransformationComponent *transformComponent;
-    CameraComponent *cameraComponent;
-    CameraControllerComponent *cameraController;
-    MeshRenderer *mesh;
+    vector<Component *> components;
 
 public:
-    Entity()
-    {
-        transformComponent = nullptr;
-        cameraComponent = nullptr;
-        mesh = nullptr;
-        cameraController = nullptr;
-    }
+    Entity();
 
-    void setTransformationComponent(TransformationComponent *TC)
-    {
-        transformComponent = TC;
-    }
+    void addComponent(Component *component);
+    TransformationComponent *getTransformationComponent();
+    CameraComponent *getCameraComponent();
+    CameraControllerComponent *getCameraComponentController();
+    MeshRenderer *getMeshRendrer();
 
-    void setCameraComponent(CameraComponent *CC)
-    {
-        cameraComponent = CC;
-    }
-
-    void setCameraControllerComponent(CameraControllerComponent *CC)
-    {
-        cameraController = CC;
-    }
-
-    void setMeshRendrer(MeshRenderer *MR)
-    {
-        mesh = MR;
-    }
-
-    TransformationComponent *getTransformationComponent()
-    {
-        return transformComponent;
-    }
-
-    CameraComponent *getCameraComponent()
-    {
-        return cameraComponent;
-    }
-
-    CameraControllerComponent *getCameraComponentController()
-    {
-        return cameraController;
-    }
-
-    MeshRenderer *getMeshRendrer()
-    {
-        return mesh;
-    }
-
-    ~Entity()
-    {
-        if (transformComponent)
-            delete transformComponent;
-
-        if (cameraComponent)
-            delete cameraComponent;
-
-        if (cameraController)
-            delete cameraController;
-
-        if (mesh)
-            delete mesh;
-    }
+    ~Entity();
 };
 
 #endif

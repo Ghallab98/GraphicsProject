@@ -10,11 +10,11 @@
 #include <mesh/mesh-utils.hpp>
 
 #include <entities/entity.hpp>
-
 #include <MeshRenderer.hpp>
 #include <cameraComponent.hpp>
 #include <cameraControllerComponent.hpp>
 #include <transformationComponent.hpp>
+#include <entities/entity.cpp>
 
 #include <Renderer/RendererSystem.hpp>
 
@@ -52,18 +52,18 @@ class GameState : public gameTemp::Application
         gameTemp::mesh_utils::Cuboid(cuboidModel, true);
         gameTemp::mesh_utils::Sphere(sphereModel, {32, 16}, true);
 
-        cubeParent->setMeshRendrer(new MeshRenderer(&cuboidModel, &program));
-        cubeChild->setMeshRendrer(new MeshRenderer(&cuboidModel, &program));
-        sphere->setMeshRendrer(new MeshRenderer(&sphereModel, &program));
+        cubeParent->addComponent(new MeshRenderer(&cuboidModel, &program));
+        cubeChild->addComponent(new MeshRenderer(&cuboidModel, &program));
+        sphere->addComponent(new MeshRenderer(&sphereModel, &program));
 
         // -- Initializing transformation components
         TransformationComponent *TCcubeParent = new TransformationComponent(nullptr);
         TransformationComponent *TCcubeChild = new TransformationComponent(TCcubeParent);
         TransformationComponent *TCSphere = new TransformationComponent(TCcubeChild);
 
-        cubeParent->setTransformationComponent(TCcubeParent);
-        cubeChild->setTransformationComponent(TCcubeChild);
-        sphere->setTransformationComponent(TCSphere);
+        cubeParent->addComponent(TCcubeParent);
+        cubeChild->addComponent(TCcubeChild);
+        sphere->addComponent(TCSphere);
 
         cubeParent->getTransformationComponent()->transform({-2, 1, -2}, {0, 0, 0}, {2, 2, 2});
         cubeChild->getTransformationComponent()->transform({2, 2, -2}, {0, 0, 0}, {1, 1, 1});
@@ -76,13 +76,13 @@ class GameState : public gameTemp::Application
 
         // -- Initializing the camera
         CameraComponent *Cam = new CameraComponent;
-        myCamera.setCameraComponent(Cam);
+        myCamera.addComponent(Cam);
         Cam->setEyePosition({10, 10, 10});
         Cam->setTarget({0, 0, 0});
         Cam->setUp({0, 1, 0});
 
         CameraControllerComponent *CamController = new CameraControllerComponent(this, &myCamera);
-        myCamera.setCameraControllerComponent(CamController);
+        myCamera.addComponent(CamController);
 
         // -- Initializing the renderer
         rendererSystem.setEntitiesVector(&entities);

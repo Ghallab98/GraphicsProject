@@ -4,8 +4,6 @@
 #include <glm/glm.hpp>
 #include <component.hpp>
 
-using namespace std;
-
 class CameraComponent : public Component
 {
 private:
@@ -29,6 +27,11 @@ public:
     CameraComponent()
     {
         dirtyFlags = V_DIRTY | P_DIRTY | VP_DIRTY;
+    }
+
+    int getComponentType()
+    {
+        return CAMERA_COMPONENT;
     }
 
     // Setup the camera as a perspective camera

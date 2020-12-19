@@ -27,6 +27,11 @@ public:
         this->program = program;
     }
 
+    int getComponentType()
+    {
+        return MESH_RENDERER_COMPONENT;
+    }
+
     void setMesh(gameTemp::Mesh *pMesh)
     {
         this->pMesh = pMesh;

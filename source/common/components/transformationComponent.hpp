@@ -25,6 +25,11 @@ public:
             transformationMatrix = glm::mat4(1.0f);
     }
 
+    int getComponentType()
+    {
+        return TRANSFORMATION_COMPONENT;
+    }
+
     bool hasChildren()
     {
         return children.size() != 0;
