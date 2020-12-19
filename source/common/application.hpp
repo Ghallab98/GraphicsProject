@@ -9,6 +9,8 @@
 #include "input/keyboard.hpp"
 #include "input/mouse.hpp"
 
+class State;
+
 #define MENU_STATE_ID 0
 #define GAME_STATE_ID 1
 
@@ -28,7 +30,8 @@ namespace gameTemp
     class Application
     {
     protected:
-        int nextStateId;
+        State *currState = nullptr;
+        State *nextState = nullptr;
         GLFWwindow *window = nullptr; // Pointer to the window created by GLFW using "glfwCreateWindow()".
         Keyboard keyboard;            // Instance of "our" keyboard class that handles keyboard functionalities.
         Mouse mouse;                  // Instance of "our" mouse class that handles mouse functionalities.
@@ -52,7 +55,7 @@ namespace gameTemp
         virtual void onMouseButtonEvent(int button, int action, int mods) {}
         virtual void onScrollEvent(double x_offset, double y_offset) {}
 
-        int run(int currentState); // This is the main class function that run the whole application (Initialize, Game loop, House cleaning).
+        int run(); // This is the main class function that run the whole application (Initialize, Game loop, House cleaning).
         const int GetNextStateID();
 
         // Class Getters.

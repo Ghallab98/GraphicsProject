@@ -1,106 +1,91 @@
-#ifndef MENUSTATE
-#define MENUSTATE
+#ifndef MENU_STATE_CPP
+#define MENU_STATE_CPP
 
-#include <application.hpp>
-#include <shader.hpp>
+#include <states/state.cpp>
 
-#include <iostream>
-class GameState;
-
-class MenuState : public gameTemp::Application
+class MenuState : public State
 {
-    gameTemp::ShaderProgram programS, programH, programP, programG;
+    gameTemp::Mouse &mouse = app->getMouse();
+    gameTemp::Keyboard &keyboard = app->getKeyboard();
 
-    gameTemp::Mouse &mouse = this->getMouse();
-    gameTemp::Keyboard &keyboard = this->getKeyboard();
     GLuint vertex_array = 0;
-
     glm::vec2 mousePos = glm::vec2(mouse.getMousePosition().x, mouse.getMousePosition().y);
-    int shapeNum = 1;
 
-    gameTemp::WindowConfiguration getWindowConfiguration() override
+public:
+    MenuState(Application *app = nullptr) : State(app)
     {
-        return {"Game", {1280, 720}, false};
+        name = "MenuState";
     }
 
-    void onInitialize() override
+    void onEnter() override
     {
-        programS.create();
-        programS.attach("assets/shaders/vertex.vert", GL_VERTEX_SHADER);
-        programS.attach("assets/shaders/Smiley/smiley.frag", GL_FRAGMENT_SHADER);
-        programS.link();
+        programs["Smiley"].create();
+        programs["Smiley"].attach("assets/shaders/vertex.vert", GL_VERTEX_SHADER);
+        programs["Smiley"].attach("assets/shaders/Smiley/smiley.frag", GL_FRAGMENT_SHADER);
+        programs["Smiley"].link();
 
-        programH.create();
-        programH.attach("assets/shaders/vertex.vert", GL_VERTEX_SHADER);
-        programH.attach("assets/shaders/Heart/heart.frag", GL_FRAGMENT_SHADER);
-        programH.link();
+        programs["Heart"].create();
+        programs["Heart"].attach("assets/shaders/vertex.vert", GL_VERTEX_SHADER);
+        programs["Heart"].attach("assets/shaders/Heart/heart.frag", GL_FRAGMENT_SHADER);
+        programs["Heart"].link();
 
-        programP.create();
-        programP.attach("assets/shaders/vertex.vert", GL_VERTEX_SHADER);
-        programP.attach("assets/shaders/Pacman/pacman.frag", GL_FRAGMENT_SHADER);
-        programP.link();
+        programs["Pacman"].create();
+        programs["Pacman"].attach("assets/shaders/vertex.vert", GL_VERTEX_SHADER);
+        programs["Pacman"].attach("assets/shaders/Pacman/pacman.frag", GL_FRAGMENT_SHADER);
+        programs["Pacman"].link();
 
-        programG.create();
-        programG.attach("assets/shaders/vertex.vert", GL_VERTEX_SHADER);
-        programG.attach("assets/shaders/G/g.frag", GL_FRAGMENT_SHADER);
-        programG.link();
+        programs["G"].create();
+        programs["G"].attach("assets/shaders/vertex.vert", GL_VERTEX_SHADER);
+        programs["G"].attach("assets/shaders/G/g.frag", GL_FRAGMENT_SHADER);
+        programs["G"].link();
 
         glGenVertexArrays(1, &vertex_array);
-
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glUseProgram(programS);
+        glUseProgram(programs["Smiley"]);
     }
 
     void onDraw(double deltaTime) override
     {
-
         glClear(GL_COLOR_BUFFER_BIT);
 
-        GLuint mouse_uniform_location = glGetUniformLocation(programS, "mouseCoord");
+        GLuint mouse_uniform_location = glGetUniformLocation(programs["Smiley"], "mouseCoord");
         glUniform2f(mouse_uniform_location, mouse.getMousePosition().x, mouse.getMousePosition().y);
-        GLuint mouse_uniform_location1 = glGetUniformLocation(programH, "mouseCoord");
+
+        GLuint mouse_uniform_location1 = glGetUniformLocation(programs["Heart"], "mouseCoord");
         glUniform2f(mouse_uniform_location1, mouse.getMousePosition().x, mouse.getMousePosition().y);
-        GLuint mouse_uniform_location2 = glGetUniformLocation(programP, "mouseCoord");
+
+        GLuint mouse_uniform_location2 = glGetUniformLocation(programs["Pacman"], "mouseCoord");
         glUniform2f(mouse_uniform_location2, mouse.getMousePosition().x, mouse.getMousePosition().y);
-        GLuint mouse_uniform_location3 = glGetUniformLocation(programG, "mouseCoord");
+
+        GLuint mouse_uniform_location3 = glGetUniformLocation(programs["G"], "mouseCoord");
         glUniform2f(mouse_uniform_location3, mouse.getMousePosition().x, mouse.getMousePosition().y);
 
         if (keyboard.isPressed(GLFW_KEY_A))
         {
-            glUseProgram(programS);
+            glUseProgram(programs["Smiley"]);
         }
         else if (keyboard.isPressed(GLFW_KEY_S))
         {
-            glUseProgram(programH);
+            glUseProgram(programs["Heart"]);
         }
         else if (keyboard.isPressed(GLFW_KEY_D))
         {
-            glUseProgram(programP);
+            glUseProgram(programs["Pacman"]);
         }
         else if (keyboard.isPressed(GLFW_KEY_W))
         {
-            glUseProgram(programG);
+            glUseProgram(programs["G"]);
         }
-        else if (keyboard.isPressed(GLFW_KEY_ENTER))
-        {
-            this->nextStateId = GAME_STATE_ID;
-        }
-        /*else if (keyboard.isPressed(GLFW_KEY_ESCAPE))
-        {
-            this->nextStateId = -1;
-        }*/
+
         glBindVertexArray(vertex_array);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
     }
 
-    void onDestroy() override
+    void onExit() override
     {
-        programS.destroy();
-        programH.destroy();
-        programP.destroy();
-        programG.destroy();
         glDeleteVertexArrays(1, &vertex_array);
+        State::onExit();
     }
 };
 
