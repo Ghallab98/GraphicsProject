@@ -7,6 +7,8 @@ using std::map;
 #include <states/state.cpp>
 #include <Renderer/RendererSystem.hpp>
 
+#include <glm/glm.hpp>
+
 #define PI 3.1415926535897932384626433832795
 
 class GameState : public State
@@ -34,6 +36,28 @@ public:
         Entity *cubeParent = new Entity;
         Entity *cubeChild = new Entity;
         Entity *sphere = new Entity;
+        Entity *yo = new Entity;
+
+        //CULLING INTIALZATIONS
+        struct Culling myCull;
+        myCull.enabled=true;
+        myCull.cullFace = BACK;
+        myCull.direction = CCW;
+        cubeParent->setCullObjProp(&myCull);
+
+        //BLENDING INTIALZATIONS
+        // struct Blending myBlend;
+        // myBlend.enabled=true;
+        // glm::vec4 blend_constant_color = {0.25f,1.0f,0.75f,0.5f};
+        // myBlend.constClr = blend_constant_color;
+        // cubeChild->setBlendObjProp(&myBlend);
+
+        struct Blending myBlend;
+        myBlend.enabled=true;
+        myBlend.type = NotConstant;
+        glm::vec4 blend_constant_color = {0.25f,1.0f,0.75f,0.5f};
+        myBlend.destClr = blend_constant_color;
+        cubeChild->setBlendObjProp(&myBlend);
 
         // -- Initializing mesh components
         gameTemp::mesh_utils::Cuboid(models["cuboid"], true);
@@ -41,17 +65,21 @@ public:
         cubeParent->addComponent(new MeshRenderer(&models["cuboid"], &programs["main"]));
         cubeChild->addComponent(new MeshRenderer(&models["cuboid"], &programs["main"]));
         sphere->addComponent(new MeshRenderer(&models["sphere"], &programs["main"]));
+        yo->addComponent(new MeshRenderer(&models["sphere"], &programs["main"]));
 
         // -- Initializing transformation components
         TransformationComponent *TCcubeParent = new TransformationComponent(nullptr);
         TransformationComponent *TCcubeChild = new TransformationComponent(TCcubeParent);
         TransformationComponent *TCSphere = new TransformationComponent(TCcubeChild);
+        TransformationComponent *TCyo = new TransformationComponent(nullptr);
 
         cubeParent->addComponent(TCcubeParent);
         cubeChild->addComponent(TCcubeChild);
         sphere->addComponent(TCSphere);
+        yo->addComponent(TCyo);
 
         cubeParent->getTransformationComponent()->transform({-2, 1, -2}, {0, 0, 0}, {2, 2, 2});
+        yo->getTransformationComponent()->transform({-2, 2, -2}, {0, 0, 0}, {2, 2, 2});
         cubeChild->getTransformationComponent()->transform({2, 2, -2}, {0, 0, 0}, {1, 1, 1});
         sphere->getTransformationComponent()->transform({-2, 1, 2}, {0, 0, 0}, {2, 2, 2});
 
@@ -59,6 +87,7 @@ public:
         entities.push_back(cubeParent);
         entities.push_back(cubeChild);
         entities.push_back(sphere);
+        entities.push_back(yo);
 
         // -- Initializing the camera
         CameraComponent *Cam = new CameraComponent;
@@ -79,6 +108,14 @@ public:
 
     void onDraw(double deltaTime) override
     {
+        // Z-buffer
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
+        glClearDepth(1.0f);
+        glDepthMask(true);
+        glColorMask(true, true, true, true);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         currentCamera->getCameraComponentController()->update(deltaTime);
         glm::mat4 camera_matrix = currentCamera->getCameraComponent()->getVPMatrix();
         rendererSystem.update(camera_matrix);

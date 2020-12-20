@@ -43,6 +43,19 @@ MeshRenderer *Entity::getMeshRendrer()
     return nullptr;
 }
 
+
+ObjectProperties* Entity:: getObjProp(){
+    return &(this->objProp);
+}
+
+void  Entity:: setCullObjProp(Culling * myCull){
+    this->objProp.cull=*myCull;
+}
+
+void  Entity:: setBlendObjProp(Blending * myBlend){
+    this->objProp.blend=*myBlend;
+}
+
 Entity::~Entity()
 {
     for (int i = 0; i < components.size(); i++)

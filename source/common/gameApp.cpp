@@ -19,7 +19,6 @@ class GameApp : public gameTemp::Application
     void onInitialize() override
     {
         nextState = new MenuState(this);
-        glEnable(GL_CULL_FACE);
         glClearColor(0, 0, 0, 0);
     }
 
