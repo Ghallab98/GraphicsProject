@@ -122,15 +122,8 @@ gameTemp::WindowConfiguration gameTemp::Application::getWindowConfiguration() {
     return {"OpenGL Application", {1280, 720}, false };
 }
 
-//RETURN THE STATE ID OF THE THE CURRENT STATE
-const int gameTemp::Application:: GetNextStateID(){
-        return this->nextStateId;
-    }
-
 // This is the main class function that run the whole application (Initialize, Game loop, House cleaning).
-int gameTemp::Application::run(int currentState) {
-    int myCurrentState=-1;
-
+int gameTemp::Application::run() {
     // Set the function to call when an error occurs.
     glfwSetErrorCallback(glfw_error_callback);
 
@@ -258,26 +251,10 @@ int gameTemp::Application::run(int currentState) {
         // Update the keyboard and mouse data
         keyboard.update();
         mouse.update();
-        if(currentState==MENU_STATE_ID){
-            if(keyboard.isPressed(GLFW_KEY_ENTER)){
-                break;
-            }
-            else if(keyboard.isPressed(GLFW_KEY_ESCAPE) || glfwWindowShouldClose(window)){
-                this->nextStateId=-1;
-                break;
-            }
-            myCurrentState=GAME_STATE_ID;
-        }
-        else if(currentState==GAME_STATE_ID){
-            if(keyboard.isPressed(GLFW_KEY_ESCAPE)){ //return to the menu state
-                myCurrentState=GAME_STATE_ID;
-                break;
-            }
-            else if(glfwWindowShouldClose(window)){
-                this->nextStateId=-1;
-                break;
-            }
-        }
+        
+        // Check exit condition
+        if (!this->currState)
+            break;
     }
 
     // Call for cleaning up
@@ -293,7 +270,6 @@ int gameTemp::Application::run(int currentState) {
 
     // And finally terminate GLFW
     glfwTerminate();
-    return myCurrentState;; // Good bye
 }
 
 // Sets-up the window callback functions from GLFW to our (Mouse/Keyboard) classes.

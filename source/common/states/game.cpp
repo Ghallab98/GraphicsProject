@@ -1,71 +1,85 @@
-#ifndef GAME_STATE
-#define GAME_STATE
+#ifndef GAME_STATE_CPP
+#define GAME_STATE_CPP
+
+#include <map>
+using std::map;
+
+#include <states/state.cpp>
+#include <Renderer/RendererSystem.hpp>
+
+#include <glm/glm.hpp>
 
 #define PI 3.1415926535897932384626433832795
 
-#include <application.hpp>
-#include <shader.hpp>
-#include <imgui-utils/utils.hpp>
-#include <mesh/mesh.hpp>
-#include <mesh/mesh-utils.hpp>
-
-#include <entities/entity.hpp>
-
-#include <MeshRenderer.hpp>
-#include <cameraComponent.hpp>
-#include <cameraControllerComponent.hpp>
-#include <transformationComponent.hpp>
-
-#include <Renderer/RendererSystem.hpp>
-
-class GameState : public gameTemp::Application
+class GameState : public State
 {
-    gameTemp::ShaderProgram program;
-    gameTemp::Mesh cuboidModel, sphereModel;
-
-    Entity myCamera;
+    map<string, gameTemp::Mesh> models;
     vector<Entity *> entities;
+    Entity *currentCamera;
     RendererSystem rendererSystem;
 
-    Entity *cubeParent;
-    Entity *cubeChild;
-    Entity *sphere;
-
-    gameTemp::WindowConfiguration getWindowConfiguration() override
+public:
+    GameState(Application *app = nullptr) : State(app)
     {
-        return {"Game State", {1280, 720}, false};
+        name = "GameState";
     }
 
-    void onInitialize() override
+    void onEnter() override
     {
-        program.create();
-        program.attach("assets/shaders/transform.vert", GL_VERTEX_SHADER);
-        program.attach("assets/shaders/tint.frag", GL_FRAGMENT_SHADER);
-        program.link();
+        // -- Initializing shaders
+        programs["main"].create();
+        programs["main"].attach("assets/shaders/transform.vert", GL_VERTEX_SHADER);
+        programs["main"].attach("assets/shaders/tint.frag", GL_FRAGMENT_SHADER);
+        programs["main"].link();
 
         // -- Initializing entities
-        cubeParent = new Entity;
-        cubeChild = new Entity;
-        sphere = new Entity;
+        Entity *cubeParent = new Entity;
+        Entity *cubeChild = new Entity;
+        Entity *sphere = new Entity;
+        Entity *yo = new Entity;
+
+        //CULLING INTIALZATIONS
+        struct Culling myCull;
+        myCull.enabled=true;
+        myCull.cullFace = BACK;
+        myCull.direction = CCW;
+        cubeParent->setCullObjProp(&myCull);
+
+        //BLENDING INTIALZATIONS
+        // struct Blending myBlend;
+        // myBlend.enabled=true;
+        // glm::vec4 blend_constant_color = {0.25f,1.0f,0.75f,0.5f};
+        // myBlend.constClr = blend_constant_color;
+        // cubeChild->setBlendObjProp(&myBlend);
+
+        struct Blending myBlend;
+        myBlend.enabled=true;
+        myBlend.type = NotConstant;
+        glm::vec4 blend_constant_color = {0.25f,1.0f,0.75f,0.5f};
+        myBlend.destClr = blend_constant_color;
+        cubeChild->setBlendObjProp(&myBlend);
 
         // -- Initializing mesh components
-        gameTemp::mesh_utils::Cuboid(cuboidModel, true);
-        gameTemp::mesh_utils::Sphere(sphereModel, {32, 16}, true);
-
-        cubeParent->setMeshRendrer(new MeshRenderer(&cuboidModel, &program));
-        cubeChild->setMeshRendrer(new MeshRenderer(&cuboidModel, &program));
-        sphere->setMeshRendrer(new MeshRenderer(&sphereModel, &program));
+        gameTemp::mesh_utils::Cuboid(models["cuboid"], true);
+        gameTemp::mesh_utils::Sphere(models["sphere"], {32, 16}, true);
+        cubeParent->addComponent(new MeshRenderer(&models["cuboid"], &programs["main"]));
+        cubeChild->addComponent(new MeshRenderer(&models["cuboid"], &programs["main"]));
+        sphere->addComponent(new MeshRenderer(&models["sphere"], &programs["main"]));
+        yo->addComponent(new MeshRenderer(&models["sphere"], &programs["main"]));
 
         // -- Initializing transformation components
         TransformationComponent *TCcubeParent = new TransformationComponent(nullptr);
         TransformationComponent *TCcubeChild = new TransformationComponent(TCcubeParent);
         TransformationComponent *TCSphere = new TransformationComponent(TCcubeChild);
+        TransformationComponent *TCyo = new TransformationComponent(nullptr);
 
-        cubeParent->setTransformationComponent(TCcubeParent);
-        cubeChild->setTransformationComponent(TCcubeChild);
-        sphere->setTransformationComponent(TCSphere);
+        cubeParent->addComponent(TCcubeParent);
+        cubeChild->addComponent(TCcubeChild);
+        sphere->addComponent(TCSphere);
+        yo->addComponent(TCyo);
 
         cubeParent->getTransformationComponent()->transform({-2, 1, -2}, {0, 0, 0}, {2, 2, 2});
+        yo->getTransformationComponent()->transform({-2, 2, -2}, {0, 0, 0}, {2, 2, 2});
         cubeChild->getTransformationComponent()->transform({2, 2, -2}, {0, 0, 0}, {1, 1, 1});
         sphere->getTransformationComponent()->transform({-2, 1, 2}, {0, 0, 0}, {2, 2, 2});
 
@@ -73,86 +87,55 @@ class GameState : public gameTemp::Application
         entities.push_back(cubeParent);
         entities.push_back(cubeChild);
         entities.push_back(sphere);
+        entities.push_back(yo);
 
         // -- Initializing the camera
         CameraComponent *Cam = new CameraComponent;
-        myCamera.setCameraComponent(Cam);
+        currentCamera = new Entity;
+        currentCamera->addComponent(Cam);
         Cam->setEyePosition({10, 10, 10});
         Cam->setTarget({0, 0, 0});
         Cam->setUp({0, 1, 0});
 
-        CameraControllerComponent *CamController = new CameraControllerComponent(this, &myCamera);
-        myCamera.setCameraControllerComponent(CamController);
+        glUseProgram(programs["main"]);
+        CameraControllerComponent *CamController = new CameraControllerComponent(app, currentCamera);
+        currentCamera->addComponent(CamController);
 
-        // -- Initializing the renderer
+        // -- Initializing GL
+        programs["main"].set("tint", glm::vec4(1, 1, 1, 1));
         rendererSystem.setEntitiesVector(&entities);
-        glEnable(GL_CULL_FACE);
-        glClearColor(0, 0, 0, 0);
     }
 
     void onDraw(double deltaTime) override
     {
-        if (keyboard.isPressed(GLFW_KEY_ESCAPE))
-            this->nextStateId = MENU_STATE_ID;
+        // Z-buffer
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
+        glClearDepth(1.0f);
+        glDepthMask(true);
+        glColorMask(true, true, true, true);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glClear(GL_COLOR_BUFFER_BIT);
-        glUseProgram(program);
-        program.set("tint", glm::vec4(1, 1, 1, 1));
-
-        ///////////////// INFO: PROTOTYPING BLOCK
-        glm::vec3 rotation = {0.0f, 0.1 * glm::sin(2 * PI * deltaTime), 0.0f};
-        cubeParent->getTransformationComponent()->transform({0, 0, 0}, rotation);
-
-        glm::vec3 translation_sensitivity = {20.0f, 20.0f, 20.0f};
-        glm::vec3 translation;
-
-        if (getKeyboard().justReleased(GLFW_KEY_I))
-        {
-            translation = {0.0f, 0.0f, (float)deltaTime * translation_sensitivity.z};
-            cubeParent->getTransformationComponent()->transform(translation);
-        }
-        if (getKeyboard().justReleased(GLFW_KEY_K))
-        {
-            translation = {0.0f, 0.0f, (float)deltaTime * translation_sensitivity.z * -1};
-            cubeParent->getTransformationComponent()->transform(translation);
-        }
-        if (getKeyboard().justReleased(GLFW_KEY_L))
-        {
-            translation = {(float)deltaTime * translation_sensitivity.x, 0.0f, 0.0f};
-            cubeParent->getTransformationComponent()->transform(translation);
-        }
-        if (getKeyboard().justReleased(GLFW_KEY_J))
-        {
-            translation = {(float)deltaTime * translation_sensitivity.x * -1, 0.0f, 0.0f};
-            cubeParent->getTransformationComponent()->transform(translation);
-        }
-        if (getKeyboard().justReleased(GLFW_KEY_O))
-        {
-            translation = {(float)deltaTime * translation_sensitivity.x, 0.0f, 0.0f};
-            sphere->getTransformationComponent()->transform(translation);
-        }
-        if (getKeyboard().justReleased(GLFW_KEY_P))
-        {
-            translation = {(float)deltaTime * translation_sensitivity.x * -1, 0.0f, 0.0f};
-            sphere->getTransformationComponent()->transform(translation);
-        }
-        ///////////////// END PROTOTYPING
-
-        myCamera.getCameraComponentController()->update(deltaTime);
-        glm::mat4 camera_matrix = myCamera.getCameraComponent()->getVPMatrix();
-
+        currentCamera->getCameraComponentController()->update(deltaTime);
+        glm::mat4 camera_matrix = currentCamera->getCameraComponent()->getVPMatrix();
         rendererSystem.update(camera_matrix);
     }
 
-    void onDestroy() override
+    void onExit() override
     {
+        // Destroy entities
         for (int i = 0; i < entities.size(); i++)
             delete entities[i];
 
         entities.clear();
-        sphereModel.destroy();
-        cuboidModel.destroy();
-        program.destroy();
+
+        // Destory mesh models
+        for (auto it = models.begin(); it != models.end(); ++it)
+            it->second.destroy();
+
+        models.clear();
+
+        State::onExit();
     }
 };
 

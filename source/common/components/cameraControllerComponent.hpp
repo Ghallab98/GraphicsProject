@@ -8,8 +8,7 @@
 
 #include <application.hpp>
 #include <cameraComponent.hpp>
-
-using namespace std;
+#include <entities/entity.hpp>
 
 using gameTemp::Application;
 
@@ -49,6 +48,11 @@ public:
         yaw = glm::atan(-direction.z, direction.x);
         float base_length = glm::sqrt(direction.x * direction.x + direction.z * direction.z);
         pitch = glm::atan(direction.y, base_length);
+    }
+
+    int getComponentType()
+    {
+        return CONTROLLER_COMPONENT;
     }
 
     void Initialize(Application *application, Entity *myEntity)

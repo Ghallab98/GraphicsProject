@@ -22,7 +22,15 @@
         "algorithm": "cpp",
         "locale": "cpp",
         "ostream": "cpp",
-        "xiosbase": "cpp"
+        "xiosbase": "cpp",
+        "unordered_map": "cpp",
+        "forward_list": "cpp",
+        "ios": "cpp",
+        "system_error": "cpp",
+        "xhash": "cpp",
+        "xstring": "cpp",
+        "xtree": "cpp",
+        "map": "cpp"
     },
     "editor.formatOnSave": true,
     "todohighlight.keywords": [

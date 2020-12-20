@@ -36,7 +36,8 @@ public:
             glm::mat4 transformationMatrix = TC->getTransformationMatrix();
             MeshRenderer *R = (*Entities)[i]->getMeshRendrer();
             glm::mat4 matrix = cameraMatrix * transformationMatrix;
-            R->Draw(matrix);
+            ObjectProperties objProp=*(*Entities)[i]->getObjProp();
+            R->Draw(matrix,objProp );
         }
     }
 };
