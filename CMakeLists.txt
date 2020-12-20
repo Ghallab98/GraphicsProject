@@ -47,7 +47,7 @@ set(COMPONENTS_SOURCES
         source/common/components/cameraControllerComponent.hpp
         source/common/components/cameraComponent.hpp
         source/common/components/component.hpp
-)
+        source/common/texture2D.cpp source/common/texture2D.hpp source/common/sampler.cpp source/common/sampler.hpp)
 
 # Define the directories in which to search for the included headers
 include_directories(
