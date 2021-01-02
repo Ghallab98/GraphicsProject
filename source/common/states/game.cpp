@@ -6,7 +6,6 @@ using std::map;
 
 #include <states/state.cpp>
 #include <Renderer/RendererSystem.hpp>
-
 #include <glm/glm.hpp>
 
 #define PI 3.1415926535897932384626433832795
@@ -38,7 +37,6 @@ public:
         Entity *sphere = new Entity;
         Entity *yo = new Entity;
 
-
         //BLENDING INTIALZATIONS
         // struct Blending myBlend;
         // myBlend.enabled=true;
@@ -50,15 +48,17 @@ public:
         gameTemp::mesh_utils::Cuboid(models["cuboid"], true);
         gameTemp::mesh_utils::Sphere(models["sphere"], {32, 16}, true);
 
-        Material * m1 = new Material(&programs["main"]);
+        Material *m1 = new Material(&programs["main"]);
+        glm::vec4 *tintVec = new glm::vec4(1, 1, 1, 0.8);
+        m1->AddUniform<glm::vec4>(tint, tintVec);
 
-        cubeParent->addComponent(new MeshRenderer(m1,&models["cuboid"]));
-        cubeChild->addComponent(new MeshRenderer(m1,&models["cuboid"]));
-        sphere->addComponent(new MeshRenderer(m1,&models["sphere"]));
-        yo->addComponent(new MeshRenderer(m1,&models["sphere"]));
+        cubeParent->addComponent(new MeshRenderer(m1, &models["cuboid"]));
+        cubeChild->addComponent(new MeshRenderer(m1, &models["cuboid"]));
+        sphere->addComponent(new MeshRenderer(m1, &models["sphere"]));
+        yo->addComponent(new MeshRenderer(m1, &models["sphere"]));
 
         //CREATE OBJECT PROPERTY OBj
-        ObjectProperties * obj= new ObjectProperties();
+        ObjectProperties *obj = new ObjectProperties();
         //CULLING INTIALZATIONS
         struct Culling myCull;
         myCull.enabled = true;
@@ -74,7 +74,7 @@ public:
         obj->setBlendObjProp(&myBlend);
 
         m1->setObjProp(obj);
-        
+
         // -- Initializing transformation components
         TransformationComponent *TCcubeParent = new TransformationComponent(nullptr);
         TransformationComponent *TCcubeChild = new TransformationComponent(TCcubeParent);
@@ -132,7 +132,7 @@ public:
     void onExit() override
     {
         // Destroy entities
-        for (int i = 0; i < entities.size(); i++)
+        for (int i = 0, numEntities = entities.size(); i < numEntities; i++)
             delete entities[i];
 
         entities.clear();

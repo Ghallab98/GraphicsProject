@@ -37,13 +37,14 @@ set(COMMON_SOURCES
         source/common/mesh/mesh-utils.cpp
         source/common/texture/texture-utils.cpp
         source/common/texture/screenshot.cpp
-
         )
 
 # A variable with all the game components
 set(COMPONENTS_SOURCES
+        source/common/materialClass/material.cpp
         source/common/components/transformationComponent.hpp
-        source/common/components/meshRenderer.hpp
+        source/common/components/MeshRenderer.hpp
+        source/common/components/MeshRenderer.cpp
         source/common/components/cameraControllerComponent.hpp
         source/common/components/cameraComponent.hpp
         source/common/components/component.hpp

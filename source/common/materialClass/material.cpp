@@ -1,37 +1,44 @@
-#include"./material.hpp"
+#include "./material.hpp"
 
-Material:: Material(gameTemp::ShaderProgram *specifiedShader) 
+Material::Material(gameTemp::ShaderProgram *specifiedShader)
 {
     shaderPtr = specifiedShader;
 }
-void  Material:: setShaderProgram(gameTemp::ShaderProgram *specifiedShader)
+
+void Material::setShaderProgram(gameTemp::ShaderProgram *specifiedShader)
 {
     shaderPtr = specifiedShader;
 }
-gameTemp::ShaderProgram *  Material:: getShaderProgram()
+
+gameTemp::ShaderProgram *Material::getShaderProgram()
 {
     return shaderPtr;
 }
 
-void  Material:: AddUniform(Uniform<std::any>* newUniform)
-{
-    this->uniformsMap.insert(std::pair<uniformType, std::any>(newUniform->getUniformtype(), newUniform->getUniformValue()));
-}
-
-map<std::string, std::any> Material::  GetUniformsMap()
+map<uniformType, any> Material::GetUniformsMap()
 {
     return this->uniformsMap;
 }
 
-void Material:: setObjProp(ObjectProperties * obj)
+void Material::setObjProp(ObjectProperties *obj)
 {
-    this->objProp=obj;
+    this->objProp = obj;
 }
+
 ObjectProperties *Material::getObjProp()
 {
     return this->objProp;
 }
 
-Material:: ~Material()
+glm::vec4 *Material::getTint()
+{
+    auto tintUniform = uniformsMap.find(tint);
+    if (tintUniform == uniformsMap.end())
+        return nullptr;
+
+    return std::any_cast<glm::vec4 *>(tintUniform->second);
+}
+
+Material::~Material()
 {
 }

@@ -7,20 +7,21 @@
 #include <shader.hpp>
 #include <component.hpp>
 
-#include"./../materialClass/material.cpp"
+#include "./../materialClass/material.hpp"
 
 using namespace gameTemp;
 
 class MeshRenderer : public Component
 {
 private:
-    Material* material;
+    Material *material;
     gameTemp::Mesh *pMesh;
+
 public:
-    MeshRenderer(Material* toBeAssignedMaterial,gameTemp::Mesh *pMesh);
+    MeshRenderer(Material *toBeAssignedMaterial, gameTemp::Mesh *pMesh);
     int getComponentType();
     void setMesh(gameTemp::Mesh *pMesh);
-    const gameTemp::Mesh *getMesh();
+    gameTemp::Mesh *getMesh();
     void Draw(glm::mat4 transformMatrix);
     ~MeshRenderer() {}
 };

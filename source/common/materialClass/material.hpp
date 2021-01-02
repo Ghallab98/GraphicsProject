@@ -1,31 +1,49 @@
-//material class stores
+// Material class stores
 // 1- pointer to the shader (fragment shader)
-// 2-map of uniforms that will be sent to the shader
+// 2- map of uniforms that will be sent to the shader
 // 3- rendrer state  (SAVED IN ENTITY DIRECLTY FOR NOW)
+
 #ifndef MATERIAL_HPP
 #define MATERIAL_HPP
+
 #include <map>
+#include <any>
 #include <shader.hpp>
 
-#include "./../uniformsTemplateClass.cpp"
-#include"./objectProperties.cpp"
-#include <any>
-//template <class T>
+#include "./uniformType.hpp"
+#include "./objectProperties.cpp"
 
-class Material{
+using std::any;
+using std::map;
+
+class Material
+{
 private:
-    ObjectProperties * objProp;
+    ObjectProperties *objProp;
     gameTemp::ShaderProgram *shaderPtr;
-    map<uniformType, std::any> uniformsMap;
+    map<uniformType, any> uniformsMap;
+
 public:
-    Material(gameTemp::ShaderProgram *specifiedShader) ;
+    Material(gameTemp::ShaderProgram *specifiedShader);
+
     void setShaderProgram(gameTemp::ShaderProgram *specifiedShader);
-    gameTemp::ShaderProgram* getShaderProgram();
-    void AddUniform(Uniform<std::any>* newUniform);
-    map<std::string, std::any> GetUniformsMap();
-    //Obj Property setter and getter
-    void setObjProp(ObjectProperties * obj);
-    ObjectProperties * getObjProp();
-     ~Material();
+    void setObjProp(ObjectProperties *obj);
+
+    template <class T>
+    void AddUniform(uniformType type, T *value);
+
+    gameTemp::ShaderProgram *getShaderProgram();
+    map<uniformType, std::any> GetUniformsMap();
+    ObjectProperties *getObjProp();
+    glm::vec4 *getTint();
+
+    ~Material();
 };
+
+template <class T>
+void Material::AddUniform(uniformType type, T *value)
+{
+    this->uniformsMap.insert(std::pair<uniformType, T *>(type, value));
+}
+
 #endif
