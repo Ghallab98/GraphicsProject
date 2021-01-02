@@ -34,26 +34,14 @@ CameraControllerComponent *Entity::getCameraComponentController()
     return nullptr;
 }
 
+
 MeshRenderer *Entity::getMeshRendrer()
 {
     for (int i = 0; i < components.size(); i++)
         if (components[i]->getComponentType() == MESH_RENDERER_COMPONENT)
-            return dynamic_cast<MeshRenderer *>(components[i]);
+            return dynamic_cast<MeshRenderer*>(components[i]);
 
     return nullptr;
-}
-
-
-ObjectProperties* Entity:: getObjProp(){
-    return &(this->objProp);
-}
-
-void  Entity:: setCullObjProp(Culling * myCull){
-    this->objProp.cull=*myCull;
-}
-
-void  Entity:: setBlendObjProp(Blending * myBlend){
-    this->objProp.blend=*myBlend;
 }
 
 Entity::~Entity()

@@ -6,7 +6,6 @@ using std::map;
 
 #include <states/state.cpp>
 #include <Renderer/RendererSystem.hpp>
-
 #include <glm/glm.hpp>
 
 #define PI 3.1415926535897932384626433832795
@@ -38,13 +37,6 @@ public:
         Entity *sphere = new Entity;
         Entity *yo = new Entity;
 
-        //CULLING INTIALZATIONS
-        struct Culling myCull;
-        myCull.enabled=true;
-        myCull.cullFace = BACK;
-        myCull.direction = CCW;
-        cubeParent->setCullObjProp(&myCull);
-
         //BLENDING INTIALZATIONS
         // struct Blending myBlend;
         // myBlend.enabled=true;
@@ -52,20 +44,36 @@ public:
         // myBlend.constClr = blend_constant_color;
         // cubeChild->setBlendObjProp(&myBlend);
 
-        struct Blending myBlend;
-        myBlend.enabled=true;
-        myBlend.type = NotConstant;
-        glm::vec4 blend_constant_color = {0.25f,1.0f,0.75f,0.5f};
-        myBlend.destClr = blend_constant_color;
-        cubeChild->setBlendObjProp(&myBlend);
-
         // -- Initializing mesh components
         gameTemp::mesh_utils::Cuboid(models["cuboid"], true);
         gameTemp::mesh_utils::Sphere(models["sphere"], {32, 16}, true);
-        cubeParent->addComponent(new MeshRenderer(&models["cuboid"], &programs["main"]));
-        cubeChild->addComponent(new MeshRenderer(&models["cuboid"], &programs["main"]));
-        sphere->addComponent(new MeshRenderer(&models["sphere"], &programs["main"]));
-        yo->addComponent(new MeshRenderer(&models["sphere"], &programs["main"]));
+
+        Material *m1 = new Material(&programs["main"]);
+        glm::vec4 *tintVec = new glm::vec4(1, 1, 1, 0.8);
+        m1->AddUniform<glm::vec4>(tint, tintVec);
+
+        cubeParent->addComponent(new MeshRenderer(m1, &models["cuboid"]));
+        cubeChild->addComponent(new MeshRenderer(m1, &models["cuboid"]));
+        sphere->addComponent(new MeshRenderer(m1, &models["sphere"]));
+        yo->addComponent(new MeshRenderer(m1, &models["sphere"]));
+
+        //CREATE OBJECT PROPERTY OBj
+        ObjectProperties *obj = new ObjectProperties();
+        //CULLING INTIALZATIONS
+        struct Culling myCull;
+        myCull.enabled = true;
+        myCull.cullFace = BACK;
+        myCull.direction = CCW;
+        obj->setCullObjProp(&myCull);
+        //BLENDING INITIALZATIONS
+        struct Blending myBlend;
+        myBlend.enabled = true;
+        myBlend.type = NotConstant;
+        glm::vec4 blend_constant_color = {0.25f, 1.0f, 0.75f, 0.5f};
+        myBlend.destClr = blend_constant_color;
+        obj->setBlendObjProp(&myBlend);
+
+        m1->setObjProp(obj);
 
         // -- Initializing transformation components
         TransformationComponent *TCcubeParent = new TransformationComponent(nullptr);
@@ -124,7 +132,7 @@ public:
     void onExit() override
     {
         // Destroy entities
-        for (int i = 0; i < entities.size(); i++)
+        for (int i = 0, numEntities = entities.size(); i < numEntities; i++)
             delete entities[i];
 
         entities.clear();
