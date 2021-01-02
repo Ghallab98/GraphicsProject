@@ -38,12 +38,6 @@ public:
         Entity *sphere = new Entity;
         Entity *yo = new Entity;
 
-        //CULLING INTIALZATIONS
-        struct Culling myCull;
-        myCull.enabled=true;
-        myCull.cullFace = BACK;
-        myCull.direction = CCW;
-        cubeParent->setCullObjProp(&myCull);
 
         //BLENDING INTIALZATIONS
         // struct Blending myBlend;
@@ -52,21 +46,35 @@ public:
         // myBlend.constClr = blend_constant_color;
         // cubeChild->setBlendObjProp(&myBlend);
 
-        struct Blending myBlend;
-        myBlend.enabled=true;
-        myBlend.type = NotConstant;
-        glm::vec4 blend_constant_color = {0.25f,1.0f,0.75f,0.5f};
-        myBlend.destClr = blend_constant_color;
-        cubeChild->setBlendObjProp(&myBlend);
-
         // -- Initializing mesh components
         gameTemp::mesh_utils::Cuboid(models["cuboid"], true);
         gameTemp::mesh_utils::Sphere(models["sphere"], {32, 16}, true);
-        cubeParent->addComponent(new MeshRenderer(&models["cuboid"], &programs["main"]));
-        cubeChild->addComponent(new MeshRenderer(&models["cuboid"], &programs["main"]));
-        sphere->addComponent(new MeshRenderer(&models["sphere"], &programs["main"]));
-        yo->addComponent(new MeshRenderer(&models["sphere"], &programs["main"]));
 
+        Material * m1 = new Material(&programs["main"]);
+
+        cubeParent->addComponent(new MeshRenderer(m1,&models["cuboid"]));
+        cubeChild->addComponent(new MeshRenderer(m1,&models["cuboid"]));
+        sphere->addComponent(new MeshRenderer(m1,&models["sphere"]));
+        yo->addComponent(new MeshRenderer(m1,&models["sphere"]));
+
+        //CREATE OBJECT PROPERTY OBj
+        ObjectProperties * obj= new ObjectProperties();
+        //CULLING INTIALZATIONS
+        struct Culling myCull;
+        myCull.enabled = true;
+        myCull.cullFace = BACK;
+        myCull.direction = CCW;
+        obj->setCullObjProp(&myCull);
+        //BLENDING INITIALZATIONS
+        struct Blending myBlend;
+        myBlend.enabled = true;
+        myBlend.type = NotConstant;
+        glm::vec4 blend_constant_color = {0.25f, 1.0f, 0.75f, 0.5f};
+        myBlend.destClr = blend_constant_color;
+        obj->setBlendObjProp(&myBlend);
+
+        m1->setObjProp(obj);
+        
         // -- Initializing transformation components
         TransformationComponent *TCcubeParent = new TransformationComponent(nullptr);
         TransformationComponent *TCcubeChild = new TransformationComponent(TCcubeParent);

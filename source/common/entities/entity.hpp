@@ -4,7 +4,6 @@
 #include <vector>
 using std::vector;
 
-#include"./objectProperties.cpp"
 
 class Component;
 class TransformationComponent;
@@ -13,12 +12,10 @@ class CameraControllerComponent;
 class MeshRenderer;
 
 
-
 class Entity
 {
 private:
     vector<Component *> components;
-    ObjectProperties objProp;
 
 public:
     Entity();
@@ -28,11 +25,6 @@ public:
     CameraComponent *getCameraComponent();
     CameraControllerComponent *getCameraComponentController();
     MeshRenderer *getMeshRendrer();
-    ObjectProperties* getObjProp();
-    void setCullObjProp(Culling * myCull);
-    void setBlendObjProp(Blending * myBlend);
-
-
     ~Entity();
 };
 
