@@ -15,8 +15,13 @@ protected:
 
 public:
     Component() {}
-    virtual int getComponentType() = 0;
     virtual ~Component() {}
+    virtual int getComponentType() = 0;
+
+    void setEntity(Entity *entity)
+    {
+        myEntity = entity;
+    }
 };
 
 #endif

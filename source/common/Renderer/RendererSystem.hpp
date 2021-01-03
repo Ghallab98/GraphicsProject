@@ -1,42 +1,111 @@
 #ifndef RENDERER_SYSTEM_HPP
 #define RENDERER_SYSTEM_HPP
 
-#include <entities/entity.hpp>
 #include <vector>
+#include <algorithm>
+
+#include <entities/entity.hpp>
+#include <Renderer/MeshRenderCommand.hpp>
 
 using std::vector;
 
 class RendererSystem
 {
-    vector<Entity *> *Entities;
+    vector<Entity *> *entities;
+    vector<struct MeshRenderCommand> renderCommands;
+
+    void handleCulling(struct Culling *cull)
+    {
+        if (!(cull->enabled))
+        {
+            glDisable(GL_CULL_FACE);
+            return;
+        }
+
+        glEnable(GL_CULL_FACE);
+        if (cull->cullFace == FRONT)
+            glCullFace(GL_FRONT);
+
+        else if (cull->cullFace == BACK)
+            glCullFace(GL_BACK);
+
+        if (cull->direction == CCW)
+            glFrontFace(GL_CCW);
+
+        else
+            glFrontFace(GL_CW);
+    }
+
+    void handleBlending(struct Blending *blend)
+    {
+        if (!(blend->enabled))
+        {
+            glDisable(GL_BLEND);
+            return;
+        }
+
+        glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
+        if (blend->type == Constant)
+        {
+            glBlendFunc(GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR);
+            glBlendColor(blend->constClr.r,
+                         blend->constClr.g,
+                         blend->constClr.b,
+                         blend->constClr.a);
+        }
+        else if (blend->type == NotConstant)
+        {
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+    }
 
 public:
-    RendererSystem() : Entities(nullptr) {}
-    RendererSystem(vector<Entity *> *Entities) : Entities(Entities) {}
+    RendererSystem() : entities(nullptr) {}
+    RendererSystem(vector<Entity *> *Entities) : entities(Entities) {}
 
     bool isInitialized()
     {
-        return Entities != nullptr;
+        return entities != nullptr;
     }
 
     void setEntitiesVector(vector<Entity *> *Entities)
     {
-        this->Entities = Entities;
+        this->entities = Entities;
     }
 
     void update(glm::mat4 cameraMatrix)
     {
-        glClear(GL_COLOR_BUFFER_BIT);
-        for (int i = 0; i < Entities->size(); i++)
+        renderCommands.clear();
+        for (int i = 0, numEntities = entities->size(); i < numEntities; i++)
         {
-            if (!(*Entities)[i]->getMeshRendrer())
+            MeshRenderer *meshRenderer = (*entities)[i]->getMeshRendrer();
+            if (!meshRenderer)
                 continue;
 
-            TransformationComponent *TC = (*Entities)[i]->getTransformationComponent();
-            glm::mat4 transformationMatrix = TC->getTransformationMatrix();
-            MeshRenderer *R = (*Entities)[i]->getMeshRendrer();
-            glm::mat4 matrix = cameraMatrix * transformationMatrix;
-            R->Draw(matrix);
+            renderCommands.push_back(meshRenderer->getRenderCommand(cameraMatrix));
+        }
+
+        std::sort(std::begin(renderCommands), std::end(renderCommands));
+    }
+
+    void draw()
+    {
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        for (int i = 0, numCommands = renderCommands.size(); i < numCommands; i++)
+        {
+            gameTemp::ShaderProgram *program = renderCommands[i].material->getShaderProgram();
+            glUseProgram(*program);
+
+            program->set("tint", *(renderCommands[i].material->getTint()));
+            program->set("transform", renderCommands[i].transformation);
+
+            ObjectProperties *objProp = renderCommands[i].material->getObjProp();
+            handleCulling(objProp->getCull());
+            handleBlending(objProp->getBlend());
+
+            renderCommands[i].mesh->draw();
         }
     }
 };

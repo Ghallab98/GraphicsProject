@@ -6,10 +6,10 @@
 #include <mesh/mesh-utils.hpp>
 #include <shader.hpp>
 #include <component.hpp>
-
-#include "./../materialClass/material.hpp"
-
-using namespace gameTemp;
+#include <entities/entity.hpp>
+#include <components/transformationComponent.hpp>
+#include <Renderer/MeshRenderCommand.hpp>
+#include <materialClass/material.hpp>
 
 class MeshRenderer : public Component
 {
@@ -19,10 +19,13 @@ private:
 
 public:
     MeshRenderer(Material *toBeAssignedMaterial, gameTemp::Mesh *pMesh);
+
     int getComponentType();
-    void setMesh(gameTemp::Mesh *pMesh);
     gameTemp::Mesh *getMesh();
-    void Draw(glm::mat4 transformMatrix);
+    MeshRenderCommand getRenderCommand(const glm::mat4 &cameraMatrix);
+
+    void setMesh(gameTemp::Mesh *pMesh);
+
     ~MeshRenderer() {}
 };
 

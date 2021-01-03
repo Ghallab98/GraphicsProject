@@ -47,7 +47,7 @@ public:
     {
         parent->transformationMatrix *= transformationMatrix;
 
-        for (int i = 0; i < parent->children.size(); i++)
+        for (int i = 0, numChild = parent->children.size(); i < numChild; i++)
             transformChildren(parent->children[i], transformationMatrix);
     }
 
