@@ -26,12 +26,14 @@ namespace gameTemp {
         bool max_anisotropy =true ;
         glm::vec4 border_color = {0,0,0,1};
     public:
-        void create(GLuint sampler,GLenum magnification_filter ,GLenum minification_filter,GLenum wrap_s,GLenum wrap_t,bool max_anisotropy,GLfloat anistropy,glm::vec4 border_color);
+        void create(GLuint sampler,GLenum magnification_filter ,GLenum minification_filter,
+                    GLenum wrap_s,GLenum wrap_t,bool max_anisotropy,GLfloat anistropy,glm::vec4 border_color);
         void destroy() {glDeleteSamplers(1, &this->sampler);};
 
         Sampler(){glGenSamplers(1, &this->sampler);};
         ~Sampler(){ destroy(); }
 
+        void bindSampler(int textureUnit) ;
         GLuint getSampler() const;
 
         //Delete copy constructor and assignment operation

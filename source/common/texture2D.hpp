@@ -21,8 +21,8 @@ namespace gameTemp {
         int height;
         int unpack;
     public :
-        void create(GLuint texture,bool Active_Mipmap,int mipmapLevel,int width, int height,int unpack,const char *filename);
-        void create(GLuint texture,bool Active_Mipmap,int mipmapLevel,int width, int height,int unpack,uint8_t pixel_data);
+        void create(GLuint texture,const char *filename,bool Active_Mipmap = true ,int mipmapLevel = 0,int unpack = 4);
+        void create(GLuint texture,bool Active_Mipmap,int mipmapLevel,int width, int height,int unpack,uint8_t *pixel_data);
 
         void destroy() {glDeleteTextures(1, &this->texture);};
 
@@ -32,7 +32,10 @@ namespace gameTemp {
         GLuint getTexture() const;
 
         glm::ivec2 loadImage(const char* filename);
-
+        void bindTexture ()
+        {
+            glBindTexture(GL_TEXTURE_2D, this->texture);
+        }
         //Delete copy constructor and assignment operation
         //This is important for Class that follow the RAII pattern since we destroy the underlying OpenGL object in deconstruction
         //So if we copied the object, one of them can destroy the object(s) while the other still thinks they are valid.

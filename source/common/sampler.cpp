@@ -31,6 +31,7 @@ void gameTemp::Sampler::create(GLuint sampler, GLenum magnification_filter, GLen
     {
         this->anisotropy= anistropy;
     }
+
     glSamplerParameteri(this->sampler, GL_TEXTURE_MAG_FILTER, this->magnification_filter);
     glSamplerParameteri(this->sampler, GL_TEXTURE_MIN_FILTER, this->minification_filter);
     glSamplerParameteri(this->sampler, GL_TEXTURE_WRAP_S, this->wrap_s);
@@ -38,5 +39,10 @@ void gameTemp::Sampler::create(GLuint sampler, GLenum magnification_filter, GLen
     glSamplerParameterfv(this->sampler, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(this->border_color));
     glSamplerParameterf(this->sampler, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
 
+
+}
+
+void gameTemp::Sampler::bindSampler(int textureUnit)  {
+    glBindSampler(textureUnit,this->sampler);
 
 }
