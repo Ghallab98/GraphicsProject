@@ -126,7 +126,9 @@ public:
 
         currentCamera->getCameraComponentController()->update(deltaTime);
         glm::mat4 camera_matrix = currentCamera->getCameraComponent()->getVPMatrix();
+
         rendererSystem.update(camera_matrix);
+        rendererSystem.draw();
     }
 
     void onExit() override
