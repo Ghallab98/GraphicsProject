@@ -4,13 +4,12 @@
 #include <vector>
 using std::vector;
 
-
 class Component;
 class TransformationComponent;
 class CameraComponent;
 class CameraControllerComponent;
 class MeshRenderer;
-
+class Light;
 
 class Entity
 {
@@ -25,6 +24,7 @@ public:
     CameraComponent *getCameraComponent();
     CameraControllerComponent *getCameraComponentController();
     MeshRenderer *getMeshRendrer();
+    Light *getLightComponent();
     ~Entity();
 };
 

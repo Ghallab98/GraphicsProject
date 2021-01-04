@@ -5,6 +5,7 @@
 #define CAMERA_COMPONENT 1
 #define CONTROLLER_COMPONENT 2
 #define MESH_RENDERER_COMPONENT 3
+#define LIGHT_COMPONENT 4
 
 class Entity;
 

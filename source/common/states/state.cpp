@@ -14,6 +14,7 @@ using std::string;
 #include <cameraComponent.hpp>
 #include <cameraControllerComponent.hpp>
 #include <transformationComponent.hpp>
+#include <light.hpp>
 #include <entities/entity.cpp>
 
 #include <application.hpp>

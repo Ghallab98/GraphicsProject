@@ -10,7 +10,6 @@
 
 using std::vector;
 
-
 class RendererSystem
 {
     vector<Entity *> *entities;
@@ -61,18 +60,20 @@ class RendererSystem
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
     }
-    void handleTexture(Material * mtr){
-            GLuint texture = mtr->getTexture();
-            GLuint sampler = mtr->getSampler();
-        if(texture != -1) {
-            int i= mtr->getIndex();
+    void handleTexture(Material *mtr)
+    {
+        GLuint texture = mtr->getTexture();
+        GLuint sampler = mtr->getSampler();
+        if (texture != -1)
+        {
+            int i = mtr->getIndex();
             glBindTexture(GL_TEXTURE_2D, texture);
             glActiveTexture(GL_TEXTURE0); // GL_TEXTURE0+i
 
-            if(sampler != -1)
-                    glBindSampler(GL_TEXTURE0, sampler); // GL_TEXTURE0+i
+            if (sampler != -1)
+                glBindSampler(GL_TEXTURE0, sampler); // GL_TEXTURE0+i
 
-            mtr->getShaderProgram()->set("sampler",GL_TEXTURE0+i );
+            mtr->getShaderProgram()->set("sampler", GL_TEXTURE0 + i);
         }
     }
 
@@ -114,7 +115,7 @@ public:
             gameTemp::ShaderProgram *program = renderCommands[i].material->getShaderProgram();
             glUseProgram(*program);
 
-            program->set("tint", *(renderCommands[i].material->getTint()));
+            renderCommands[i].material->setProgramUniforms();
             program->set("transform", renderCommands[i].transformation);
 
             ObjectProperties *objProp = renderCommands[i].material->getObjProp();

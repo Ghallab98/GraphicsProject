@@ -2,13 +2,13 @@
 // 1- pointer to the shader (fragment shader)
 // 2- map of uniforms that will be sent to the shader
 // 3- rendrer state  (SAVED IN ENTITY DIRECLTY FOR NOW)
-// 4- GLuint for texture 
 
 #ifndef MATERIAL_HPP
 #define MATERIAL_HPP
 
 #include <map>
 #include <any>
+#include <typeinfo>
 #include <shader.hpp>
 
 #include "./uniformType.hpp"
@@ -17,6 +17,12 @@
 using std::any;
 using std::map;
 
+struct uniform
+{
+    any data;
+    const type_info &typeId;
+};
+
 class Material
 {
 private:
@@ -24,7 +30,7 @@ private:
     int i;
     ObjectProperties *objProp;
     gameTemp::ShaderProgram *shaderPtr;
-    map<uniformType, any> uniformsMap;
+    map<std::string, uniform> uniformsMap;
     GLuint texture;
     GLuint sampler;
 
@@ -38,24 +44,23 @@ public:
     static void setIndex(int num1);
 
     template <class T>
-    void AddUniform(uniformType type, T *value);
+    void AddUniform(std::string name, T *value);
 
     gameTemp::ShaderProgram *getShaderProgram();
-    map<uniformType, std::any> GetUniformsMap();
     ObjectProperties *getObjProp();
     GLuint getTexture();
     GLuint getSampler();
     int getIndex();
-    
-    glm::vec4 *getTint();
+
+    void setProgramUniforms();
 
     ~Material();
 };
 
 template <class T>
-void Material::AddUniform(uniformType type, T *value)
+void Material::AddUniform(std::string name, T *value)
 {
-    this->uniformsMap.insert(std::pair<uniformType, T *>(type, value));
+    this->uniformsMap.insert(std::pair<std::string, struct uniform>(name, {value, typeid(T)}));
 }
 
 #endif

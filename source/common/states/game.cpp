@@ -1,7 +1,7 @@
 #ifndef GAME_STATE_CPP
 #define GAME_STATE_CPP
 
-#include<vector>
+#include <vector>
 #include <map>
 using std::map;
 using std::vector;
@@ -11,9 +11,7 @@ using std::vector;
 #include <states/state.cpp>
 #include <Renderer/RendererSystem.hpp>
 #include <glm/glm.hpp>
-#include"./../sampler.hpp"
-
-
+#include "./../sampler.hpp"
 
 #define PI 3.1415926535897932384626433832795
 
@@ -25,7 +23,7 @@ class GameState : public State
     RendererSystem rendererSystem;
     //
     std::unordered_map<std::string, GLuint> textures;
-    vector<gameTemp:: Texture> texVec;
+    vector<gameTemp::Texture> texVec;
     std::string current_texture_name;
 
 public:
@@ -52,41 +50,46 @@ public:
         Entity *cubeChild = new Entity;
         Entity *sphere = new Entity;
         Entity *yo = new Entity;
-        Entity * floor = new Entity;
+        Entity *floor = new Entity;
+
         //-- Loading a texture
         GLuint texture;
         gameTemp::Texture text;
-        texture= text.getTexture();
-        text.create(texture,true,0,256,128,0,"assets/images/moon.jpg");
+        texture = text.getTexture();
+        text.create(texture, true, 0, 256, 128, 0, "assets/images/moon.jpg");
         current_texture_name = "moon";
         textures[current_texture_name] = texture;
         texVec.push_back(text);
+
         //tex 2
         GLuint texture2;
         gameTemp::Texture text2;
-        texture2= text2.getTexture();
-        text2.create(texture2,true,0,256,128,0,"assets/images/color-grid.png");
+        texture2 = text2.getTexture();
+        text2.create(texture2, true, 0, 256, 128, 0, "assets/images/color-grid.png");
         current_texture_name = "color-grid";
         textures[current_texture_name] = texture2;
         texVec.push_back(text2);
+
         //text for the checker board
         GLuint texture3;
         gameTemp::Texture text3;
-        texture3= text3.getTexture();
-        text3.checkerBoard(texture3, {256,256}, {128,128}, {255, 255, 255, 255}, {16, 16, 16, 255});
+        texture3 = text3.getTexture();
+        text3.checkerBoard(texture3, {256, 256}, {128, 128}, {255, 255, 255, 255}, {16, 16, 16, 255});
         current_texture_name = "checkerboard";
         textures[current_texture_name] = texture3;
         texVec.push_back(text3);
+
         //--Loading a sampler
         GLuint glSampler;
         gameTemp::Sampler sampler;
         glSampler = sampler.getSampler();
         sampler.create(glSampler);
+
         //sampler 2
         GLuint glSampler2;
         gameTemp::Sampler sampler2;
         glSampler2 = sampler.getSampler();
-        sampler2.create(glSampler2,GL_MIRROR_CLAMP_TO_EDGE);
+        sampler2.create(glSampler2, GL_MIRROR_CLAMP_TO_EDGE);
 
         // -- Initializing mesh components
         gameTemp::mesh_utils::Cuboid(models["cuboid"], true);
@@ -108,14 +111,15 @@ public:
         //creation of a unifrom and ataching it to uniforms map
         glm::vec4 *tintVec = new glm::vec4(1, 1, 1, 0.8);
         glm::vec4 *tintVec2 = new glm::vec4(0.96, 0.9, 0.64, 1);
-        m1->AddUniform<glm::vec4>(tint, tintVec);
-        m2->AddUniform<glm::vec4>(tint, tintVec);
-        m3->AddUniform<glm::vec4>(tint, tintVec2);
+        m1->AddUniform<glm::vec4>("tint", tintVec);
+        m2->AddUniform<glm::vec4>("tint", tintVec);
+        m3->AddUniform<glm::vec4>("tint", tintVec2);
+
         //With texture 1
         sphere->addComponent(new MeshRenderer(m1, &models["sphere"]));
         yo->addComponent(new MeshRenderer(m1, &models["sphere"]));
 
-        //With texture 2 
+        //With texture 2
         cubeParent->addComponent(new MeshRenderer(m2, &models["cuboid"]));
         cubeChild->addComponent(new MeshRenderer(m2, &models["cuboid"]));
 
@@ -138,7 +142,7 @@ public:
         glm::vec4 blend_constant_color = {0.25f, 1.0f, 0.75f, 0.5f};
         myBlend.destClr = blend_constant_color;
         obj->setBlendObjProp(&myBlend);
-        
+
         //CONSTANT BLENDING INTIALZATIONS
         // struct Blending myBlend2;
         // myBlend2.enabled=true;
@@ -218,7 +222,7 @@ public:
         toDestroy.setIndex(0);
 
         //Destroy Textures
-        for (int i=0 ; i<texVec.size();i++)
+        for (int i = 0; i < texVec.size(); i++)
             texVec[i].destroy();
 
         // Destroy entities
