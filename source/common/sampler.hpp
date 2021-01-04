@@ -30,7 +30,7 @@ namespace gameTemp {
         };
 
         Sampler(){glGenSamplers(1, &(this->sampler));};
-        ~Sampler(){ };
+        ~Sampler(){destroy(); };
 
         void setWrapT(GLenum myWrapT);
 

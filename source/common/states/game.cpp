@@ -1,7 +1,7 @@
 #ifndef GAME_STATE_CPP
 #define GAME_STATE_CPP
 
-#include <vector>
+#include<vector>
 #include <map>
 using std::map;
 using std::vector;
@@ -11,7 +11,7 @@ using std::vector;
 #include <states/state.cpp>
 #include <Renderer/RendererSystem.hpp>
 #include <glm/glm.hpp>
-#include "./../sampler.hpp"
+#include"../sampler.hpp"
 
 #define PI 3.1415926535897932384626433832795
 
@@ -23,7 +23,8 @@ class GameState : public State
     RendererSystem rendererSystem;
     //
     std::unordered_map<std::string, GLuint> textures;
-    vector<gameTemp::Texture> texVec;
+    vector<gameTemp:: Texture*> texVec;
+    vector<gameTemp:: Sampler*> sampVec;
     std::string current_texture_name;
 
 public:
@@ -50,46 +51,44 @@ public:
         Entity *cubeChild = new Entity;
         Entity *sphere = new Entity;
         Entity *yo = new Entity;
-        Entity *floor = new Entity;
-
+        Entity * floor = new Entity;
         //-- Loading a texture
         GLuint texture;
-        gameTemp::Texture text;
-        texture = text.getTexture();
-        text.create(texture, true, 0, 256, 128, 0, "assets/images/moon.jpg");
+        gameTemp::Texture* text =new gameTemp::Texture ();
+        texture= text->getTexture();
+        text->create(texture,true,0,256,128,0,"assets/images/moon.jpg");
         current_texture_name = "moon";
         textures[current_texture_name] = texture;
         texVec.push_back(text);
-
         //tex 2
         GLuint texture2;
-        gameTemp::Texture text2;
-        texture2 = text2.getTexture();
-        text2.create(texture2, true, 0, 256, 128, 0, "assets/images/color-grid.png");
+        gameTemp::Texture* text2=new gameTemp::Texture ();
+        texture2= text2->getTexture();
+        text2->create(texture2,true,0,256,128,0,"assets/images/color-grid.png");
         current_texture_name = "color-grid";
         textures[current_texture_name] = texture2;
         texVec.push_back(text2);
-
         //text for the checker board
         GLuint texture3;
-        gameTemp::Texture text3;
-        texture3 = text3.getTexture();
-        text3.checkerBoard(texture3, {256, 256}, {128, 128}, {255, 255, 255, 255}, {16, 16, 16, 255});
+        gameTemp::Texture* text3 =new gameTemp::Texture ();
+        texture3= text3->getTexture();
+        text3->checkerBoard(texture3, {256,256}, {128,128}, {255, 255, 255, 255}, {16, 16, 16, 255});
         current_texture_name = "checkerboard";
         textures[current_texture_name] = texture3;
         texVec.push_back(text3);
 
         //--Loading a sampler
         GLuint glSampler;
-        gameTemp::Sampler sampler;
-        glSampler = sampler.getSampler();
-        sampler.create(glSampler);
-
+        gameTemp::Sampler* sampler =new gameTemp::Sampler ();
+        glSampler = sampler->getSampler();
+        sampler->create(glSampler);
+        sampVec.push_back(sampler);
         //sampler 2
         GLuint glSampler2;
-        gameTemp::Sampler sampler2;
-        glSampler2 = sampler.getSampler();
-        sampler2.create(glSampler2, GL_MIRROR_CLAMP_TO_EDGE);
+        gameTemp::Sampler* sampler2 =new gameTemp::Sampler ();
+        glSampler2 = sampler2->getSampler();
+        sampler2->create(glSampler2,GL_MIRROR_CLAMP_TO_EDGE);
+        sampVec.push_back(sampler2);
 
         // -- Initializing mesh components
         gameTemp::mesh_utils::Cuboid(models["cuboid"], true);
@@ -99,8 +98,8 @@ public:
         Material *m1 = new Material(&programs["text"]);
         Material *m2 = new Material(&programs["text"]);
         Material *m3 = new Material(&programs["text"]);
-
-        //setting the texture of the material class with a value
+        Material *m4 = new Material(&programs["main"]);
+        //setting the texture and sampler of the material class with a value
         m1->setTexture(texture);
         m2->setTexture(texture2);
         m3->setTexture(texture3);
@@ -114,12 +113,12 @@ public:
         m1->AddUniform<glm::vec4>("tint", tintVec);
         m2->AddUniform<glm::vec4>("tint", tintVec);
         m3->AddUniform<glm::vec4>("tint", tintVec2);
-
+        m4->AddUniform<glm::vec4>("tint", tintVec);
         //With texture 1
         sphere->addComponent(new MeshRenderer(m1, &models["sphere"]));
-        yo->addComponent(new MeshRenderer(m1, &models["sphere"]));
+        yo->addComponent(new MeshRenderer(m4, &models["sphere"]));
 
-        //With texture 2
+        //With texture 2 
         cubeParent->addComponent(new MeshRenderer(m2, &models["cuboid"]));
         cubeChild->addComponent(new MeshRenderer(m2, &models["cuboid"]));
 
@@ -128,31 +127,42 @@ public:
 
         //CREATE OBJECT PROPERTY OBj
         ObjectProperties *obj = new ObjectProperties();
+        ObjectProperties *obj2 = new ObjectProperties();
+
         //CULLING INTIALZATIONS
         struct Culling myCull;
         myCull.enabled = true;
         myCull.cullFace = BACK;
         myCull.direction = CCW;
-        obj->setCullObjProp(&myCull);
+        //
+        struct Culling myCull2;
+        myCull.enabled = false;
+        myCull.cullFace = BACK;
+        myCull.direction = CCW;
 
         //BLENDING INITIALZATIONS
-        struct Blending myBlend;
-        myBlend.enabled = true;
-        myBlend.type = NotConstant;
-        glm::vec4 blend_constant_color = {0.25f, 1.0f, 0.75f, 0.5f};
-        myBlend.destClr = blend_constant_color;
-        obj->setBlendObjProp(&myBlend);
+        struct Blending myBlend2;
+        myBlend2.enabled = true;
+        myBlend2.type = NotConstant;
+        glm::vec4 blend_constant_color2 = {0.25f, 1.0f, 0.75f, 0.5f};
+        myBlend2.destClr = blend_constant_color2;
+
 
         //CONSTANT BLENDING INTIALZATIONS
-        // struct Blending myBlend2;
-        // myBlend2.enabled=true;
-        // glm::vec4 blend_constant_color = {0.25f,1.0f,0.75f,0.5f};
-        // myBlend2.constClr = blend_constant_color;
-        // cubeChild->setBlendObjProp(&myBlend2);
+        struct Blending myBlend;
+        myBlend.enabled=false;
+        glm::vec4 blend_constant_color = {0.25f,1.0f,0.75f,0.5f};
+        myBlend.constClr = blend_constant_color;
+        //Set blend and cull fo object properties
+        obj->setCullObjProp(&myCull);
+        obj2->setCullObjProp(&myCull2);
+        obj->setBlendObjProp(&myBlend);
+        obj2->setBlendObjProp(&myBlend2);
         //
         m1->setObjProp(obj);
         m2->setObjProp(obj);
         m3->setObjProp(obj);
+        m4->setObjProp(obj2);
         // -- Initializing transformation components
         TransformationComponent *TCcubeParent = new TransformationComponent(nullptr);
         TransformationComponent *TCcubeChild = new TransformationComponent(TCcubeParent);
@@ -222,8 +232,13 @@ public:
         toDestroy.setIndex(0);
 
         //Destroy Textures
-        for (int i = 0; i < texVec.size(); i++)
-            texVec[i].destroy();
+        for (int i=0 ; i<texVec.size();i++)
+            delete texVec[i];
+
+        //Destroy Samplers
+        for (int i=0 ; i<sampVec.size();i++)
+            delete sampVec[i];
+
 
         // Destroy entities
         for (int i = 0, numEntities = entities.size(); i < numEntities; i++)

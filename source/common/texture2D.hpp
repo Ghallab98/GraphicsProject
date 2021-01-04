@@ -27,7 +27,9 @@ namespace gameTemp {
         Texture(){
             glGenTextures(1, &(this->texture));
         };
-        ~Texture(){};
+        ~Texture(){
+            destroy();
+        };
 
         GLuint getTexture() const;
 

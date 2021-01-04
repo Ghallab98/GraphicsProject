@@ -76,7 +76,8 @@
         "xmemory": "cpp",
         "xstddef": "cpp",
         "xtr1common": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "xmemory0": "cpp"
     },
     "editor.formatOnSave": true,
     "todohighlight.keywords": [
