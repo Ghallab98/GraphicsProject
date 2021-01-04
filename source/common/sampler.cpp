@@ -8,8 +8,8 @@ GLuint gameTemp::Sampler::getSampler() const {
     return this->sampler;
 }
 
-void gameTemp::Sampler::create(GLuint sampler, GLenum magnification_filter, GLenum minification_filter, GLenum wrap_s,
-                               GLenum wrap_t, bool max_anisotropy,GLfloat anistropy ,glm::vec4 border_color) {
+void gameTemp::Sampler::create(GLuint sampler, GLenum wrap_t, GLenum magnification_filter, GLenum minification_filter, GLenum wrap_s,
+                                bool max_anisotropy,GLfloat anistropy ,glm::vec4 border_color) {
     this->sampler = sampler;
     this->magnification_filter = magnification_filter;
     this->minification_filter = minification_filter;
@@ -28,6 +28,7 @@ void gameTemp::Sampler::create(GLuint sampler, GLenum magnification_filter, GLen
     {
         this->anisotropy= anistropy;
     }
+    std::cout <<this->wrap_t <<std::endl;
     glSamplerParameteri(this->sampler, GL_TEXTURE_MAG_FILTER, this->magnification_filter);
     glSamplerParameteri(this->sampler, GL_TEXTURE_MIN_FILTER, this->minification_filter);
     glSamplerParameteri(this->sampler, GL_TEXTURE_WRAP_S, this->wrap_s);

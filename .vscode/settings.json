@@ -30,7 +30,8 @@
         "xhash": "cpp",
         "xstring": "cpp",
         "xtree": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "cmath": "cpp"
     },
     "editor.formatOnSave": true,
     "todohighlight.keywords": [

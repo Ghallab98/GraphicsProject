@@ -1,6 +1,7 @@
 #ifndef TEXTURE2D_HPP
 #define TEXTURE2D_HPP
 
+#include <data-types.h>
 #include <iostream>
 #include <string>
 #include <glad/gl.h>
@@ -33,6 +34,7 @@ namespace gameTemp {
         void setTexture(GLuint texture);
 
         glm::ivec2 loadImage(const char* filename);
+        void checkerBoard(GLuint texture, glm::ivec2 size, glm::ivec2 patternSize, gameTemp::Color color1, gameTemp::Color color2);
     };
 
 }

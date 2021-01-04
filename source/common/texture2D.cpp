@@ -53,6 +53,20 @@ glm::ivec2 gameTemp::Texture::loadImage(const char *filename)
     return size;
 }
 
+void gameTemp::Texture::checkerBoard(GLuint texture, glm::ivec2 size, glm::ivec2 patternSize, gameTemp::Color color1, gameTemp::Color color2){
+    auto* data = new gameTemp::Color[size.x * size.y];
+    int ptr = 0;
+    for(int y = 0; y < size.y; y++){
+        for(int x = 0; x < size.x; x++){
+            data[ptr++] = ((x/patternSize.x)&1)^((y/patternSize.y)&1)?color1:color2;
+        }
+    }
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    delete[] data;
+}
 GLuint gameTemp::Texture::getTexture() const
 {
     return this->texture;

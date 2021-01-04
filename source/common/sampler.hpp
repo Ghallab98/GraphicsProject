@@ -23,8 +23,8 @@ namespace gameTemp {
         bool max_anisotropy =true ;
         glm::vec4 border_color = {0,0,0,1};
     public:
-        void create(GLuint sampler, GLenum magnification_filter=GL_LINEAR, GLenum minification_filter=GL_LINEAR_MIPMAP_LINEAR
-        , GLenum wrap_s=GL_REPEAT, GLenum wrap_t=GL_REPEAT, bool max_anisotropy=true,GLfloat anistropy= 1.0f ,glm::vec4 border_color={0,0,0,1});
+        void create(GLuint sampler, GLenum wrap_s=GL_REPEAT ,GLenum magnification_filter=GL_LINEAR, GLenum minification_filter=GL_LINEAR_MIPMAP_LINEAR
+        , GLenum wrap_t=GL_REPEAT, bool max_anisotropy=true,GLfloat anistropy= 1.0f ,glm::vec4 border_color={0,0,0,1});
         void destroy() {
            glDeleteSamplers(1, &this->sampler);
         };
