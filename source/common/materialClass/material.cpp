@@ -3,8 +3,6 @@
 int Material ::num = 0;
 Material::Material(gameTemp::ShaderProgram *specifiedShader)
 {
-    texture = -1;
-    sampler = -1;
     shaderPtr = specifiedShader;
     i = num;
     num++;
@@ -15,15 +13,15 @@ void Material::setShaderProgram(gameTemp::ShaderProgram *specifiedShader)
     shaderPtr = specifiedShader;
 }
 
-void Material ::setTexture(GLuint myTex)
+void Material ::setTexture(gameTemp::Texture* texture)
 {
-    this->texture = myTex;
+    this->texture = texture;
 }
 
-void Material ::setSampler(GLuint mySamp)
+void Material ::setSampler(gameTemp::Sampler* sampler)
 {
-    if (texture != -1) //There is no texture
-        this->sampler = mySamp;
+    if (texture != nullptr) //There is no texture
+        this->sampler = sampler;
 }
 
 void Material ::setIndex(int num1)
@@ -36,12 +34,12 @@ int Material ::getIndex()
     return this->i;
 }
 
-GLuint Material ::getTexture()
+gameTemp::Texture* Material ::getTexture()
 {
     return this->texture;
 }
 
-GLuint Material ::getSampler()
+gameTemp::Sampler* Material ::getSampler()
 {
     return this->sampler;
 }

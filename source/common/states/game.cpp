@@ -56,7 +56,7 @@ public:
         GLuint texture;
         gameTemp::Texture* text =new gameTemp::Texture ();
         texture= text->getTexture();
-        text->create(texture,true,0,256,128,0,"assets/images/moon.jpg");
+        text->create(true,0,256,128,0,"assets/images/moon.jpg");
         current_texture_name = "moon";
         textures[current_texture_name] = texture;
         texVec.push_back(text);
@@ -64,7 +64,7 @@ public:
         GLuint texture2;
         gameTemp::Texture* text2=new gameTemp::Texture ();
         texture2= text2->getTexture();
-        text2->create(texture2,true,0,256,128,0,"assets/images/color-grid.png");
+        text2->create(true,0,256,128,0,"assets/images/color-grid.png");
         current_texture_name = "color-grid";
         textures[current_texture_name] = texture2;
         texVec.push_back(text2);
@@ -81,13 +81,13 @@ public:
         GLuint glSampler;
         gameTemp::Sampler* sampler =new gameTemp::Sampler ();
         glSampler = sampler->getSampler();
-        sampler->create(glSampler);
+        sampler->create();
         sampVec.push_back(sampler);
         //sampler 2
         GLuint glSampler2;
         gameTemp::Sampler* sampler2 =new gameTemp::Sampler ();
         glSampler2 = sampler2->getSampler();
-        sampler2->create(glSampler2,GL_MIRROR_CLAMP_TO_EDGE);
+        sampler2->create(GL_MIRROR_CLAMP_TO_EDGE);
         sampVec.push_back(sampler2);
 
         // -- Initializing mesh components
@@ -100,13 +100,12 @@ public:
         Material *m3 = new Material(&programs["text"]);
         Material *m4 = new Material(&programs["main"]);
         //setting the texture and sampler of the material class with a value
-        m1->setTexture(texture);
-        m2->setTexture(texture2);
-        m3->setTexture(texture3);
-        m1->setSampler(glSampler);
-        m2->setSampler(glSampler);
-        m3->setSampler(glSampler2);
-
+        m1->setTexture(texVec[0]);
+        m2->setTexture(texVec[1]);
+        m3->setTexture(texVec[2]);
+        m1->setSampler(sampVec[0]);
+        m2->setSampler(sampVec[0]);
+        m3->setSampler(sampVec[1]);
         //creation of a unifrom and ataching it to uniforms map
         glm::vec4 *tintVec = new glm::vec4(1, 1, 1, 0.8);
         glm::vec4 *tintVec2 = new glm::vec4(0.96, 0.9, 0.64, 1);

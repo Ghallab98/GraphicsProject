@@ -1,9 +1,8 @@
 #include "texture2D.hpp"
 #include <stb/stb_image.h>
 
-void gameTemp::Texture::create(GLuint texture, bool Active_Mipmap, int mipmapLevel, int width, int height, int unpack, const char *filename)
+void gameTemp::Texture::create(bool Active_Mipmap, int mipmapLevel, int width, int height, int unpack, const char *filename)
 {
-    this->texture = texture;
     this->Active_Mipmap = Active_Mipmap;
     this->mipmapLevel = mipmapLevel;
     this->width = width;

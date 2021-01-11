@@ -10,7 +10,7 @@
 namespace gameTemp {
     class Texture {
     private:
-        GLuint texture;
+        GLuint texture = -1;
         //enum textureType;
         bool Active_Mipmap;
         int mipmapLevel;
@@ -18,7 +18,7 @@ namespace gameTemp {
         int height;
         int unpack;
     public :
-        void create(GLuint texture,bool Active_Mipmap,int mipmapLevel,int width, int height,int unpack,const char *filename);
+        void create(bool Active_Mipmap,int mipmapLevel,int width, int height,int unpack,const char *filename);
 
         void destroy() {
             glDeleteTextures(1, &this->texture);
@@ -37,6 +37,8 @@ namespace gameTemp {
 
         glm::ivec2 loadImage(const char* filename);
         void checkerBoard(GLuint texture, glm::ivec2 size, glm::ivec2 patternSize, gameTemp::Color color1, gameTemp::Color color2);
+        Texture(Texture const &) = delete;
+        Texture &operator=(Texture const &) = delete;
     };
 
 }
