@@ -32,3 +32,11 @@ MeshRenderCommand MeshRenderer::getRenderCommand(const glm::mat4 &cameraMatrix)
         transformation,
         pMesh};
 }
+
+//
+MeshRenderer *MeshRenderer::CreationFromBase()
+{
+    //MeshRenderer *createdMeshRend = new MeshRenderer();
+    //return createdMeshRend;
+    return nullptr;
+}

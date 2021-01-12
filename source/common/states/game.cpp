@@ -1,8 +1,9 @@
 #ifndef GAME_STATE_CPP
 #define GAME_STATE_CPP
 
-#include<vector>
+#include <vector>
 #include <map>
+#include <string.h>
 using std::map;
 using std::vector;
 //
@@ -11,7 +12,7 @@ using std::vector;
 #include <states/state.cpp>
 #include <Renderer/RendererSystem.hpp>
 #include <glm/glm.hpp>
-#include"../sampler.hpp"
+#include "../sampler.hpp"
 
 #define PI 3.1415926535897932384626433832795
 
@@ -23,8 +24,8 @@ class GameState : public State
     RendererSystem rendererSystem;
     //
     std::unordered_map<std::string, GLuint> textures;
-    vector<gameTemp:: Texture*> texVec;
-    vector<gameTemp:: Sampler*> sampVec;
+    vector<gameTemp::Texture *> texVec;
+    vector<gameTemp::Sampler *> sampVec;
     std::string current_texture_name;
 
 public:
@@ -35,6 +36,16 @@ public:
 
     void onEnter() override
     {
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        int numOfEntites = 0;
+        vector<TransformationComponent *> tecVector;
+        string path = "../json_File/input.json";
+        Component::ReadData(path, numOfEntites, tecVector);
+        cout << endl
+             << endl
+             << "Number of entitess " << numOfEntites << endl;
+        //////////////////////////////////////////////////////////////////////////////////////////////
+
         // -- Initializing shaders
         programs["main"].create();
         programs["main"].attach("assets/shaders/transform.vert", GL_VERTEX_SHADER);
@@ -51,41 +62,41 @@ public:
         Entity *cubeChild = new Entity;
         Entity *sphere = new Entity;
         Entity *yo = new Entity;
-        Entity * floor = new Entity;
+        Entity *floor = new Entity;
         //-- Loading a texture
         GLuint texture;
-        gameTemp::Texture* text =new gameTemp::Texture ();
-        texture= text->getTexture();
-        text->create(true,0,256,128,0,"assets/images/moon.jpg");
+        gameTemp::Texture *text = new gameTemp::Texture();
+        texture = text->getTexture();
+        text->create(true, 0, 256, 128, 0, "assets/images/moon.jpg");
         current_texture_name = "moon";
         textures[current_texture_name] = texture;
         texVec.push_back(text);
         //tex 2
         GLuint texture2;
-        gameTemp::Texture* text2=new gameTemp::Texture ();
-        texture2= text2->getTexture();
-        text2->create(true,0,256,128,0,"assets/images/color-grid.png");
+        gameTemp::Texture *text2 = new gameTemp::Texture();
+        texture2 = text2->getTexture();
+        text2->create(true, 0, 256, 128, 0, "assets/images/color-grid.png");
         current_texture_name = "color-grid";
         textures[current_texture_name] = texture2;
         texVec.push_back(text2);
         //text for the checker board
         GLuint texture3;
-        gameTemp::Texture* text3 =new gameTemp::Texture ();
-        texture3= text3->getTexture();
-        text3->checkerBoard(texture3, {256,256}, {128,128}, {255, 255, 255, 255}, {16, 16, 16, 255});
+        gameTemp::Texture *text3 = new gameTemp::Texture();
+        texture3 = text3->getTexture();
+        text3->checkerBoard(texture3, {256, 256}, {128, 128}, {255, 255, 255, 255}, {16, 16, 16, 255});
         current_texture_name = "checkerboard";
         textures[current_texture_name] = texture3;
         texVec.push_back(text3);
 
         //--Loading a sampler
         GLuint glSampler;
-        gameTemp::Sampler* sampler =new gameTemp::Sampler ();
+        gameTemp::Sampler *sampler = new gameTemp::Sampler();
         glSampler = sampler->getSampler();
         sampler->create();
         sampVec.push_back(sampler);
         //sampler 2
         GLuint glSampler2;
-        gameTemp::Sampler* sampler2 =new gameTemp::Sampler ();
+        gameTemp::Sampler *sampler2 = new gameTemp::Sampler();
         glSampler2 = sampler2->getSampler();
         sampler2->create(GL_MIRROR_CLAMP_TO_EDGE);
         sampVec.push_back(sampler2);
@@ -117,7 +128,7 @@ public:
         sphere->addComponent(new MeshRenderer(m1, &models["sphere"]));
         yo->addComponent(new MeshRenderer(m4, &models["sphere"]));
 
-        //With texture 2 
+        //With texture 2
         cubeParent->addComponent(new MeshRenderer(m2, &models["cuboid"]));
         cubeChild->addComponent(new MeshRenderer(m2, &models["cuboid"]));
 
@@ -146,11 +157,10 @@ public:
         glm::vec4 blend_constant_color2 = {0.25f, 1.0f, 0.75f, 0.5f};
         myBlend2.destClr = blend_constant_color2;
 
-
         //CONSTANT BLENDING INTIALZATIONS
         struct Blending myBlend;
-        myBlend.enabled=false;
-        glm::vec4 blend_constant_color = {0.25f,1.0f,0.75f,0.5f};
+        myBlend.enabled = false;
+        glm::vec4 blend_constant_color = {0.25f, 1.0f, 0.75f, 0.5f};
         myBlend.constClr = blend_constant_color;
         //Set blend and cull fo object properties
         obj->setCullObjProp(&myCull);
@@ -231,13 +241,12 @@ public:
         toDestroy.setIndex(0);
 
         //Destroy Textures
-        for (int i=0 ; i<texVec.size();i++)
+        for (int i = 0; i < texVec.size(); i++)
             delete texVec[i];
 
         //Destroy Samplers
-        for (int i=0 ; i<sampVec.size();i++)
+        for (int i = 0; i < sampVec.size(); i++)
             delete sampVec[i];
-
 
         // Destroy entities
         for (int i = 0, numEntities = entities.size(); i < numEntities; i++)

@@ -211,6 +211,10 @@ public:
         return glm::vec3(clip) / clip.w;
         // Note that we must divide by w even though we not going to the NDC space. This is because of the projection matrix.
     }
+    //
+    CameraComponent *CreationFromBase()
+    {
+    }
 };
 
 #endif

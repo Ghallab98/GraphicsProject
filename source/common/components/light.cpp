@@ -87,3 +87,7 @@ int Light::getComponentType()
 {
     return LIGHT_COMPONENT;
 }
+//
+Light *Light::CreationFromBase()
+{
+}

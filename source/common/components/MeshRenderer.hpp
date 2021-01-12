@@ -25,6 +25,8 @@ public:
     MeshRenderCommand getRenderCommand(const glm::mat4 &cameraMatrix);
 
     void setMesh(gameTemp::Mesh *pMesh);
+    //
+    MeshRenderer *CreationFromBase();
 
     ~MeshRenderer() {}
 };

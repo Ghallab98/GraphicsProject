@@ -7,6 +7,13 @@
 
 #include <component.hpp>
 
+class Component;
+class TransformationComponent;
+class CameraComponent;
+class CameraControllerComponent;
+class MeshRenderer;
+class Light;
+
 class TransformationComponent : public Component
 {
 private:
@@ -64,6 +71,12 @@ public:
         return glm::translate(glm::mat4(1.0f), translation) *
                glm::yawPitchRoll(rotation.y, rotation.x, rotation.z) *
                glm::scale(glm::mat4(1.0f), scale);
+    }
+    //TO BE CALLED FROM THE READ FILE FN IN THE COMPONENT FILE
+    static TransformationComponent *CreationFromBase(TransformationComponent *parent, glm::vec3 translation, glm ::vec3 rotation, glm::vec3 scaling)
+    {
+        TransformationComponent *TC_Comp = new TransformationComponent(parent);
+        TC_Comp->transform(translation, rotation, scaling);
     }
 };
 

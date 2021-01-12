@@ -57,6 +57,8 @@ public:
     glm::vec3 getDirection() const;
     Attenuation getAttenuation() const;
     SpotAngle getSpotAngle() const;
+    //
+    Light *CreationFromBase();
 
     ~Light();
 };

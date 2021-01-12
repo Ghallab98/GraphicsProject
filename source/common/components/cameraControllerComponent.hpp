@@ -172,6 +172,10 @@ public:
     void setPitchSensitivity(float sensitivity) { this->pitch_sensitivity = sensitivity; }
     void setFieldOfViewSensitivity(float sensitivity) { this->fov_sensitivity = sensitivity; }
     void setPositionSensitivity(glm::vec3 sensitivity) { this->position_sensitivity = sensitivity; }
+    //
+    CameraControllerComponent *CreationFromBase()
+    {
+    }
 };
 
 #endif

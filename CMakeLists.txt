@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)   # Selects the minimum version of CMake required to run this file
-project(GFX-LAB VERSION 0.1.0)          # Here we select the project name and version
+project(TempleRun VERSION 0.1.0)          # Here we select the project name and version
 
 # Here we select C++17 with all the standards required and all compiler-specific extensions disabled
 set(CMAKE_CXX_STANDARD 17)
@@ -13,6 +13,12 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)    # Don't build Examples
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)           # Don't build Installation Information
 set(GLFW_USE_HYBRID_HPG ON CACHE BOOL "" FORCE)     # Add variables to use High Performance Graphics Card if available
 add_subdirectory(vendor/glfw)                       # Build the GLFW project to use later as a library
+
+
+# Add subdirectory for the josn dynamic library
+add_subdirectory(vendor/jsoncpp)
+
+
 
 # A variable with all the source files of GLAD
 set(GLAD_SOURCE vendor/glad/src/gl.c)
@@ -50,6 +56,7 @@ set(COMPONENTS_SOURCES
         source/common/components/component.hpp
         source/common/texture2D.cpp source/common/texture2D.hpp source/common/sampler.cpp source/common/sampler.hpp)
 
+
 # Define the directories in which to search for the included headers
 include_directories(
         source/common
@@ -59,10 +66,15 @@ include_directories(
         vendor/glm
         vendor/imgui
         vendor/utils
+        vendor/jsoncpp
+        vendor/jsoncpp/include  # Main folder to target
+        vendor/jsoncpp/dist  # The extracted folder from the python script
 )
 
 # For each example, we add an executable target
 # Each target compiles one example source file and the common & vendor source files
 # Then we link GLFW with each target
-add_executable(Game source/common/source.cpp ${COMMON_SOURCES} ${VENDOR_SOURCES} ${COMPONENTS_SOURCES})
-target_link_libraries(Game glfw)
+add_executable(TempleRun source/common/source.cpp ${COMMON_SOURCES} ${VENDOR_SOURCES} ${COMPONENTS_SOURCES})
+target_link_libraries(TempleRun glfw)
+#target_link_libraries(TempleRun jsoncpp)
+
