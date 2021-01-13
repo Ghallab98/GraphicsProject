@@ -34,13 +34,14 @@ public:
         myEntity = entity;
     }
     //
-    static void ReadData(std::string inputFilepath, int &numOfEntites) // to be called from the Game.cpp
+    static void ReadData(std::string inputFilepath, int &numOfEntites, int &numOfCamEntities) // to be called from the Game.cpp
     {
 
         Json::Value data;
         std::ifstream people_file(inputFilepath, std::ifstream::binary);
         people_file >> data;
         numOfEntites = data["NumberOfEntities"].asInt();
+        numOfCamEntities = data["NumberOfCameraEntities"].asInt();
     }
 };
 

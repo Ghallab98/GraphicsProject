@@ -22,11 +22,20 @@ private:
     float field_of_view_y = glm::radians(90.0f), aspect_ratio = 1.0f, near = 0.1f, far = 100.0f;
 
     glm::mat4 V{}, P{}, VP{};
+    //Creation from Base
+    static CameraComponent *CreationFromBase(glm::vec3 myeyePos, glm::vec3 mydirection, glm::vec3 mytarget)
+    {
+        CameraComponent *camComp = new CameraComponent(myeyePos, mydirection, mytarget);
+        return camComp;
+    }
 
 public:
-    CameraComponent()
+    CameraComponent(glm::vec3 myeyePos, glm::vec3 mydirection, glm::vec3 mytarget)
     {
         dirtyFlags = V_DIRTY | P_DIRTY | VP_DIRTY;
+        setEyePosition(myeyePos);
+        setDirection(mydirection);
+        setTarget(mytarget);
     }
 
     int getComponentType()
@@ -211,9 +220,53 @@ public:
         return glm::vec3(clip) / clip.w;
         // Note that we must divide by w even though we not going to the NDC space. This is because of the projection matrix.
     }
-    //
-    CameraComponent *CreationFromBase()
+    //Read Data
+    static void ReadData(string inputFile, int numOfAllEntities, vector<CameraComponent *> &cameraVector, vector<bool> &isCameraEntity)
     {
+        Json::Value data;
+        std::ifstream people_file(inputFile, std::ifstream::binary);
+        people_file >> data;
+        string entity = "entity";
+        string entityTemp = "entity";
+        for (int num = 1; num <= numOfAllEntities; num++)
+        {
+            entity += to_string(num);
+            bool isCamera = (data[entity]["camera"]).asBool();
+            if (isCamera)
+            {
+                //--Eye position
+                int eyePos[3];
+                for (int j = 0; j < 3; j++)
+                {
+                    eyePos[j] = (data[entity]["Camera Component"]["Eye Position"][j]).asInt();
+                }
+                glm::vec3 eyePosVec(eyePos[0], eyePos[1], eyePos[2]);
+                //--Target
+                int target[3];
+                for (int j = 0; j < 3; j++)
+                {
+                    target[j] = (data[entity]["Camera Component"]["Target"][j]).asInt();
+                }
+                glm::vec3 targetVec(target[0], target[1], target[2]);
+                //--Up
+                int up[3];
+                for (int j = 0; j < 3; j++)
+                {
+                    up[j] = (data[entity]["Camera Component"]["Up Direction"][j]).asInt();
+                }
+                glm::vec3 upVec(up[0], up[1], up[2]);
+                //Call of Creation
+                cameraVector.push_back(CreationFromBase(eyePosVec, upVec, targetVec));
+                isCameraEntity.push_back(true);
+            }
+            else
+            {
+                cameraVector.push_back(nullptr);
+                isCameraEntity.push_back(false);
+            }
+            //last line in the for loop
+            entity = entityTemp;
+        }
     }
 };
 

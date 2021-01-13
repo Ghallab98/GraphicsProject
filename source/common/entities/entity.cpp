@@ -4,8 +4,11 @@ Entity::Entity() {}
 
 void Entity::addComponent(Component *component)
 {
-    component->setEntity(this);
-    components.push_back(component);
+    if (component != nullptr)
+    {
+        component->setEntity(this);
+        components.push_back(component);
+    }
 }
 
 TransformationComponent *Entity::getTransformationComponent()

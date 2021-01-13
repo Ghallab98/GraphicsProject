@@ -26,6 +26,10 @@ private:
     float speedup_factor = 5.0f; // A speed multiplier if "Left Shift" is held.
 
     bool mouse_locked = false; //wether the mouse is inside the game window or not
+    //CALLED FROM THE READ FUNCTION HERE
+    static CameraControllerComponent *CreationFromBase()
+    {
+    }
 
 public:
     CameraControllerComponent(Application *application, Entity *myEntity)
@@ -55,27 +59,6 @@ public:
         return CONTROLLER_COMPONENT;
     }
 
-    void Initialize(Application *application, Entity *myEntity)
-    { //REVIEW: Remove this
-        this->app = application;
-        int width, height = 0;
-        glm::ivec2 wh = app->getFrameBufferSize();
-        width = wh.x;
-        height = wh.y;
-
-        camera = myEntity->getCameraComponent();
-        camera->setupPerspective(glm::pi<float>() / 2, static_cast<float>(width) / height, 0.1f, 100.0f);
-        yaw_sensitivity = pitch_sensitivity = 0.01f;
-        position_sensitivity = {3.0f, 3.0f, 3.0f};
-        fov_sensitivity = glm::pi<float>() / 10;
-
-        position = camera->getEyePosition();
-        auto direction = camera->getDirection();
-        yaw = glm::atan(-direction.z, direction.x);
-        float base_length = glm::sqrt(direction.x * direction.x + direction.z * direction.z);
-        pitch = glm::atan(direction.y, base_length);
-    }
-
     void release()
     {
         if (mouse_locked)
@@ -85,7 +68,7 @@ public:
         }
     }
 
-    void update(double delta_time)
+    void update(double delta_time, int front, int back, int right, int left, int jump, int counter)
     {
         if (app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && !mouse_locked)
         {
@@ -121,17 +104,17 @@ public:
         if (app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT))
             current_sensitivity *= speedup_factor;
 
-        if (app->getKeyboard().isPressed(GLFW_KEY_UP))
+        if (app->getKeyboard().isPressed(front))
             position += front * ((float)delta_time * current_sensitivity.z);
-        if (app->getKeyboard().isPressed(GLFW_KEY_DOWN))
+        if (app->getKeyboard().isPressed(back))
             position -= front * ((float)delta_time * current_sensitivity.z);
-        if (app->getKeyboard().isPressed(GLFW_KEY_SPACE))
+        if (app->getKeyboard().isPressed(jump))
             position += up * ((float)delta_time * current_sensitivity.y);
-        if (app->getKeyboard().isPressed(GLFW_KEY_C))
+        if (app->getKeyboard().isPressed(counter))
             position -= up * ((float)delta_time * current_sensitivity.y);
-        if (app->getKeyboard().isPressed(GLFW_KEY_RIGHT))
+        if (app->getKeyboard().isPressed(right))
             position += right * ((float)delta_time * current_sensitivity.x);
-        if (app->getKeyboard().isPressed(GLFW_KEY_LEFT))
+        if (app->getKeyboard().isPressed(left))
             position -= right * ((float)delta_time * current_sensitivity.x);
 
         camera->setDirection(glm::vec3(glm::cos(yaw), 0, -glm::sin(yaw)) * glm::cos(pitch) + glm::vec3(0, glm::sin(pitch), 0));
@@ -172,10 +155,6 @@ public:
     void setPitchSensitivity(float sensitivity) { this->pitch_sensitivity = sensitivity; }
     void setFieldOfViewSensitivity(float sensitivity) { this->fov_sensitivity = sensitivity; }
     void setPositionSensitivity(glm::vec3 sensitivity) { this->position_sensitivity = sensitivity; }
-    //
-    CameraControllerComponent *CreationFromBase()
-    {
-    }
 };
 
 #endif

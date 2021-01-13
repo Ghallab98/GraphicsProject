@@ -19,8 +19,13 @@ using std::vector;
 class GameState : public State
 {
     map<string, gameTemp::Mesh> models;
+    //
     vector<Entity *> entities;
+    vector<TransformationComponent *> tcVector;
+    vector<CameraComponent *> camVector;
     Entity *currentCamera;
+    vector<bool> isEntityCamera;
+    //
     RendererSystem rendererSystem;
     //
     std::unordered_map<std::string, GLuint> textures;
@@ -48,26 +53,40 @@ public:
         programs["text"].link();
 
         //////////////////////////////////////////////////////////////////////////////////////////////
-        int numOfEntites = 0;
+        int numOfEntities = 0;
+        int numOfCamEntities = 0;
         string path = "./source/common/json_File/input.json";
-        Component::ReadData(path, numOfEntites);
+        Component::ReadData(path, numOfEntities, numOfCamEntities);
         cout << endl
              << endl
-             << "Number of entitess " << numOfEntites << endl;
-        //Creation of Entites
-        for (int i = 0; i < numOfEntites; i++)
+             << "Number of entitess " << numOfEntities << endl;
+        cout << endl
+             << endl
+             << "Number of Camera entitess " << numOfCamEntities << endl;
+        //Creation of Entites and Camera Entites
+        for (int i = 0; i < numOfEntities + numOfCamEntities; i++)
         {
             entities.push_back(new Entity);
         }
-        //Transformation Component
-        vector<TransformationComponent *> tcVector;
-        TransformationComponent::ReadData(path, numOfEntites, tcVector);
+        //--Transformation Component
+        TransformationComponent::ReadData(path, numOfEntities + numOfCamEntities, tcVector);
+        //--Camera Component
+        CameraComponent ::ReadData(path, numOfEntities + numOfCamEntities, camVector, isEntityCamera);
 
-        //ATTCHAING OF ALL COMPONENTS TO ENTITES (LAST THING TODO)
-        for (int index = 0; index < numOfEntites; index++)
+        //cout << "The size of the camera component vector is " << camVector.size() << endl;
+        //cout << "The size of the camera component vector boolean array is " << isEntityCamera.size() << endl;
+        /*for (int k = 0; k < isEntityCamera.size(); k++)
+        {
+            cout << isEntityCamera[k] << endl;
+        }*/
+
+        //ATTCHAING OF ALL TRANSOFRMATION COMPONENTS AND CAMERA COMPONENTS TO ENTITES+CAMERA ENTITES
+        for (int index = 0; index < numOfEntities + numOfCamEntities; index++)
         {
             entities[index]->addComponent(tcVector[index]);
+            entities[index]->addComponent(camVector[index]);
         }
+
         //////////////////////////////////////////////////////////////////////////////////////////////
         //-- Loading a texture
         GLuint texture;
@@ -179,20 +198,17 @@ public:
         m3->setObjProp(obj);
         m4->setObjProp(obj2);
 
-        // -- Initializing the camera
-        CameraComponent *Cam = new CameraComponent;
-        currentCamera = new Entity;
-        currentCamera->addComponent(Cam);
-        Cam->setEyePosition({10, 10, 10});
-        Cam->setTarget({0, 0, 0});
-        Cam->setUp({0, 1, 0});
-
-        CameraControllerComponent *CamController = new CameraControllerComponent(app, currentCamera);
-        currentCamera->addComponent(CamController);
+        // -- TODO NOT HARDCODED OF CAMERA ENTITY AND IN FOR LOOP OF WHICH CAMERA ENTITY TO BE THE CURRENT CAMERA
+        currentCamera = entities[5];
+        CameraControllerComponent *CamController = new CameraControllerComponent(app, entities[5]);
+        entities[5]->addComponent(CamController);
+        //
 
         // -- Initializing GL
         glUseProgram(programs["text"]);
         rendererSystem.setEntitiesVector(&entities);
+        cout << "finished on eneter" << endl
+             << endl;
     }
 
     void onDraw(double deltaTime) override
@@ -210,7 +226,6 @@ public:
 
         currentCamera->getCameraComponentController()->update(deltaTime);
         glm::mat4 camera_matrix = currentCamera->getCameraComponent()->getVPMatrix();
-
         rendererSystem.update(camera_matrix);
         rendererSystem.draw();
     }

@@ -1,6 +1,23 @@
 {
     "NumberOfEntities": 5,
+    "NumberOfCameraEntities":1,
+    "Camera Controllers":{
+      "Array":[
+        {
+          "Number of Entity to Control":6,
+          "Keys":{
+            "Front":"",
+            "Back":"",
+            "Right":"",
+            "Left":"",
+            "Jump":"",
+            "Counter":""
+          }
+        }
+      ]
+    },
     "entity1": {
+      "camera":false,
       "entityParentNum": null,
       "Transformation Component": {
         "position": [ -2, 1, -2 ],
@@ -9,6 +26,7 @@
       }
     },
     "entity2": {
+      "camera":false,
       "entityParentNum": 1,
       "Transformation Component": {
         "position": [ 2, 2, -2 ],
@@ -17,6 +35,7 @@
       }
     },
     "entity3": {
+      "camera":false,
       "entityParentNum": 2,
       "Transformation Component": {
         "position": [ -2, 1, 2 ],
@@ -25,6 +44,7 @@
       }
     },
     "entity4":{
+      "camera":false,
       "entityParentNum": null,
       "Transformation Component": {
         "position": [ -2, 2, -2 ],
@@ -33,11 +53,27 @@
       }
     },
     "entity5":{
+      "camera":false,
       "entityParentNum": null,
       "Transformation Component": {
         "position": [ 0, 0, 0 ],
         "rotation": [ 0, 0, 0 ],
         "scale": [ 500, 1, 500 ]
       }
+    },
+    "entity6":{
+      "camera":true,
+      "entityParentNum": null,
+      "Transformation Component": {
+        "position": [ 0, 0, 0 ],
+        "rotation": [ 0, 0, 0 ],
+        "scale": [ 0, 0, 0 ]
+      },
+      "Camera Component" :{
+        "Eye Position" :[10,10,10],
+        "Target":[0,0,0],
+        "Up Direction":[0,1,0]
+      }
+
     }
   }
