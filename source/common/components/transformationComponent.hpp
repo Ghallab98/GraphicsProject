@@ -3,6 +3,11 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/euler_angles.hpp>
+#include <iostream>
+#include "../../vendor/jsoncpp/include/json/value.h"
+#include "../../vendor/jsoncpp/include/json/json.h"
+#include <fstream>
+#include <string.h>
 #include <vector>
 
 #include <component.hpp>
@@ -19,6 +24,13 @@ class TransformationComponent : public Component
 private:
     std::vector<TransformationComponent *> children;
     glm::mat4 transformationMatrix;
+    //TO BE CALLED FROM READ FILE IN THIS CLASS
+    static TransformationComponent *CreationFromBase(TransformationComponent *parent, glm::vec3 translation, glm ::vec3 rotation, glm::vec3 scaling)
+    {
+        TransformationComponent *TC_Comp = new TransformationComponent(parent);
+        TC_Comp->transform(translation, rotation, scaling);
+        return TC_Comp;
+    }
 
 public:
     TransformationComponent(TransformationComponent *parent)
@@ -72,11 +84,60 @@ public:
                glm::yawPitchRoll(rotation.y, rotation.x, rotation.z) *
                glm::scale(glm::mat4(1.0f), scale);
     }
-    //TO BE CALLED FROM THE READ FILE FN IN THE COMPONENT FILE
-    static TransformationComponent *CreationFromBase(TransformationComponent *parent, glm::vec3 translation, glm ::vec3 rotation, glm::vec3 scaling)
+    ///
+    static void ReadData(string inputFile, int numOfEntities, vector<TransformationComponent *> &tcVector)
     {
-        TransformationComponent *TC_Comp = new TransformationComponent(parent);
-        TC_Comp->transform(translation, rotation, scaling);
+        Json::Value data;
+        std::ifstream people_file(inputFile, std::ifstream::binary);
+        people_file >> data;
+        string entity = "entity";
+        string entityTemp = "entity";
+        for (int num = 1; num <= numOfEntities; num++)
+        {
+            entity += to_string(num);
+            int parntEntityNum = data[entity]["entityParentNum"].asInt() - 1;
+            //-- Translation
+            int posVal[3];
+            int posIndex;
+            for (int j = 0; j < 3; j++)
+            {
+                posIndex = (data[entity]["Transformation Component"]["position"][j]).asInt();
+                posVal[j] = posIndex;
+            }
+            glm::vec3 translation(posVal[0], posVal[1], posVal[2]);
+            cout << "Translation is " << posVal[0] << posVal[1] << posVal[2] << endl;
+            //-- Rotation
+            int rotIndex;
+            int rotVal[3];
+            for (int j = 0; j < 3; j++)
+            {
+                rotIndex = (data[entity]["Transformation Component"]["rotation"][j]).asInt();
+                rotVal[j] = rotIndex;
+            }
+            glm::vec3 rotation(rotVal[0], rotVal[1], rotVal[2]);
+            cout << "Rotation is " << rotVal[0] << rotVal[1] << rotVal[2] << endl;
+            //-- Scaling
+            int scaleIndex;
+            int scaleVal[3];
+            for (int j = 0; j < 3; j++)
+            {
+                scaleIndex = (data[entity]["Transformation Component"]["scale"][j]).asInt();
+                scaleVal[j] = scaleIndex;
+            }
+            glm::vec3 scale(scaleVal[0], scaleVal[1], scaleVal[2]);
+            cout << "Scaling is " << scaleVal[0] << scaleVal[1] << scaleVal[2] << endl;
+            //Creation of TC
+            if (parntEntityNum <= -1)
+            {
+                tcVector.push_back(CreationFromBase(nullptr, translation, rotation, scale));
+            }
+            else
+            {
+                tcVector.push_back(CreationFromBase(tcVector[parntEntityNum], translation, rotation, scale));
+            }
+            //last line in the for loop
+            entity = entityTemp;
+        }
     }
 };
 

@@ -36,16 +36,6 @@ public:
 
     void onEnter() override
     {
-        //////////////////////////////////////////////////////////////////////////////////////////////
-        int numOfEntites = 0;
-        vector<TransformationComponent *> tecVector;
-        string path = "../json_File/input.json";
-        Component::ReadData(path, numOfEntites, tecVector);
-        cout << endl
-             << endl
-             << "Number of entitess " << numOfEntites << endl;
-        //////////////////////////////////////////////////////////////////////////////////////////////
-
         // -- Initializing shaders
         programs["main"].create();
         programs["main"].attach("assets/shaders/transform.vert", GL_VERTEX_SHADER);
@@ -57,12 +47,28 @@ public:
         programs["text"].attach("assets/shaders/texture/texture.frag", GL_FRAGMENT_SHADER);
         programs["text"].link();
 
-        // -- Initializing entities
-        Entity *cubeParent = new Entity;
-        Entity *cubeChild = new Entity;
-        Entity *sphere = new Entity;
-        Entity *yo = new Entity;
-        Entity *floor = new Entity;
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        int numOfEntites = 0;
+        string path = "./source/common/json_File/input.json";
+        Component::ReadData(path, numOfEntites);
+        cout << endl
+             << endl
+             << "Number of entitess " << numOfEntites << endl;
+        //Creation of Entites
+        for (int i = 0; i < numOfEntites; i++)
+        {
+            entities.push_back(new Entity);
+        }
+        //Transformation Component
+        vector<TransformationComponent *> tcVector;
+        TransformationComponent::ReadData(path, numOfEntites, tcVector);
+
+        //ATTCHAING OF ALL COMPONENTS TO ENTITES (LAST THING TODO)
+        for (int index = 0; index < numOfEntites; index++)
+        {
+            entities[index]->addComponent(tcVector[index]);
+        }
+        //////////////////////////////////////////////////////////////////////////////////////////////
         //-- Loading a texture
         GLuint texture;
         gameTemp::Texture *text = new gameTemp::Texture();
@@ -125,15 +131,15 @@ public:
         m3->AddUniform<glm::vec4>("tint", tintVec2);
         m4->AddUniform<glm::vec4>("tint", tintVec);
         //With texture 1
-        sphere->addComponent(new MeshRenderer(m1, &models["sphere"]));
-        yo->addComponent(new MeshRenderer(m4, &models["sphere"]));
+        entities[2]->addComponent(new MeshRenderer(m1, &models["sphere"]));
+        entities[3]->addComponent(new MeshRenderer(m4, &models["sphere"]));
 
         //With texture 2
-        cubeParent->addComponent(new MeshRenderer(m2, &models["cuboid"]));
-        cubeChild->addComponent(new MeshRenderer(m2, &models["cuboid"]));
+        entities[0]->addComponent(new MeshRenderer(m2, &models["cuboid"]));
+        entities[1]->addComponent(new MeshRenderer(m2, &models["cuboid"]));
 
         //With texture 3
-        floor->addComponent(new MeshRenderer(m3, &models["plane"]));
+        entities[4]->addComponent(new MeshRenderer(m3, &models["plane"]));
 
         //CREATE OBJECT PROPERTY OBj
         ObjectProperties *obj = new ObjectProperties();
@@ -172,31 +178,6 @@ public:
         m2->setObjProp(obj);
         m3->setObjProp(obj);
         m4->setObjProp(obj2);
-        // -- Initializing transformation components
-        TransformationComponent *TCcubeParent = new TransformationComponent(nullptr);
-        TransformationComponent *TCcubeChild = new TransformationComponent(TCcubeParent);
-        TransformationComponent *TCSphere = new TransformationComponent(TCcubeChild);
-        TransformationComponent *TCyo = new TransformationComponent(nullptr);
-        TransformationComponent *TCfloor = new TransformationComponent(nullptr);
-
-        cubeParent->addComponent(TCcubeParent);
-        cubeChild->addComponent(TCcubeChild);
-        sphere->addComponent(TCSphere);
-        yo->addComponent(TCyo);
-        floor->addComponent(TCfloor);
-
-        cubeParent->getTransformationComponent()->transform({-2, 1, -2}, {0, 0, 0}, {2, 2, 2});
-        yo->getTransformationComponent()->transform({-2, 2, -2}, {0, 0, 0}, {2, 2, 2});
-        cubeChild->getTransformationComponent()->transform({2, 2, -2}, {0, 0, 0}, {1, 1, 1});
-        sphere->getTransformationComponent()->transform({-2, 1, 2}, {0, 0, 0}, {2, 2, 2});
-        floor->getTransformationComponent()->transform({0, 0, 0}, {0, 0, 0}, {500, 1, 500});
-
-        // -- Storing entities
-        entities.push_back(cubeParent);
-        entities.push_back(cubeChild);
-        entities.push_back(sphere);
-        entities.push_back(yo);
-        entities.push_back(floor);
 
         // -- Initializing the camera
         CameraComponent *Cam = new CameraComponent;

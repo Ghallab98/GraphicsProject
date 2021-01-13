@@ -16,9 +16,8 @@ add_subdirectory(vendor/glfw)                       # Build the GLFW project to 
 
 
 # Add subdirectory for the josn dynamic library
-add_subdirectory(vendor/jsoncpp)
-
-
+#set(vendor/jsoncpp)
+set(JSON_CPP_SOURCE vendor/jsoncpp/dist/jsoncpp.cpp)
 
 # A variable with all the source files of GLAD
 set(GLAD_SOURCE vendor/glad/src/gl.c)
@@ -34,7 +33,7 @@ set(IMGUI_SOURCES
         )
 
 # Combine all vendor source files together into a single variable
-set(VENDOR_SOURCES ${GLAD_SOURCE} ${IMGUI_SOURCES})
+set(VENDOR_SOURCES ${GLAD_SOURCE} ${IMGUI_SOURCES} ${JSON_CPP_SOURCE})
 
 # A variable with all our source files that are common between executable targets (examples)
 set(COMMON_SOURCES
@@ -66,9 +65,6 @@ include_directories(
         vendor/glm
         vendor/imgui
         vendor/utils
-        vendor/jsoncpp
-        vendor/jsoncpp/include  # Main folder to target
-        vendor/jsoncpp/dist  # The extracted folder from the python script
 )
 
 # For each example, we add an executable target
@@ -76,5 +72,4 @@ include_directories(
 # Then we link GLFW with each target
 add_executable(TempleRun source/common/source.cpp ${COMMON_SOURCES} ${VENDOR_SOURCES} ${COMPONENTS_SOURCES})
 target_link_libraries(TempleRun glfw)
-#target_link_libraries(TempleRun jsoncpp)
 

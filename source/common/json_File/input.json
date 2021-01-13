@@ -1,9 +1,43 @@
 {
+    "NumberOfEntities": 5,
     "entity1": {
-        "Transformation Component": {
-            "position": [-2,1,-2],
-            "rotation": [0,0,0],
-            "scale": [2,2,2]
-        }
+      "entityParentNum": null,
+      "Transformation Component": {
+        "position": [ -2, 1, -2 ],
+        "rotation": [ 0, 0, 0 ],
+        "scale": [ 2, 2, 2 ]
+      }
+    },
+    "entity2": {
+      "entityParentNum": 1,
+      "Transformation Component": {
+        "position": [ 2, 2, -2 ],
+        "rotation": [ 0, 0, 0 ],
+        "scale": [ 1, 1, 1 ]
+      }
+    },
+    "entity3": {
+      "entityParentNum": 2,
+      "Transformation Component": {
+        "position": [ -2, 1, 2 ],
+        "rotation": [ 0, 0, 0 ],
+        "scale": [ 2, 2, 2 ]
+      }
+    },
+    "entity4":{
+      "entityParentNum": null,
+      "Transformation Component": {
+        "position": [ -2, 2, -2 ],
+        "rotation": [ 0, 0, 0 ],
+        "scale": [ 2, 2, 2 ]
+      }
+    },
+    "entity5":{
+      "entityParentNum": null,
+      "Transformation Component": {
+        "position": [ 0, 0, 0 ],
+        "rotation": [ 0, 0, 0 ],
+        "scale": [ 500, 1, 500 ]
+      }
     }
-}
+  }

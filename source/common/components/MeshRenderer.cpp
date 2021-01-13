@@ -34,9 +34,22 @@ MeshRenderCommand MeshRenderer::getRenderCommand(const glm::mat4 &cameraMatrix)
 }
 
 //
-MeshRenderer *MeshRenderer::CreationFromBase()
+/*MeshRenderer *MeshRenderer::CreationFromBase()
 {
-    //MeshRenderer *createdMeshRend = new MeshRenderer();
-    //return createdMeshRend;
-    return nullptr;
+}*/
+
+void MeshRenderer::ReadData(string inputFile, int numOfEntities, vector<Material *> materialClassVec, vector<MeshRenderer *> &tcVector)
+{
+    Json::Value data;
+    std::ifstream people_file(inputFile, std::ifstream::binary);
+    people_file >> data;
+    string entity = "entity";
+    string entityTemp = "entity";
+    for (int num = 1; num <= numOfEntities; num++)
+    {
+        entity += to_string(num);
+
+        //last line in the for loop
+        entity = entityTemp;
+    }
 }
