@@ -23,6 +23,7 @@ class GameState : public State
     vector<Entity *> entities;
     vector<TransformationComponent *> tcVector;
     vector<CameraComponent *> camVector;
+    vector<CameraControllerComponent *> camControllerVector;
     Entity *currentCamera;
     vector<bool> isEntityCamera;
     //
@@ -72,6 +73,8 @@ public:
         TransformationComponent::ReadData(path, numOfEntities + numOfCamEntities, tcVector);
         //--Camera Component
         CameraComponent ::ReadData(path, numOfEntities + numOfCamEntities, camVector, isEntityCamera);
+        //--Camera Controller Component
+        CameraControllerComponent::ReadData(path, camControllerVector);
 
         //cout << "The size of the camera component vector is " << camVector.size() << endl;
         //cout << "The size of the camera component vector boolean array is " << isEntityCamera.size() << endl;

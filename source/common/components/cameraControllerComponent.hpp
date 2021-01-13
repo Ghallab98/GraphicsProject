@@ -68,7 +68,7 @@ public:
         }
     }
 
-    void update(double delta_time, int front, int back, int right, int left, int jump, int counter)
+    void update(double delta_time)
     {
         if (app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && !mouse_locked)
         {
@@ -104,17 +104,17 @@ public:
         if (app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT))
             current_sensitivity *= speedup_factor;
 
-        if (app->getKeyboard().isPressed(front))
+        if (app->getKeyboard().isPressed(GLFW_KEY_UP))
             position += front * ((float)delta_time * current_sensitivity.z);
-        if (app->getKeyboard().isPressed(back))
+        if (app->getKeyboard().isPressed(GLFW_KEY_DOWN))
             position -= front * ((float)delta_time * current_sensitivity.z);
-        if (app->getKeyboard().isPressed(jump))
+        if (app->getKeyboard().isPressed(GLFW_KEY_SPACE))
             position += up * ((float)delta_time * current_sensitivity.y);
-        if (app->getKeyboard().isPressed(counter))
+        if (app->getKeyboard().isPressed(GLFW_KEY_C))
             position -= up * ((float)delta_time * current_sensitivity.y);
-        if (app->getKeyboard().isPressed(right))
+        if (app->getKeyboard().isPressed(GLFW_KEY_RIGHT))
             position += right * ((float)delta_time * current_sensitivity.x);
-        if (app->getKeyboard().isPressed(left))
+        if (app->getKeyboard().isPressed(GLFW_KEY_LEFT))
             position -= right * ((float)delta_time * current_sensitivity.x);
 
         camera->setDirection(glm::vec3(glm::cos(yaw), 0, -glm::sin(yaw)) * glm::cos(pitch) + glm::vec3(0, glm::sin(pitch), 0));
@@ -155,6 +155,17 @@ public:
     void setPitchSensitivity(float sensitivity) { this->pitch_sensitivity = sensitivity; }
     void setFieldOfViewSensitivity(float sensitivity) { this->fov_sensitivity = sensitivity; }
     void setPositionSensitivity(glm::vec3 sensitivity) { this->position_sensitivity = sensitivity; }
+    //Read Data
+    static void ReadData(string path, vector<CameraControllerComponent *> &camControllerVector)
+    {
+        Json::Value data;
+        std::ifstream people_file(path, std::ifstream::binary);
+        people_file >> data;
+        int numOfCamController;
+        cout << endl;
+        cout << data["Camera Controllers"]["Array"] << endl;
+        cout << endl;
+    }
 };
 
 #endif
