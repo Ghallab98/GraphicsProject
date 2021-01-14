@@ -22,9 +22,14 @@ class GameState : public State
     //
     vector<Entity *> entities;
     vector<TransformationComponent *> tcVector;
-    vector<CameraComponent *> camVector;
+    //Camera Controller Vars
     vector<CameraControllerComponent *> camControllerVector;
+    vector<map<string, int>> CameraControllerComponentControllers; //map for each camera controller of the keys
+    int currentCameraIndex;
+    //Camera Vars
+    vector<CameraComponent *> camVector;
     vector<bool> isEntityCamera;
+    //
     vector<Entity *> currentCameraTempVec;
     Entity *currentCamera;
     vector<int> cameraCtrlPos; //camera controller position in entities array
@@ -59,7 +64,7 @@ public:
         int numOfEntities = 0;
         int numOfCamEntities = 0;
         int numOfCamCtrls = 0;
-        string path = "./source/common/json_File/input.json";
+        string path = "./assets/files/input.json";
         Component::ReadData(path, numOfEntities, numOfCamEntities, numOfCamCtrls);
         cout << endl
              << endl
@@ -96,30 +101,24 @@ public:
         }
         //THIS BLOCK IS AFTER ATTACHING CAMERA COMPONENT TO ENTITIES FOR USAGE IN CAMERA CONTROLLER CONSTRUCTOR
         //--Camera Controller Component
-        CameraControllerComponent::ReadData(path, entities, camControllerVector, app, cameraCtrlPos);
-        //
-        // -- TODO NOT HARDCODED OF CAMERA ENTITY AND IN FOR LOOP OF WHICH CAMERA ENTITY TO BE THE CURRENT CAMERA
+        CameraControllerComponent::ReadData(path, entities, camControllerVector, app, cameraCtrlPos, CameraControllerComponentControllers);
 
-        //
-        for (int o = 0; o < camControllerVector.size(); o++)
+        /*for (int o = 0; o < camControllerVector.size(); o++)
         {
             cout << endl
                  << "Camera controller vector is " << camControllerVector[o] << endl;
-        }
-        //currentCamera.push_back(entities[6]);
-        //CameraControllerComponent *CamController = new CameraControllerComponent(app, entities[6]);
-        //entities[6]->addComponent(camControllerVector[0]);
+        }*/
         int itIndex = 0;
         for (int i = 0; i < camControllerVector.size(); i++)
         {
-            cout << endl
-                 << "How manyyyy " << cameraCtrlPos[itIndex] << endl;
             currentCameraTempVec.push_back(entities[cameraCtrlPos[itIndex]]);
             entities[cameraCtrlPos[itIndex]]->addComponent(camControllerVector[i]);
             itIndex++;
         }
-        //-- SET THE CURRENT CAMERA AS THE FIRST CAMERA ENTITY IN THE VECTOR (CHANGED ACCORDING TO THE LOGIC IN THE GAME)
+        //-- SET THE CURRENT CAMERA AS THE FIRST CAMERA ENTITY IN THE VECTOR AND THE CURRENT CAMERA INDEX IN THE VECTOR TO 0 (CHANGED ACCORDING TO THE LOGIC IN THE GAME)
         currentCamera = currentCameraTempVec[0];
+        currentCameraIndex = 0;
+        //
         cout << endl
              << "Doneeeee" << endl;
         //////////////////////////////////////////////////////////////////////////////////////////////
@@ -169,11 +168,11 @@ public:
         gameTemp::mesh_utils::Plane(models["plane"], {1, 1}, false, {0, 0, 0}, {1, 1}, {0, 0}, {100, 100});
 
         Material *m1 = new Material(&programs["text"]);
-        m1->addTextureAndSampler(texVec[0],sampVec[0]);
+        m1->addTextureAndSampler(texVec[0], sampVec[0]);
         Material *m2 = new Material(&programs["text"]);
-        m2->addTextureAndSampler(texVec[1],sampVec[0]);
+        m2->addTextureAndSampler(texVec[1], sampVec[0]);
         Material *m3 = new Material(&programs["text"]);
-        m3->addTextureAndSampler(texVec[2],sampVec[1]);
+        m3->addTextureAndSampler(texVec[2], sampVec[1]);
         Material *m4 = new Material(&programs["main"]);
         //setting the texture and sampler of the material class with a value
         //creation of a unifrom and ataching it to uniforms map
@@ -252,7 +251,25 @@ public:
         glColorMask(true, true, true, true);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // TODO --CHOOSE WHICH CAMERA ENTITY TO BE THE CURRENT CAMERA ACCORDING TO THE GAME LOGIC
-        currentCamera->getCameraComponentController()->update(deltaTime);
+        int front = CameraControllerComponentControllers[currentCameraIndex]["front"];
+        int back = CameraControllerComponentControllers[currentCameraIndex]["back"];
+        int right = CameraControllerComponentControllers[currentCameraIndex]["right"];
+        int left = CameraControllerComponentControllers[currentCameraIndex]["left"];
+        int jump = CameraControllerComponentControllers[currentCameraIndex]["jump"];
+        int crouch = CameraControllerComponentControllers[currentCameraIndex]["crouch"];
+        /*cout << "The front is " << front << endl
+             << endl;
+        cout << "The back is " << back << endl
+             << endl;
+        cout << "The right is " << right << endl
+             << endl;
+        cout << "The left is " << left << endl
+             << endl;
+        cout << "The jump is " << jump << endl
+             << endl;
+        cout << "The crouch is " << crouch << endl
+             << endl;*/
+        currentCamera->getCameraComponentController()->update(deltaTime, front, back, right, left, jump, crouch);
         glm::mat4 camera_matrix = currentCamera->getCameraComponent()->getVPMatrix();
         //
 

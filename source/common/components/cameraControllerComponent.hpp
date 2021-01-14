@@ -5,7 +5,11 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
-
+#include <map>
+#include <string.h>
+#include <iostream>
+#include <vector>
+#include <fstream>
 #include <application.hpp>
 #include <cameraComponent.hpp>
 #include <entities/entity.hpp>
@@ -71,7 +75,7 @@ public:
         }
     }
 
-    void update(double delta_time)
+    void update(double delta_time, int recFront, int recBack, int recRight, int recLeft, int recJump, int recCrouch)
     {
         if (app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && !mouse_locked)
         {
@@ -106,19 +110,36 @@ public:
         glm::vec3 current_sensitivity = this->position_sensitivity;
         if (app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT))
             current_sensitivity *= speedup_factor;
-
-        if (app->getKeyboard().isPressed(GLFW_KEY_UP))
-            position += front * ((float)delta_time * current_sensitivity.z);
-        if (app->getKeyboard().isPressed(GLFW_KEY_DOWN))
-            position -= front * ((float)delta_time * current_sensitivity.z);
-        if (app->getKeyboard().isPressed(GLFW_KEY_SPACE))
-            position += up * ((float)delta_time * current_sensitivity.y);
-        if (app->getKeyboard().isPressed(GLFW_KEY_C))
-            position -= up * ((float)delta_time * current_sensitivity.y);
-        if (app->getKeyboard().isPressed(GLFW_KEY_RIGHT))
-            position += right * ((float)delta_time * current_sensitivity.x);
-        if (app->getKeyboard().isPressed(GLFW_KEY_LEFT))
-            position -= right * ((float)delta_time * current_sensitivity.x);
+        if (recFront > 0)
+        {
+            if (app->getKeyboard().isPressed(recFront))
+                position += front * ((float)delta_time * current_sensitivity.z);
+        }
+        if (recBack > 0)
+        {
+            if (app->getKeyboard().isPressed(recBack))
+                position -= front * ((float)delta_time * current_sensitivity.z);
+        }
+        if (recJump > 0)
+        {
+            if (app->getKeyboard().isPressed(recJump))
+                position += up * ((float)delta_time * current_sensitivity.y);
+        }
+        if (recCrouch > 0)
+        {
+            if (app->getKeyboard().isPressed(recCrouch))
+                position -= up * ((float)delta_time * current_sensitivity.y);
+        }
+        if (recRight > 0)
+        {
+            if (app->getKeyboard().isPressed(recRight))
+                position += right * ((float)delta_time * current_sensitivity.x);
+        }
+        if (recLeft > 0)
+        {
+            if (app->getKeyboard().isPressed(recLeft))
+                position -= right * ((float)delta_time * current_sensitivity.x);
+        }
 
         camera->setDirection(glm::vec3(glm::cos(yaw), 0, -glm::sin(yaw)) * glm::cos(pitch) + glm::vec3(0, glm::sin(pitch), 0));
         camera->setEyePosition(position);
@@ -158,29 +179,98 @@ public:
     void setPitchSensitivity(float sensitivity) { this->pitch_sensitivity = sensitivity; }
     void setFieldOfViewSensitivity(float sensitivity) { this->fov_sensitivity = sensitivity; }
     void setPositionSensitivity(glm::vec3 sensitivity) { this->position_sensitivity = sensitivity; }
-    //Read Data
-    static void ReadData(string path, vector<Entity *> entities, vector<CameraControllerComponent *> &camControllerVector, Application *app, vector<int> &entitesPos)
+    //Map of the keyboard with key=keyName and value of glfw key number
+    static void GenerateKeyboardMap(map<string, int> &keyboardMap)
     {
+        string textFilePath = "./assets/files/keyboard.txt";
+        string line;
+        ifstream myfile(textFilePath);
+        if (myfile.is_open())
+        {
+            while (getline(myfile, line))
+            {
+                int index;
+                char *cstr = const_cast<char *>(line.c_str());
+                for (int i = 0; i < line.size(); i++)
+                {
+                    if (cstr[i] == ' ')
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+                string first = line.substr(0, index);
+                string second = line.substr(index + 1, line.size());
+                keyboardMap[first] = (stoi(second));
+            }
+            myfile.close();
+        }
+    }
+    //Read Data
+    static void ReadData(string path, vector<Entity *> entities, vector<CameraControllerComponent *> &camControllerVector, Application *app, vector<int> &entitesPos, vector<map<string, int>> &CameraControllerComponentControllers)
+    {
+        map<string, int> keyboardControls;
+        GenerateKeyboardMap(keyboardControls);
         Json::Value data;
         std::ifstream people_file(path, std::ifstream::binary);
         people_file >> data;
         int numOfCamController = data["Camera Controllers"]["Array"].size();
+        //Temp vector of each camera controller keys
+        map<string, int> tempMap;
+        tempMap["front"] = -1;
+        tempMap["back"] = -1;
+        tempMap["right"] = -1;
+        tempMap["left"] = -1;
+        tempMap["jump"] = -1;
+        tempMap["crouch"] = -1;
+        vector<map<string, int>> CameraControllerComponentControllersTemp(numOfCamController, tempMap);
+        //
         int numOfEntityToControl;
+        string upString;
+        string downString;
+        string rightString;
+        string leftString;
+        string jumpString;
+        string crouchString;
         for (int i = 0; i < numOfCamController; i++)
         {
             numOfEntityToControl = data["Camera Controllers"]["Array"][i]["Number of Entity to Control"].asInt();
+            upString = data["Camera Controllers"]["Array"][i]["Keys"]["Front"].asString();
+            downString = data["Camera Controllers"]["Array"][i]["Keys"]["Back"].asString();
+            rightString = data["Camera Controllers"]["Array"][i]["Keys"]["Right"].asString();
+            leftString = data["Camera Controllers"]["Array"][i]["Keys"]["Left"].asString();
+            jumpString = data["Camera Controllers"]["Array"][i]["Keys"]["Jump"].asString();
+            crouchString = data["Camera Controllers"]["Array"][i]["Keys"]["Crouch"].asString();
+            // retrieve the glfwNumbers for the fetched key names and place it in the map of keys
+            CameraControllerComponentControllersTemp[i]["front"] = keyboardControls[upString];
+            CameraControllerComponentControllersTemp[i]["back"] = keyboardControls[downString];
+            CameraControllerComponentControllersTemp[i]["right"] = keyboardControls[rightString];
+            CameraControllerComponentControllersTemp[i]["left"] = keyboardControls[leftString];
+            CameraControllerComponentControllersTemp[i]["jump"] = keyboardControls[jumpString];
+            CameraControllerComponentControllersTemp[i]["crouch"] = keyboardControls[crouchString];
             //
+            /*cout << upString << downString << rightString << leftString << jumpString << crouchString << endl
+                 << endl;
+
             cout << endl
                  << endl;
             cout << "Numer of entity to control" << numOfEntityToControl << endl;
 
             cout << endl
-                 << "The entitttttty is " << entities[numOfEntityToControl - 1] << endl;
+                 << "The entitttttty is " << entities[numOfEntityToControl - 1] << endl;*/
             //
             entitesPos.push_back(numOfEntityToControl - 1); //Where is position of the camera controller entity
             camControllerVector.push_back(CreationFromBase(entities[numOfEntityToControl - 1], app));
-            cout << endl
-                 << "Returning nowwwww " << endl;
+            CameraControllerComponentControllers = CameraControllerComponentControllersTemp; // map for each camera controller component of the glfw key numbers
+            cout << "HEREEEEEEEEEEEEEEEEEEEEE" << endl
+                 << endl
+                 << endl;
+            cout << CameraControllerComponentControllers[i]["front"] << endl;
+            cout << CameraControllerComponentControllers[i]["back"] << endl;
+            cout << CameraControllerComponentControllers[i]["right"] << endl;
+            cout << CameraControllerComponentControllers[i]["left"] << endl;
+            cout << CameraControllerComponentControllers[i]["jump"] << endl;
+            cout << CameraControllerComponentControllers[i]["crouch"] << endl;
         }
     }
 };

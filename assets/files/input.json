@@ -6,12 +6,12 @@
         {
           "Number of Entity to Control":6,
           "Keys":{
-            "Front":"GLFW_KEY_UP",
-            "Back":"GLFW_KEY_DOWN",
-            "Right":"GLFW_KEY_RIGHT",
-            "Left":"GLFW_KEY_LEFT",
-            "Jump":"GLFW_KEY_SPACE",
-            "Counter":"GLFW_KEY_C"
+            "Front":"up",
+            "Back":"down",
+            "Right":"right",
+            "Left":"left",
+            "Jump":"space",
+            "Crouch":"c"
           }
         }
       ]
