@@ -34,7 +34,7 @@ public:
     {
         dirtyFlags = V_DIRTY | P_DIRTY | VP_DIRTY;
         setEyePosition(myeyePos);
-        setDirection(mydirection);
+        setUp(mydirection);
         setTarget(mytarget);
     }
 
@@ -231,28 +231,28 @@ public:
         for (int num = 1; num <= numOfAllEntities; num++)
         {
             entity += to_string(num);
-            bool isCamera = (data[entity]["camera"]).asBool();
+            bool isCamera = (data["World"][entity]["camera"]).asBool();
             if (isCamera)
             {
                 //--Eye position
                 int eyePos[3];
                 for (int j = 0; j < 3; j++)
                 {
-                    eyePos[j] = (data[entity]["Camera Component"]["Eye Position"][j]).asInt();
+                    eyePos[j] = (data["World"][entity]["Camera Component"]["Eye Position"][j]).asInt();
                 }
                 glm::vec3 eyePosVec(eyePos[0], eyePos[1], eyePos[2]);
                 //--Target
                 int target[3];
                 for (int j = 0; j < 3; j++)
                 {
-                    target[j] = (data[entity]["Camera Component"]["Target"][j]).asInt();
+                    target[j] = (data["World"][entity]["Camera Component"]["Target"][j]).asInt();
                 }
                 glm::vec3 targetVec(target[0], target[1], target[2]);
                 //--Up
                 int up[3];
                 for (int j = 0; j < 3; j++)
                 {
-                    up[j] = (data[entity]["Camera Component"]["Up Direction"][j]).asInt();
+                    up[j] = (data["World"][entity]["Camera Component"]["Up Direction"][j]).asInt();
                 }
                 glm::vec3 upVec(up[0], up[1], up[2]);
                 //Call of Creation
