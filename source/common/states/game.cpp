@@ -24,8 +24,10 @@ class GameState : public State
     vector<TransformationComponent *> tcVector;
     vector<CameraComponent *> camVector;
     vector<CameraControllerComponent *> camControllerVector;
-    Entity *currentCamera;
     vector<bool> isEntityCamera;
+    vector<Entity *> currentCameraTempVec;
+    Entity *currentCamera;
+    vector<int> cameraCtrlPos; //camera controller position in entities array
     //
     RendererSystem rendererSystem;
     //
@@ -56,14 +58,17 @@ public:
         //////////////////////////////////////////////////////////////////////////////////////////////
         int numOfEntities = 0;
         int numOfCamEntities = 0;
+        int numOfCamCtrls = 0;
         string path = "./source/common/json_File/input.json";
-        Component::ReadData(path, numOfEntities, numOfCamEntities);
+        Component::ReadData(path, numOfEntities, numOfCamEntities, numOfCamCtrls);
         cout << endl
              << endl
              << "Number of entitess " << numOfEntities << endl;
         cout << endl
              << endl
              << "Number of Camera entitess " << numOfCamEntities << endl;
+        cout << endl
+             << "Numbbbbber of camera controller are " << numOfCamCtrls << endl;
         //Creation of Entites and Camera Entites
         for (int i = 0; i < numOfEntities + numOfCamEntities; i++)
         {
@@ -73,8 +78,6 @@ public:
         TransformationComponent::ReadData(path, numOfEntities + numOfCamEntities, tcVector);
         //--Camera Component
         CameraComponent ::ReadData(path, numOfEntities + numOfCamEntities, camVector, isEntityCamera);
-        //--Camera Controller Component
-        CameraControllerComponent::ReadData(path, camControllerVector);
 
         //cout << "The size of the camera component vector is " << camVector.size() << endl;
         //cout << "The size of the camera component vector boolean array is " << isEntityCamera.size() << endl;
@@ -88,8 +91,37 @@ public:
         {
             entities[index]->addComponent(tcVector[index]);
             entities[index]->addComponent(camVector[index]);
+            /*cout << endl
+                 << entities[index] << endl;*/
         }
+        //THIS BLOCK IS AFTER ATTACHING CAMERA COMPONENT TO ENTITIES FOR USAGE IN CAMERA CONTROLLER CONSTRUCTOR
+        //--Camera Controller Component
+        CameraControllerComponent::ReadData(path, entities, camControllerVector, app, cameraCtrlPos);
+        //
+        // -- TODO NOT HARDCODED OF CAMERA ENTITY AND IN FOR LOOP OF WHICH CAMERA ENTITY TO BE THE CURRENT CAMERA
 
+        //
+        for (int o = 0; o < camControllerVector.size(); o++)
+        {
+            cout << endl
+                 << "Camera controller vector is " << camControllerVector[o] << endl;
+        }
+        //currentCamera.push_back(entities[6]);
+        //CameraControllerComponent *CamController = new CameraControllerComponent(app, entities[6]);
+        //entities[6]->addComponent(camControllerVector[0]);
+        int itIndex = 0;
+        for (int i = 0; i < camControllerVector.size(); i++)
+        {
+            cout << endl
+                 << "How manyyyy " << cameraCtrlPos[itIndex] << endl;
+            currentCameraTempVec.push_back(entities[cameraCtrlPos[itIndex]]);
+            entities[cameraCtrlPos[itIndex]]->addComponent(camControllerVector[i]);
+            itIndex++;
+        }
+        //-- SET THE CURRENT CAMERA AS THE FIRST CAMERA ENTITY IN THE VECTOR (CHANGED ACCORDING TO THE LOGIC IN THE GAME)
+        currentCamera = currentCameraTempVec[0];
+        cout << endl
+             << "Doneeeee" << endl;
         //////////////////////////////////////////////////////////////////////////////////////////////
         //-- Loading a texture
         GLuint texture;
@@ -201,12 +233,6 @@ public:
         m3->setObjProp(obj);
         m4->setObjProp(obj2);
 
-        // -- TODO NOT HARDCODED OF CAMERA ENTITY AND IN FOR LOOP OF WHICH CAMERA ENTITY TO BE THE CURRENT CAMERA
-        currentCamera = entities[5];
-        CameraControllerComponent *CamController = new CameraControllerComponent(app, entities[5]);
-        entities[5]->addComponent(CamController);
-        //
-
         // -- Initializing GL
         glUseProgram(programs["text"]);
         rendererSystem.setEntitiesVector(&entities);
@@ -226,9 +252,11 @@ public:
         glDepthMask(true);
         glColorMask(true, true, true, true);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        // TODO --CHOOSE WHICH CAMERA ENTITY TO BE THE CURRENT CAMERA ACCORDING TO THE GAME LOGIC
         currentCamera->getCameraComponentController()->update(deltaTime);
         glm::mat4 camera_matrix = currentCamera->getCameraComponent()->getVPMatrix();
+        //
+
         rendererSystem.update(camera_matrix);
         rendererSystem.draw();
     }

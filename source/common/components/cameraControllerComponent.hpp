@@ -26,9 +26,12 @@ private:
     float speedup_factor = 5.0f; // A speed multiplier if "Left Shift" is held.
 
     bool mouse_locked = false; //wether the mouse is inside the game window or not
+
     //CALLED FROM THE READ FUNCTION HERE
-    static CameraControllerComponent *CreationFromBase()
+    static CameraControllerComponent *CreationFromBase(Entity *camEntity, Application *app)
     {
+        CameraControllerComponent *CamController = new CameraControllerComponent(app, camEntity);
+        return CamController;
     }
 
 public:
@@ -156,15 +159,29 @@ public:
     void setFieldOfViewSensitivity(float sensitivity) { this->fov_sensitivity = sensitivity; }
     void setPositionSensitivity(glm::vec3 sensitivity) { this->position_sensitivity = sensitivity; }
     //Read Data
-    static void ReadData(string path, vector<CameraControllerComponent *> &camControllerVector)
+    static void ReadData(string path, vector<Entity *> entities, vector<CameraControllerComponent *> &camControllerVector, Application *app, vector<int> &entitesPos)
     {
         Json::Value data;
         std::ifstream people_file(path, std::ifstream::binary);
         people_file >> data;
-        int numOfCamController;
-        cout << endl;
-        cout << data["Camera Controllers"]["Array"] << endl;
-        cout << endl;
+        int numOfCamController = data["Camera Controllers"]["Array"].size();
+        int numOfEntityToControl;
+        for (int i = 0; i < numOfCamController; i++)
+        {
+            numOfEntityToControl = data["Camera Controllers"]["Array"][i]["Number of Entity to Control"].asInt();
+            //
+            cout << endl
+                 << endl;
+            cout << "Numer of entity to control" << numOfEntityToControl << endl;
+
+            cout << endl
+                 << "The entitttttty is " << entities[numOfEntityToControl - 1] << endl;
+            //
+            entitesPos.push_back(numOfEntityToControl - 1); //Where is position of the camera controller entity
+            camControllerVector.push_back(CreationFromBase(entities[numOfEntityToControl - 1], app));
+            cout << endl
+                 << "Returning nowwwww " << endl;
+        }
     }
 };
 
