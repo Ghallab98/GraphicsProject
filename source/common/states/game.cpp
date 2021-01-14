@@ -152,6 +152,8 @@ public:
         GLuint glSampler;
         gameTemp::Sampler *sampler = new gameTemp::Sampler();
         glSampler = sampler->getSampler();
+        sampler->setWrapS(GL_REPEAT);
+        sampler->setWrapT(GL_REPEAT);
         sampler->create();
         sampVec.push_back(sampler);
         //sampler 2
@@ -167,16 +169,13 @@ public:
         gameTemp::mesh_utils::Plane(models["plane"], {1, 1}, false, {0, 0, 0}, {1, 1}, {0, 0}, {100, 100});
 
         Material *m1 = new Material(&programs["text"]);
+        m1->addTextureAndSampler(texVec[0],sampVec[0]);
         Material *m2 = new Material(&programs["text"]);
+        m2->addTextureAndSampler(texVec[1],sampVec[0]);
         Material *m3 = new Material(&programs["text"]);
+        m3->addTextureAndSampler(texVec[2],sampVec[1]);
         Material *m4 = new Material(&programs["main"]);
         //setting the texture and sampler of the material class with a value
-        m1->setTexture(texVec[0]);
-        m2->setTexture(texVec[1]);
-        m3->setTexture(texVec[2]);
-        m1->setSampler(sampVec[0]);
-        m2->setSampler(sampVec[0]);
-        m3->setSampler(sampVec[1]);
         //creation of a unifrom and ataching it to uniforms map
         glm::vec4 *tintVec = new glm::vec4(1, 1, 1, 0.8);
         glm::vec4 *tintVec2 = new glm::vec4(0.96, 0.9, 0.64, 1);

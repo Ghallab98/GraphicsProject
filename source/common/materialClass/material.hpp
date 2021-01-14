@@ -10,13 +10,14 @@
 #include <any>
 #include <typeinfo>
 #include <shader.hpp>
-
+#include <vector>
 #include "./uniformType.hpp"
 #include "./objectProperties.cpp"
 #include "../texture2D.hpp"
 #include "../sampler.hpp"
 using std::any;
 using std::map;
+using std::vector;
 struct uniform
 {
     any data;
@@ -31,16 +32,15 @@ private:
     ObjectProperties *objProp;
     gameTemp::ShaderProgram *shaderPtr;
     map<std::string, uniform> uniformsMap;
-    gameTemp::Texture* texture = nullptr;
-    gameTemp::Sampler* sampler = nullptr;
+    vector<gameTemp::Texture*> texture;
+    vector<gameTemp::Sampler*> sampler;
 
 public:
     Material(gameTemp::ShaderProgram *specifiedShader);
 
     void setShaderProgram(gameTemp::ShaderProgram *specifiedShader);
     void setObjProp(ObjectProperties *obj);
-    void setTexture(gameTemp::Texture* texture);
-    void setSampler(gameTemp::Sampler* sampler);
+    void addTextureAndSampler(gameTemp::Texture* texture,gameTemp::Sampler* sampler = nullptr);
     static void setIndex(int num1);
 
     template <class T>
@@ -48,8 +48,8 @@ public:
 
     gameTemp::ShaderProgram *getShaderProgram();
     ObjectProperties *getObjProp();
-    gameTemp::Texture* getTexture();
-    gameTemp::Sampler* getSampler();
+    vector<gameTemp::Texture*> getTexture();
+    vector<gameTemp::Sampler*> getSampler();
     int getIndex();
 
     void setProgramUniforms();

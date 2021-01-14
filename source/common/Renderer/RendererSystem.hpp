@@ -62,18 +62,20 @@ class RendererSystem
     }
     void handleTexture(Material *mtr)
     {
-        if (mtr->getTexture())
-        {
-            GLuint texture = mtr->getTexture()->getTexture();
+        vector<gameTemp::Texture*> allTextures = mtr->getTexture();
+        vector<gameTemp::Sampler*> allSampler = mtr->getSampler();
+        for(int j=0;j<allTextures.size();j++){
+            GLuint texture = allTextures[j]->getTexture();
             int i = mtr->getIndex();
-            glActiveTexture(GL_TEXTURE0+i);
+            glActiveTexture(GL_TEXTURE0+i+j);
             glBindTexture(GL_TEXTURE_2D, texture);
 
-            if (mtr->getSampler()){
-                GLuint sampler = mtr->getSampler()->getSampler();
-                glBindSampler(i, sampler);
+            if (allSampler[j]!=nullptr){
+                GLuint sampler = allSampler[j]->getSampler();
+                glBindSampler(i+j, sampler);
+                mtr->getShaderProgram()->set("sampler", i+j);
             }
-            mtr->getShaderProgram()->set("sampler", i);
+            else mtr->getShaderProgram()->set("sampler", 0);
         }
     }
 
