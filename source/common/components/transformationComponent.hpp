@@ -24,6 +24,7 @@ class TransformationComponent : public Component
 private:
     std::vector<TransformationComponent *> children;
     glm::mat4 transformationMatrix;
+    glm::vec3 position;
     //TO BE CALLED FROM READ FILE IN THIS CLASS
     static TransformationComponent *CreationFromBase(TransformationComponent *parent, glm::vec3 translation, glm ::vec3 rotation, glm::vec3 scaling)
     {
@@ -95,37 +96,37 @@ public:
         for (int num = 1; num <= numOfEntities; num++)
         {
             entity += to_string(num);
-            int parntEntityNum = data[entity]["entityParentNum"].asInt() - 1;
+            int parntEntityNum = data["World"][entity]["entityParentNum"].asInt() - 1;
             //-- Translation
             int posVal[3];
             int posIndex;
             for (int j = 0; j < 3; j++)
             {
-                posIndex = (data[entity]["Transformation Component"]["position"][j]).asInt();
+                posIndex = (data["World"][entity]["Transformation Component"]["position"][j]).asInt();
                 posVal[j] = posIndex;
             }
             glm::vec3 translation(posVal[0], posVal[1], posVal[2]);
-            cout << "Translation is " << posVal[0] << posVal[1] << posVal[2] << endl;
+            //cout << "Translation is " << posVal[0] << posVal[1] << posVal[2] << endl;
             //-- Rotation
             int rotIndex;
             int rotVal[3];
             for (int j = 0; j < 3; j++)
             {
-                rotIndex = (data[entity]["Transformation Component"]["rotation"][j]).asInt();
+                rotIndex = (data["World"][entity]["Transformation Component"]["rotation"][j]).asInt();
                 rotVal[j] = rotIndex;
             }
             glm::vec3 rotation(rotVal[0], rotVal[1], rotVal[2]);
-            cout << "Rotation is " << rotVal[0] << rotVal[1] << rotVal[2] << endl;
+            //cout << "Rotation is " << rotVal[0] << rotVal[1] << rotVal[2] << endl;
             //-- Scaling
             int scaleIndex;
             int scaleVal[3];
             for (int j = 0; j < 3; j++)
             {
-                scaleIndex = (data[entity]["Transformation Component"]["scale"][j]).asInt();
+                scaleIndex = (data["World"][entity]["Transformation Component"]["scale"][j]).asInt();
                 scaleVal[j] = scaleIndex;
             }
             glm::vec3 scale(scaleVal[0], scaleVal[1], scaleVal[2]);
-            cout << "Scaling is " << scaleVal[0] << scaleVal[1] << scaleVal[2] << endl;
+            //cout << "Scaling is " << scaleVal[0] << scaleVal[1] << scaleVal[2] << endl;
             //Creation of TC
             if (parntEntityNum <= -1)
             {

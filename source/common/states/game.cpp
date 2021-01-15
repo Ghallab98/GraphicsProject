@@ -4,8 +4,10 @@
 #include <vector>
 #include <map>
 #include <string.h>
-using std::map;
-using std::vector;
+#include "../../vendor/jsoncpp/include/json/value.h"
+#include "../../vendor/jsoncpp/include/json/json.h"
+#include <fstream>
+
 //
 #include <texture/texture-utils.h>
 #include "../texture2D.hpp"
@@ -35,11 +37,33 @@ class GameState : public State
     vector<int> cameraCtrlPos; //camera controller position in entities array
     //
     RendererSystem rendererSystem;
-    //
-    std::unordered_map<std::string, GLuint> textures;
-    vector<gameTemp::Texture *> texVec;
+    //Textures Map and Samplers Vector
+    std::unordered_map<std::string, gameTemp::Texture *> textures;
     vector<gameTemp::Sampler *> sampVec;
-    std::string current_texture_name;
+    string current_texture_name;
+    //Private fns
+    static void ShaderInitializition(string inputFilepath, int &numOfShaders, vector<string> &programsName, vector<string> &vertexShaderPath, vector<string> &fragmentShaderPath)
+    {
+        string shaderName = "shader";
+        string shaderNameTemp = "shader";
+        Json::Value data;
+        std::ifstream people_file(inputFilepath, std::ifstream::binary);
+        people_file >> data;
+        int shadersNum = data["Resources"]["Shaders"].size();
+        numOfShaders = shadersNum;
+        //
+        for (int pos = 1; pos <= shadersNum; pos++)
+        {
+            shaderName += to_string(pos);
+            programsName.push_back(shaderName);
+            string vxPath = data["Resources"]["Shaders"][pos - 1][shaderName]["vertex"].asString();
+            string frgPath = data["Resources"]["Shaders"][pos - 1][shaderName]["fragment"].asString();
+            vertexShaderPath.push_back(vxPath);
+            fragmentShaderPath.push_back(frgPath);
+            //last line
+            shaderName = shaderNameTemp;
+        }
+    }
 
 public:
     GameState(Application *app = nullptr) : State(app)
@@ -49,22 +73,26 @@ public:
 
     void onEnter() override
     {
-        // -- Initializing shaders
-        programs["main"].create();
-        programs["main"].attach("assets/shaders/transform.vert", GL_VERTEX_SHADER);
-        programs["main"].attach("assets/shaders/tint.frag", GL_FRAGMENT_SHADER);
-        programs["main"].link();
-        //
-        programs["text"].create();
-        programs["text"].attach("assets/shaders/texture/transform.vert", GL_VERTEX_SHADER);
-        programs["text"].attach("assets/shaders/texture/texture.frag", GL_FRAGMENT_SHADER);
-        programs["text"].link();
+        string path = "./assets/files/input.json";
+        vector<string> programsName;
+        vector<string> vertexShaderPath;
+        vector<string> fragmentShaderPath;
+        int numOfShaders;
+        ShaderInitializition(path, numOfShaders, programsName, vertexShaderPath, fragmentShaderPath);
+        //cout << "The number of shaders are  " << numOfShaders << endl;
+        for (int i = 0; i < numOfShaders; i++)
+        {
+            //cout << programsName[i] << "   " << vertexShaderPath[i] << "    " << fragmentShaderPath[i] << endl;
+            programs[programsName[i]].create();
+            programs[programsName[i]].attach(vertexShaderPath[i], GL_VERTEX_SHADER);
+            programs[programsName[i]].attach(fragmentShaderPath[i], GL_FRAGMENT_SHADER);
+            programs[programsName[i]].link();
+        }
 
         //////////////////////////////////////////////////////////////////////////////////////////////
         int numOfEntities = 0;
         int numOfCamEntities = 0;
         int numOfCamCtrls = 0;
-        string path = "./assets/files/input.json";
         Component::ReadData(path, numOfEntities, numOfCamEntities, numOfCamCtrls);
         cout << endl
              << endl
@@ -103,14 +131,16 @@ public:
         //--Camera Controller Component
         CameraControllerComponent::ReadData(path, entities, camControllerVector, app, cameraCtrlPos, CameraControllerComponentControllers);
 
-        /*for (int o = 0; o < camControllerVector.size(); o++)
+        for (int o = 0; o < camControllerVector.size(); o++)
         {
             cout << endl
                  << "Camera controller vector is " << camControllerVector[o] << endl;
-        }*/
+        }
         int itIndex = 0;
         for (int i = 0; i < camControllerVector.size(); i++)
         {
+            cout << endl
+                 << cameraCtrlPos[itIndex] << endl;
             currentCameraTempVec.push_back(entities[cameraCtrlPos[itIndex]]);
             entities[cameraCtrlPos[itIndex]]->addComponent(camControllerVector[i]);
             itIndex++;
@@ -122,43 +152,13 @@ public:
         cout << endl
              << "Doneeeee" << endl;
         //////////////////////////////////////////////////////////////////////////////////////////////
-        //-- Loading a texture
-        GLuint texture;
-        gameTemp::Texture *text = new gameTemp::Texture();
-        texture = text->getTexture();
-        text->create(true, 0, 256, 128, 0, "assets/images/moon.jpg");
-        current_texture_name = "moon";
-        textures[current_texture_name] = texture;
-        texVec.push_back(text);
-        //tex 2
-        GLuint texture2;
-        gameTemp::Texture *text2 = new gameTemp::Texture();
-        texture2 = text2->getTexture();
-        text2->create(true, 0, 256, 128, 0, "assets/images/color-grid.png");
-        current_texture_name = "color-grid";
-        textures[current_texture_name] = texture2;
-        texVec.push_back(text2);
-        //text for the checker board
-        GLuint texture3;
-        gameTemp::Texture *text3 = new gameTemp::Texture();
-        texture3 = text3->getTexture();
-        text3->checkerBoard(texture3, {256, 256}, {128, 128}, {255, 255, 255, 255}, {16, 16, 16, 255});
-        current_texture_name = "checkerboard";
-        textures[current_texture_name] = texture3;
-        texVec.push_back(text3);
-
+        gameTemp::Texture ::ReadData(path, textures);
         //--Loading a sampler
-        GLuint glSampler;
         gameTemp::Sampler *sampler = new gameTemp::Sampler();
-        glSampler = sampler->getSampler();
-        sampler->setWrapS(GL_REPEAT);
-        sampler->setWrapT(GL_REPEAT);
         sampler->create();
         sampVec.push_back(sampler);
         //sampler 2
-        GLuint glSampler2;
         gameTemp::Sampler *sampler2 = new gameTemp::Sampler();
-        glSampler2 = sampler2->getSampler();
         sampler2->create(GL_MIRROR_CLAMP_TO_EDGE);
         sampVec.push_back(sampler2);
 
@@ -167,13 +167,13 @@ public:
         gameTemp::mesh_utils::Sphere(models["sphere"], {32, 16}, true);
         gameTemp::mesh_utils::Plane(models["plane"], {1, 1}, false, {0, 0, 0}, {1, 1}, {0, 0}, {100, 100});
 
-        Material *m1 = new Material(&programs["text"]);
-        m1->addTextureAndSampler(texVec[0], sampVec[0]);
-        Material *m2 = new Material(&programs["text"]);
-        m2->addTextureAndSampler(texVec[1], sampVec[0]);
-        Material *m3 = new Material(&programs["text"]);
-        m3->addTextureAndSampler(texVec[2], sampVec[1]);
-        Material *m4 = new Material(&programs["main"]);
+        Material *m1 = new Material(&programs[programsName[1]]);
+        m1->addTextureAndSampler(textures["moon"], sampVec[0]);
+        Material *m2 = new Material(&programs[programsName[1]]);
+        m2->addTextureAndSampler(textures["color-grid"], sampVec[0]);
+        Material *m3 = new Material(&programs[programsName[1]]);
+        m3->addTextureAndSampler(textures["checkerboard"], sampVec[1]);
+        Material *m4 = new Material(&programs[programsName[0]]);
         //setting the texture and sampler of the material class with a value
         //creation of a unifrom and ataching it to uniforms map
         glm::vec4 *tintVec = new glm::vec4(1, 1, 1, 0.8);
@@ -232,7 +232,7 @@ public:
         m4->setObjProp(obj2);
 
         // -- Initializing GL
-        glUseProgram(programs["text"]);
+        glUseProgram(programs[programsName[1]]);
         rendererSystem.setEntitiesVector(&entities);
         cout << "finished on eneter" << endl
              << endl;
@@ -284,9 +284,11 @@ public:
         toDestroy.setIndex(0);
 
         //Destroy Textures
-        for (int i = 0; i < texVec.size(); i++)
-            delete texVec[i];
-
+        for (auto &it : textures)
+        {
+            delete it.second;
+        }
+        textures.clear();
         //Destroy Samplers
         for (int i = 0; i < sampVec.size(); i++)
             delete sampVec[i];

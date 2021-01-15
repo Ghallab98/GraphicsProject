@@ -40,9 +40,9 @@ public:
         Json::Value data;
         std::ifstream people_file(inputFilepath, std::ifstream::binary);
         people_file >> data;
-        numOfEntites = data["NumberOfEntities"].asInt();
-        numOfCamEntities = data["NumberOfCameraEntities"].asInt();
-        numOfCamController = data["Camera Controllers"]["Array"].size();
+        numOfEntites = data["World"]["NumberOfEntities"].asInt();
+        numOfCamEntities = data["World"]["NumberOfCameraEntities"].asInt();
+        numOfCamController = data["World"]["Camera Controllers"]["Array"].size();
         cout << endl
              << "Numer of camera controller are " << numOfCamController << endl;
     }

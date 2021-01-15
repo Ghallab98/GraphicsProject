@@ -1,6 +1,5 @@
 #include "texture2D.hpp"
 #include <stb/stb_image.h>
-
 void gameTemp::Texture::create(bool Active_Mipmap, int mipmapLevel, int width, int height, int unpack, const char *filename)
 {
     this->Active_Mipmap = Active_Mipmap;
@@ -52,15 +51,18 @@ glm::ivec2 gameTemp::Texture::loadImage(const char *filename)
     return size;
 }
 
-void gameTemp::Texture::checkerBoard(GLuint texture, glm::ivec2 size, glm::ivec2 patternSize, gameTemp::Color color1, gameTemp::Color color2){
-    auto* data = new gameTemp::Color[size.x * size.y];
+void gameTemp::Texture::checkerBoard(glm::ivec2 size, glm::ivec2 patternSize, gameTemp::Color color1, gameTemp::Color color2)
+{
+    auto *data = new gameTemp::Color[size.x * size.y];
     int ptr = 0;
-    for(int y = 0; y < size.y; y++){
-        for(int x = 0; x < size.x; x++){
-            data[ptr++] = ((x/patternSize.x)&1)^((y/patternSize.y)&1)?color1:color2;
+    for (int y = 0; y < size.y; y++)
+    {
+        for (int x = 0; x < size.x; x++)
+        {
+            data[ptr++] = ((x / patternSize.x) & 1) ^ ((y / patternSize.y) & 1) ? color1 : color2;
         }
     }
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindTexture(GL_TEXTURE_2D, this->texture);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -71,7 +73,107 @@ GLuint gameTemp::Texture::getTexture() const
     return this->texture;
 }
 
- void gameTemp::Texture:: setTexture(GLuint texture){
-     this->texture=texture;
- }
+void gameTemp::Texture::setTexture(GLuint texture)
+{
+    this->texture = texture;
+}
 
+//Creation From Base FN
+gameTemp::Texture *gameTemp::Texture::CreationFromBase(bool isLoaded, string path, bool activeMipMap, int mipMapLevel, int width, int height, int unpack, glm::ivec2 size, glm::ivec2 patternSize, gameTemp::Color color1, gameTemp::Color color2)
+{
+    gameTemp::Texture *myTexturePtr = new gameTemp::Texture();
+    if (isLoaded)
+    {
+        myTexturePtr->create(activeMipMap, mipMapLevel, width, height, unpack, path.c_str());
+    }
+    else
+    {
+        myTexturePtr->checkerBoard(size, patternSize, color1, color2);
+    }
+    return myTexturePtr;
+}
+
+//Read FN
+void gameTemp::Texture::ReadData(string inputPath, unordered_map<string, gameTemp::Texture *> &textures)
+{
+    Json::Value data;
+    std::ifstream people_file(inputPath, std::ifstream::binary);
+    people_file >> data;
+    string textureRead = "texture";
+    string textureReadTemp = "texture";
+    int numberofTextures = data["Resources"]["Textures"].size();
+    cout << "Number of textures are   " << numberofTextures << endl
+         << endl
+         << endl;
+    for (int pos = 1; pos <= numberofTextures; pos++)
+    {
+        textureRead += to_string(pos);
+        cout << textureRead << endl;
+        bool isLoaded = data["Resources"]["Textures"][pos - 1][textureRead]["isLoaded"].asBool();
+        string textureName = data["Resources"]["Textures"][pos - 1][textureRead]["name"].asString();
+        if (isLoaded)
+        {
+            string texturePath = data["Resources"]["Textures"][pos - 1][textureRead]["path"].asString();
+            //Defualt values in case not given in json file
+            bool activeMipMap = true;
+            int mipMapLevel = 0;
+            int width = 256;
+            int height = 128;
+            int unpack = 0;
+            if (data["Resources"]["Textures"][pos - 1][textureRead]["active_MipMap"])
+            {
+                activeMipMap = data["Resources"]["Textures"][pos - 1][textureRead]["active_MipMap"].asBool();
+            }
+
+            if (data["Resources"]["Textures"][pos - 1][textureRead]["mipMapLevel"])
+            {
+                mipMapLevel = data["Resources"]["Textures"][pos - 1][textureRead]["mipMapLevel"].asInt();
+            }
+            if (data["Resources"]["Textures"][pos - 1][textureRead]["width"])
+            {
+                width = data["Resources"]["Textures"][pos - 1][textureRead]["width"].asInt();
+            }
+            if (data["Resources"]["Textures"][pos - 1][textureRead]["height"])
+            {
+                height = data["Resources"]["Textures"][pos - 1][textureRead]["height"].asInt();
+            }
+            if (data["Resources"]["Textures"][pos - 1][textureRead]["unPack"])
+            {
+                unpack = data["Resources"]["Textures"][pos - 1][textureRead]["unPack"].asInt();
+            }
+            /*cout << endl
+                 << endl
+                 << activeMipMap << mipMapLevel << width << height << unpack << endl
+                 << endl;*/
+            //textures[textureName] = CreationFromBase(isLoaded);
+            textures[textureName] = CreationFromBase(isLoaded, texturePath, activeMipMap, mipMapLevel, width, height, unpack, {0, 0}, {0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0});
+            cout << endl
+                 << textures[textureName] << endl;
+        }
+        else
+        {
+            int size[2];
+            int patternSize[2];
+            int color1[4];
+            int color2[4];
+            //Fill Size and Pattern size
+            for (int i = 0; i < 2; i++)
+            {
+                size[i] = data["Resources"]["Textures"][pos - 1][textureRead]["size"][i].asInt();
+                patternSize[i] = data["Resources"]["Textures"][pos - 1][textureRead]["patternSize"][i].asInt();
+            }
+            //{size[0], size[1]};
+            //{patternSize[0], patternSize[1]};
+            for (int j = 0; j < 4; j++)
+            {
+                color1[j] = data["Resources"]["Textures"][pos - 1][textureRead]["color1"][j].asInt();
+                color2[j] = data["Resources"]["Textures"][pos - 1][textureRead]["color2"][j].asInt();
+            }
+            textures[textureName] = CreationFromBase(isLoaded, " ", 0, 0, 0, 0, 0, {size[0], size[1]}, {patternSize[0], patternSize[1]}, {color1[0], color1[1], color1[2], color1[3]}, {color2[0], color2[1], color2[2], color2[3]});
+            cout << endl
+                 << textures[textureName] << endl;
+        }
+        //last line
+        textureRead = textureReadTemp;
+    }
+}

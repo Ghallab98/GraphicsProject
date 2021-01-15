@@ -34,13 +34,21 @@ private:
     //CALLED FROM THE READ FUNCTION HERE
     static CameraControllerComponent *CreationFromBase(Entity *camEntity, Application *app)
     {
+        cout << "Dakhalttttttttttt " << endl;
         CameraControllerComponent *CamController = new CameraControllerComponent(app, camEntity);
+        cout << endl
+             << "Dakhalttttttttttt 22222222222222222222" << endl;
         return CamController;
     }
 
 public:
     CameraControllerComponent(Application *application, Entity *myEntity)
     {
+        if (myEntity->getCameraComponent())
+        {
+            cout << endl
+                 << "THIS ISSSS A CAMERAAAAA  " << endl;
+        }
         this->app = application;
 
         int width, height = 0;
@@ -214,7 +222,8 @@ public:
         Json::Value data;
         std::ifstream people_file(path, std::ifstream::binary);
         people_file >> data;
-        int numOfCamController = data["Camera Controllers"]["Array"].size();
+        int numOfCamController = data["World"]["Camera Controllers"]["Array"].size();
+        cout << "INSIDEEEEE THE CAMERAAAA CONTROLLLLLERRRRRR " << numOfCamController << endl;
         //Temp vector of each camera controller keys
         map<string, int> tempMap;
         tempMap["front"] = -1;
@@ -234,13 +243,13 @@ public:
         string crouchString;
         for (int i = 0; i < numOfCamController; i++)
         {
-            numOfEntityToControl = data["Camera Controllers"]["Array"][i]["Number of Entity to Control"].asInt();
-            upString = data["Camera Controllers"]["Array"][i]["Keys"]["Front"].asString();
-            downString = data["Camera Controllers"]["Array"][i]["Keys"]["Back"].asString();
-            rightString = data["Camera Controllers"]["Array"][i]["Keys"]["Right"].asString();
-            leftString = data["Camera Controllers"]["Array"][i]["Keys"]["Left"].asString();
-            jumpString = data["Camera Controllers"]["Array"][i]["Keys"]["Jump"].asString();
-            crouchString = data["Camera Controllers"]["Array"][i]["Keys"]["Crouch"].asString();
+            numOfEntityToControl = data["World"]["Camera Controllers"]["Array"][i]["Number of Entity to Control"].asInt();
+            upString = data["World"]["Camera Controllers"]["Array"][i]["Keys"]["Front"].asString();
+            downString = data["World"]["Camera Controllers"]["Array"][i]["Keys"]["Back"].asString();
+            rightString = data["World"]["Camera Controllers"]["Array"][i]["Keys"]["Right"].asString();
+            leftString = data["World"]["Camera Controllers"]["Array"][i]["Keys"]["Left"].asString();
+            jumpString = data["World"]["Camera Controllers"]["Array"][i]["Keys"]["Jump"].asString();
+            crouchString = data["World"]["Camera Controllers"]["Array"][i]["Keys"]["Crouch"].asString();
             // retrieve the glfwNumbers for the fetched key names and place it in the map of keys
             CameraControllerComponentControllersTemp[i]["front"] = keyboardControls[upString];
             CameraControllerComponentControllersTemp[i]["back"] = keyboardControls[downString];
@@ -261,8 +270,9 @@ public:
             //
             entitesPos.push_back(numOfEntityToControl - 1); //Where is position of the camera controller entity
             camControllerVector.push_back(CreationFromBase(entities[numOfEntityToControl - 1], app));
+            cout << "WESEEEEEELLLT L HENNAAAAAA     " << numOfEntityToControl << endl;
             CameraControllerComponentControllers = CameraControllerComponentControllersTemp; // map for each camera controller component of the glfw key numbers
-            cout << "HEREEEEEEEEEEEEEEEEEEEEE" << endl
+            /*cout << "HEREEEEEEEEEEEEEEEEEEEEE" << endl
                  << endl
                  << endl;
             cout << CameraControllerComponentControllers[i]["front"] << endl;
@@ -270,7 +280,9 @@ public:
             cout << CameraControllerComponentControllers[i]["right"] << endl;
             cout << CameraControllerComponentControllers[i]["left"] << endl;
             cout << CameraControllerComponentControllers[i]["jump"] << endl;
-            cout << CameraControllerComponentControllers[i]["crouch"] << endl;
+            cout << CameraControllerComponentControllers[i]["crouch"] << endl;*/
+            cout << endl
+                 << "THE INDEX ISSSSSSSSSSSSSS  " << i << endl;
         }
     }
 };

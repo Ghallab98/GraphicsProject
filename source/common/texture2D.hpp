@@ -3,12 +3,20 @@
 
 #include <data-types.h>
 #include <iostream>
-#include <string>
 #include <glad/gl.h>
 #include <glm/vec2.hpp>
-
-namespace gameTemp {
-    class Texture {
+#include <iostream>
+#include "../../vendor/jsoncpp/include/json/value.h"
+#include "../../vendor/jsoncpp/include/json/json.h"
+#include <fstream>
+#include <string.h>
+#include <vector>
+#include <unordered_map>
+using namespace std;
+namespace gameTemp
+{
+    class Texture
+    {
     private:
         GLuint texture = -1;
         //enum textureType;
@@ -17,17 +25,23 @@ namespace gameTemp {
         int width;
         int height;
         int unpack;
-    public :
-        void create(bool Active_Mipmap,int mipmapLevel,int width, int height,int unpack,const char *filename);
+        //To be called from the Read Data fn
+        static Texture *CreationFromBase(bool isLoaded, string path, bool activeMipMap = 0, int mipMapLevel = 0, int width = 0, int height = 0, int unpack = 0, glm::ivec2 size = {0, 0}, glm::ivec2 patternSize = {0, 0}, gameTemp::Color color1 = {0, 0, 0, 0}, gameTemp::Color color2 = {0, 0, 0, 0});
 
-        void destroy() {
+    public:
+        void create(bool Active_Mipmap, int mipmapLevel, int width, int height, int unpack, const char *filename);
+
+        void destroy()
+        {
             glDeleteTextures(1, &this->texture);
         };
 
-        Texture(){
+        Texture()
+        {
             glGenTextures(1, &(this->texture));
         };
-        ~Texture(){
+        ~Texture()
+        {
             destroy();
         };
 
@@ -35,11 +49,13 @@ namespace gameTemp {
 
         void setTexture(GLuint texture);
 
-        glm::ivec2 loadImage(const char* filename);
-        void checkerBoard(GLuint texture, glm::ivec2 size, glm::ivec2 patternSize, gameTemp::Color color1, gameTemp::Color color2);
+        glm::ivec2 loadImage(const char *filename);
+        void checkerBoard(glm::ivec2 size, glm::ivec2 patternSize, gameTemp::Color color1, gameTemp::Color color2);
         Texture(Texture const &) = delete;
         Texture &operator=(Texture const &) = delete;
+        //Read Data
+        static void ReadData(string inputPath, unordered_map<string, Texture *> &textures);
     };
 
-}
-#endif 
+} // namespace gameTemp
+#endif

@@ -1,79 +1,176 @@
 {
-    "NumberOfEntities": 5,
-    "NumberOfCameraEntities":1,
-    "Camera Controllers":{
-      "Array":[
+  "Resources":{
+    "Shaders":[
         {
-          "Number of Entity to Control":6,
-          "Keys":{
-            "Front":"up",
-            "Back":"down",
-            "Right":"right",
-            "Left":"left",
-            "Jump":"space",
-            "Crouch":"c"
-          }
+          "shader1":{
+          "vertex":"assets/shaders/transform.vert",
+          "fragment":"assets/shaders/tint.frag"
         }
-      ]
-    },
-    "entity1": {
-      "camera":false,
-      "entityParentNum": null,
-      "Transformation Component": {
-        "position": [ -2, 1, -2 ],
-        "rotation": [ 0, 0, 0 ],
-        "scale": [ 2, 2, 2 ]
-      }
-    },
-    "entity2": {
-      "camera":false,
-      "entityParentNum": 1,
-      "Transformation Component": {
-        "position": [ 2, 2, -2 ],
-        "rotation": [ 0, 0, 0 ],
-        "scale": [ 1, 1, 1 ]
-      }
-    },
-    "entity3": {
-      "camera":false,
-      "entityParentNum": 2,
-      "Transformation Component": {
-        "position": [ -2, 1, 2 ],
-        "rotation": [ 0, 0, 0 ],
-        "scale": [ 2, 2, 2 ]
-      }
-    },
-    "entity4":{
-      "camera":false,
-      "entityParentNum": null,
-      "Transformation Component": {
-        "position": [ -2, 2, -2 ],
-        "rotation": [ 0, 0, 0 ],
-        "scale": [ 2, 2, 2 ]
-      }
-    },
-    "entity5":{
-      "camera":false,
-      "entityParentNum": null,
-      "Transformation Component": {
-        "position": [ 0, 0, 0 ],
-        "rotation": [ 0, 0, 0 ],
-        "scale": [ 500, 1, 500 ]
-      }
-    },
-    "entity6":{
-      "camera":true,
-      "entityParentNum": null,
-      "Transformation Component": {
-        "position": [ 0, 0, 0 ],
-        "rotation": [ 0, 0, 0 ],
-        "scale": [ 0, 0, 0 ]
       },
-      "Camera Component" :{
-        "Eye Position" :[10,10,10],
-        "Target":[0,0,0],
-        "Up Direction":[0,1,0]
+        {
+          "shader2":{
+          "vertex":"assets/shaders/texture/transform.vert",
+          "fragment":"assets/shaders/texture/texture.frag"
+        }
       }
+    ],
+    "Textures":[
+      {
+        "texture1":{
+          "isLoaded":true,
+          "name":"moon",
+          "active_MipMap":true,
+          "mipMapLevel":0,
+          "width":256,
+          "height":128,
+          "unPack": 0,
+          "path":"assets/images/moon.jpg"
+        }
+      },
+      {
+        "texture2":{
+          "isLoaded":true,
+          "name":"color-grid",
+          "active_MipMap":true,
+          "mipMapLevel":0,
+          "width":256,
+          "height":128,
+          "unPack": 0,
+          "path":"assets/images/color-grid.png"
+        }
+      },
+      {
+        "texture3":{
+          "isLoaded":false,
+          "name":"checkerboard",
+          "size":[256,256],
+          "patternSize":[128,128],
+          "color1":[255,255,255,255],
+          "color2":[16,16,16,225]
+        }
+      }
+    ]
+  },
+  "World":{
+      "NumberOfEntities": 6,
+      "NumberOfCameraEntities":1,
+      "Camera Controllers":{
+        "Array":[
+          {
+            "Number of Entity to Control":6,
+            "Keys":{
+              "Front":"up",
+              "Back":"down",
+              "Right":"right",
+              "Left":"left",
+              "Jump":"space",
+              "Crouch":"c"
+            }
+          }
+        ]
+      },
+      "entity1": {
+        "camera":false,
+        "entityParentNum": null,
+        "Transformation Component": {
+          "position": [ -2, 1, -2 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 2, 2, 2 ]
+        },
+        "Material":{
+          "Textures Arr":["texture2"],
+          "Samplers Arr":[]
+        }
+      },
+      "entity2": {
+        "camera":false,
+        "entityParentNum": 1,
+        "Transformation Component": {
+          "position": [ 2, 2, -2 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 1, 1, 1 ]
+        },
+        "Material":{
+          "Textures Arr":["texture2"],
+          "Samplers Arr":[]
+        }
+      },
+      "entity3": {
+        "camera":false,
+        "entityParentNum": 2,
+        "Transformation Component": {
+          "position": [ -2, 1, 2 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 2, 2, 2 ]
+        },
+        "Material":{
+          "Textures Arr":["texture1"],
+          "Samplers Arr":[]
+        }
+      },
+      "entity4":{
+        "camera":false,
+        "entityParentNum": null,
+        "Transformation Component": {
+          "position": [ -2, 2, -2 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 2, 2, 2 ]
+        },
+        "Material":{
+          "Textures Arr":["none"],
+          "Samplers Arr":[]
+        }
+      },
+      "entity5":{
+        "camera":false,
+        "entityParentNum": null,
+        "Transformation Component": {
+          "position": [ 0, 0, 0 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 500, 1, 500 ]
+        },
+        "Material":{
+          "Textures Arr":["texture3"],
+          "Samplers Arr":[]
+        }
+      },
+      "entity6":{
+        "camera":true,
+        "entityParentNum": null,
+        "Transformation Component": {
+          "position": [ 0, 0, 0 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 0, 0, 0 ]
+        },
+        "Camera Component" :{
+          "Eye Position" :[10,10,10],
+          "Target":[0,0,0],
+          "Up Direction":[0,1,0]
+        },
+        "Material":{
+          "Textures":[],
+          "Samplers":[]
+        }
 
+      },
+      "entity7":{
+        "camera":true,
+        "entityParentNum": null,
+        "Transformation Component": {
+          "position": [ 0, 0, 0 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 0, 0, 0 ]
+        },
+        "Camera Component" :{
+          "Eye Position" :[10,10,10],
+          "Target":[0,0,0],
+          "Up Direction":[0,1,0]
+        },
+        "Material":{
+          "Textures":[],
+          "Samplers":[]
+        }
+
+      }
     }
-  }
+}
