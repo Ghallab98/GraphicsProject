@@ -24,6 +24,7 @@ class GameState : public State
     //
     vector<Entity *> entities;
     vector<TransformationComponent *> tcVector;
+    vector<MeshRenderer *> meshRenderVector;
     //Camera Controller Vars
     vector<CameraControllerComponent *> camControllerVector;
     vector<map<string, int>> CameraControllerComponentControllers; //map for each camera controller of the keys
@@ -37,10 +38,10 @@ class GameState : public State
     vector<int> cameraCtrlPos; //camera controller position in entities array
     //
     RendererSystem rendererSystem;
-    //Textures Map and Samplers Vector
+    //Materials Vector Textures Map and Samplers Vector
+    vector<Material *> materialVec;
     std::unordered_map<std::string, gameTemp::Texture *> textures;
     vector<gameTemp::Sampler *> sampVec;
-    string current_texture_name;
     //Private fns
     static void ShaderInitializition(string inputFilepath, int &numOfShaders, vector<string> &programsName, vector<string> &vertexShaderPath, vector<string> &fragmentShaderPath)
     {
@@ -64,6 +65,84 @@ class GameState : public State
             shaderName = shaderNameTemp;
         }
     }
+    static void MeshInitializition(string inputFilepath, map<string, gameTemp::Mesh> &models)
+    {
+        Json::Value data;
+        std::ifstream people_file(inputFilepath, std::ifstream::binary);
+        people_file >> data;
+        int meshesNum = data["Resources"]["Meshes"].size();
+        for (int i = 0; i < meshesNum; i++)
+        {
+            bool isLoadable = data["Resources"]["Meshes"][i]["isLoadable"].asBool();
+            string meshName = data["Resources"]["Meshes"][i]["name"].asString();
+            if (!isLoadable)
+            {
+                bool coloredFaces = data["Resources"]["Meshes"][i]["colored"].asBool();
+                float center[3] = {0, 0, 0};
+                if (data["Resources"]["Meshes"][i]["center"].size() != 0)
+                {
+                    center[0] = data["Resources"]["Meshes"][i]["center"][0].asFloat();
+                    center[1] = data["Resources"]["Meshes"][i]["center"][1].asFloat();
+                    center[2] = data["Resources"]["Meshes"][i]["center"][2].asFloat();
+                }
+                glm::vec3 centerVec = {center[0], center[1], center[2]};
+                if (meshName == "cuboid")
+                {
+                    float size[3] = {1, 1, 1};
+                    if (data["Resources"]["Meshes"][i]["size"].size() != 0)
+                    {
+                        size[0] = data["Resources"]["Meshes"][i]["size"][0].asFloat();
+                        size[1] = data["Resources"]["Meshes"][i]["size"][1].asFloat();
+                        size[2] = data["Resources"]["Meshes"][i]["size"][2].asFloat();
+                    }
+                    glm::vec3 sizeVec = {size[0], size[1], size[2]};
+                    gameTemp::mesh_utils::Cuboid(models["cuboid"], coloredFaces, centerVec, sizeVec);
+                }
+                else if (meshName == "sphere")
+                {
+                    float raduis = data["Resources"]["Meshes"][i]["radius"].asFloat();
+                    gameTemp::mesh_utils::Sphere(models["sphere"], coloredFaces, centerVec, raduis);
+                }
+                else if (meshName == "plane")
+                {
+                    float resolution[2] = {1, 1};
+                    float sizeP[2] = {1, 1};
+                    float texOffSet[2] = {0, 0};
+                    float texTiling[2] = {1, 1};
+                    if (data["Resources"]["Meshes"][i]["resolution"].size() != 0)
+                    {
+                        resolution[0] = data["Resources"]["Meshes"][i]["resolution"][0].asFloat();
+                        resolution[1] = data["Resources"]["Meshes"][i]["resolution"][1].asFloat();
+                    }
+                    glm::vec2 resVector = {resolution[0], resolution[1]};
+                    if (data["Resources"]["Meshes"][i]["size"].size() != 0)
+                    {
+                        sizeP[0] = data["Resources"]["Meshes"][i]["size"][0].asFloat();
+                        sizeP[1] = data["Resources"]["Meshes"][i]["size"][1].asFloat();
+                    }
+                    glm::vec2 resSizeP = {sizeP[0], sizeP[1]};
+                    if (data["Resources"]["Meshes"][i]["texture offset"].size() != 0)
+                    {
+                        texOffSet[0] = data["Resources"]["Meshes"][i]["texture offset"][0].asFloat();
+                        texOffSet[1] = data["Resources"]["Meshes"][i]["texture offset"][1].asFloat();
+                    }
+                    glm ::vec2 texOffVec = {texOffSet[0], texOffSet[1]};
+                    if (data["Resources"]["Meshes"][i]["texture tiling"].size() != 0)
+                    {
+                        texTiling[0] = data["Resources"]["Meshes"][i]["texture tiling"][0].asFloat();
+                        texTiling[1] = data["Resources"]["Meshes"][i]["texture tiling"][1].asFloat();
+                    }
+                    glm ::vec2 texTileVector = {texTiling[0], texTiling[1]};
+                    gameTemp::mesh_utils::Plane(models["plane"], resVector, coloredFaces, centerVec, resSizeP, texOffVec, texTileVector);
+                }
+            }
+            else
+            {
+                string path = data["Resources"]["Meshes"][i]["path"].asString();
+                gameTemp::mesh_utils::loadOBJ(models[meshName], path.c_str());
+            }
+        }
+    }
 
 public:
     GameState(Application *app = nullptr) : State(app)
@@ -79,10 +158,9 @@ public:
         vector<string> fragmentShaderPath;
         int numOfShaders;
         ShaderInitializition(path, numOfShaders, programsName, vertexShaderPath, fragmentShaderPath);
-        //cout << "The number of shaders are  " << numOfShaders << endl;
+        MeshInitializition(path, models);
         for (int i = 0; i < numOfShaders; i++)
         {
-            //cout << programsName[i] << "   " << vertexShaderPath[i] << "    " << fragmentShaderPath[i] << endl;
             programs[programsName[i]].create();
             programs[programsName[i]].attach(vertexShaderPath[i], GL_VERTEX_SHADER);
             programs[programsName[i]].attach(fragmentShaderPath[i], GL_FRAGMENT_SHADER);
@@ -94,14 +172,14 @@ public:
         int numOfCamEntities = 0;
         int numOfCamCtrls = 0;
         Component::ReadData(path, numOfEntities, numOfCamEntities, numOfCamCtrls);
-        cout << endl
+        /*cout << endl
              << endl
              << "Number of entitess " << numOfEntities << endl;
         cout << endl
              << endl
              << "Number of Camera entitess " << numOfCamEntities << endl;
         cout << endl
-             << "Numbbbbber of camera controller are " << numOfCamCtrls << endl;
+             << "Numbbbbber of camera controller are " << numOfCamCtrls << endl;*/
         //Creation of Entites and Camera Entites
         for (int i = 0; i < numOfEntities + numOfCamEntities; i++)
         {
@@ -112,35 +190,19 @@ public:
         //--Camera Component
         CameraComponent ::ReadData(path, numOfEntities + numOfCamEntities, camVector, isEntityCamera);
 
-        //cout << "The size of the camera component vector is " << camVector.size() << endl;
-        //cout << "The size of the camera component vector boolean array is " << isEntityCamera.size() << endl;
-        /*for (int k = 0; k < isEntityCamera.size(); k++)
-        {
-            cout << isEntityCamera[k] << endl;
-        }*/
-
         //ATTCHAING OF ALL TRANSOFRMATION COMPONENTS AND CAMERA COMPONENTS TO ENTITES+CAMERA ENTITES
         for (int index = 0; index < numOfEntities + numOfCamEntities; index++)
         {
             entities[index]->addComponent(tcVector[index]);
             entities[index]->addComponent(camVector[index]);
-            /*cout << endl
-                 << entities[index] << endl;*/
         }
         //THIS BLOCK IS AFTER ATTACHING CAMERA COMPONENT TO ENTITIES FOR USAGE IN CAMERA CONTROLLER CONSTRUCTOR
         //--Camera Controller Component
         CameraControllerComponent::ReadData(path, entities, camControllerVector, app, cameraCtrlPos, CameraControllerComponentControllers);
 
-        for (int o = 0; o < camControllerVector.size(); o++)
-        {
-            cout << endl
-                 << "Camera controller vector is " << camControllerVector[o] << endl;
-        }
         int itIndex = 0;
         for (int i = 0; i < camControllerVector.size(); i++)
         {
-            cout << endl
-                 << cameraCtrlPos[itIndex] << endl;
             currentCameraTempVec.push_back(entities[cameraCtrlPos[itIndex]]);
             entities[cameraCtrlPos[itIndex]]->addComponent(camControllerVector[i]);
             itIndex++;
@@ -149,93 +211,33 @@ public:
         currentCamera = currentCameraTempVec[0];
         currentCameraIndex = 0;
         //
-        cout << endl
-             << "Doneeeee" << endl;
+
         //////////////////////////////////////////////////////////////////////////////////////////////
+        //Textures
         gameTemp::Texture ::ReadData(path, textures);
-        //--Loading a sampler
-        gameTemp::Sampler *sampler = new gameTemp::Sampler();
-        sampler->create();
-        sampVec.push_back(sampler);
-        //sampler 2
-        gameTemp::Sampler *sampler2 = new gameTemp::Sampler();
-        sampler2->create(GL_MIRROR_CLAMP_TO_EDGE);
-        sampVec.push_back(sampler2);
-
-        // -- Initializing mesh components
-        gameTemp::mesh_utils::Cuboid(models["cuboid"], true);
-        gameTemp::mesh_utils::Sphere(models["sphere"], {32, 16}, true);
-        gameTemp::mesh_utils::Plane(models["plane"], {1, 1}, false, {0, 0, 0}, {1, 1}, {0, 0}, {100, 100});
-
-        Material *m1 = new Material(&programs[programsName[1]]);
-        m1->addTextureAndSampler(textures["moon"], sampVec[0]);
-        Material *m2 = new Material(&programs[programsName[1]]);
-        m2->addTextureAndSampler(textures["color-grid"], sampVec[0]);
-        Material *m3 = new Material(&programs[programsName[1]]);
-        m3->addTextureAndSampler(textures["checkerboard"], sampVec[1]);
-        Material *m4 = new Material(&programs[programsName[0]]);
-        //setting the texture and sampler of the material class with a value
-        //creation of a unifrom and ataching it to uniforms map
+        //Samplers
+        gameTemp::Sampler::ReadData(path, sampVec);
+        //Material
+        Material::ReadData(path, textures, sampVec, programs, materialVec);
+        //Mesh Rendrer
+        MeshRenderer ::ReadData(path, numOfEntities + numOfCamEntities, models, materialVec, meshRenderVector);
+        //Adding Mesh Renderer component to entites
+        for (int l = 0; l < meshRenderVector.size(); l++)
+        {
+            entities[l]->addComponent(meshRenderVector[l]);
+        }
+        ///////////////////////////////////////////////////////////////////////
         glm::vec4 *tintVec = new glm::vec4(1, 1, 1, 0.8);
         glm::vec4 *tintVec2 = new glm::vec4(0.96, 0.9, 0.64, 1);
-        m1->AddUniform<glm::vec4>("tint", tintVec);
-        m2->AddUniform<glm::vec4>("tint", tintVec);
-        m3->AddUniform<glm::vec4>("tint", tintVec2);
-        m4->AddUniform<glm::vec4>("tint", tintVec);
-        //With texture 1
-        entities[2]->addComponent(new MeshRenderer(m1, &models["sphere"]));
-        entities[3]->addComponent(new MeshRenderer(m4, &models["sphere"]));
-
-        //With texture 2
-        entities[0]->addComponent(new MeshRenderer(m2, &models["cuboid"]));
-        entities[1]->addComponent(new MeshRenderer(m2, &models["cuboid"]));
-
-        //With texture 3
-        entities[4]->addComponent(new MeshRenderer(m3, &models["plane"]));
-
-        //CREATE OBJECT PROPERTY OBj
-        ObjectProperties *obj = new ObjectProperties();
-        ObjectProperties *obj2 = new ObjectProperties();
-
-        //CULLING INTIALZATIONS
-        struct Culling myCull;
-        myCull.enabled = true;
-        myCull.cullFace = BACK;
-        myCull.direction = CCW;
-        //
-        struct Culling myCull2;
-        myCull.enabled = false;
-        myCull.cullFace = BACK;
-        myCull.direction = CCW;
-
-        //BLENDING INITIALZATIONS
-        struct Blending myBlend2;
-        myBlend2.enabled = true;
-        myBlend2.type = NotConstant;
-        glm::vec4 blend_constant_color2 = {0.25f, 1.0f, 0.75f, 0.5f};
-        myBlend2.destClr = blend_constant_color2;
-
-        //CONSTANT BLENDING INTIALZATIONS
-        struct Blending myBlend;
-        myBlend.enabled = false;
-        glm::vec4 blend_constant_color = {0.25f, 1.0f, 0.75f, 0.5f};
-        myBlend.constClr = blend_constant_color;
-        //Set blend and cull fo object properties
-        obj->setCullObjProp(&myCull);
-        obj2->setCullObjProp(&myCull2);
-        obj->setBlendObjProp(&myBlend);
-        obj2->setBlendObjProp(&myBlend2);
-        //
-        m1->setObjProp(obj);
-        m2->setObjProp(obj);
-        m3->setObjProp(obj);
-        m4->setObjProp(obj2);
+        materialVec[0]->AddUniform<glm::vec4>("tint", tintVec);
+        materialVec[1]->AddUniform<glm::vec4>("tint", tintVec);
+        materialVec[2]->AddUniform<glm::vec4>("tint", tintVec2);
+        materialVec[3]->AddUniform<glm::vec4>("tint", tintVec);
+        ///////////////////////////////////////////////////////////////////////
 
         // -- Initializing GL
         glUseProgram(programs[programsName[1]]);
         rendererSystem.setEntitiesVector(&entities);
-        cout << "finished on eneter" << endl
-             << endl;
     }
 
     void onDraw(double deltaTime) override

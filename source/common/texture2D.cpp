@@ -102,13 +102,13 @@ void gameTemp::Texture::ReadData(string inputPath, unordered_map<string, gameTem
     string textureRead = "texture";
     string textureReadTemp = "texture";
     int numberofTextures = data["Resources"]["Textures"].size();
-    cout << "Number of textures are   " << numberofTextures << endl
+    /*cout << "Number of textures are   " << numberofTextures << endl
          << endl
-         << endl;
+         << endl;*/
     for (int pos = 1; pos <= numberofTextures; pos++)
     {
         textureRead += to_string(pos);
-        cout << textureRead << endl;
+        //cout << textureRead << endl;
         bool isLoaded = data["Resources"]["Textures"][pos - 1][textureRead]["isLoaded"].asBool();
         string textureName = data["Resources"]["Textures"][pos - 1][textureRead]["name"].asString();
         if (isLoaded)
@@ -146,9 +146,10 @@ void gameTemp::Texture::ReadData(string inputPath, unordered_map<string, gameTem
                  << activeMipMap << mipMapLevel << width << height << unpack << endl
                  << endl;*/
             //textures[textureName] = CreationFromBase(isLoaded);
+            //Save in the textures Map
             textures[textureName] = CreationFromBase(isLoaded, texturePath, activeMipMap, mipMapLevel, width, height, unpack, {0, 0}, {0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0});
-            cout << endl
-                 << textures[textureName] << endl;
+            /*cout << endl
+                 << textures[textureName] << endl;*/
         }
         else
         {
@@ -162,16 +163,16 @@ void gameTemp::Texture::ReadData(string inputPath, unordered_map<string, gameTem
                 size[i] = data["Resources"]["Textures"][pos - 1][textureRead]["size"][i].asInt();
                 patternSize[i] = data["Resources"]["Textures"][pos - 1][textureRead]["patternSize"][i].asInt();
             }
-            //{size[0], size[1]};
-            //{patternSize[0], patternSize[1]};
+            //Fill Color1 and Color2
             for (int j = 0; j < 4; j++)
             {
                 color1[j] = data["Resources"]["Textures"][pos - 1][textureRead]["color1"][j].asInt();
                 color2[j] = data["Resources"]["Textures"][pos - 1][textureRead]["color2"][j].asInt();
             }
+            //Save in the textures Map
             textures[textureName] = CreationFromBase(isLoaded, " ", 0, 0, 0, 0, 0, {size[0], size[1]}, {patternSize[0], patternSize[1]}, {color1[0], color1[1], color1[2], color1[3]}, {color2[0], color2[1], color2[2], color2[3]});
-            cout << endl
-                 << textures[textureName] << endl;
+            /*cout << endl
+                 << textures[textureName] << endl;*/
         }
         //last line
         textureRead = textureReadTemp;

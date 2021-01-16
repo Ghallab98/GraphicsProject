@@ -34,21 +34,13 @@ private:
     //CALLED FROM THE READ FUNCTION HERE
     static CameraControllerComponent *CreationFromBase(Entity *camEntity, Application *app)
     {
-        cout << "Dakhalttttttttttt " << endl;
         CameraControllerComponent *CamController = new CameraControllerComponent(app, camEntity);
-        cout << endl
-             << "Dakhalttttttttttt 22222222222222222222" << endl;
         return CamController;
     }
 
 public:
     CameraControllerComponent(Application *application, Entity *myEntity)
     {
-        if (myEntity->getCameraComponent())
-        {
-            cout << endl
-                 << "THIS ISSSS A CAMERAAAAA  " << endl;
-        }
         this->app = application;
 
         int width, height = 0;
@@ -223,7 +215,7 @@ public:
         std::ifstream people_file(path, std::ifstream::binary);
         people_file >> data;
         int numOfCamController = data["World"]["Camera Controllers"]["Array"].size();
-        cout << "INSIDEEEEE THE CAMERAAAA CONTROLLLLLERRRRRR " << numOfCamController << endl;
+        //cout << "INSIDEEEEE THE CAMERAAAA CONTROLLLLLERRRRRR " << numOfCamController << endl;
         //Temp vector of each camera controller keys
         map<string, int> tempMap;
         tempMap["front"] = -1;
@@ -270,7 +262,7 @@ public:
             //
             entitesPos.push_back(numOfEntityToControl - 1); //Where is position of the camera controller entity
             camControllerVector.push_back(CreationFromBase(entities[numOfEntityToControl - 1], app));
-            cout << "WESEEEEEELLLT L HENNAAAAAA     " << numOfEntityToControl << endl;
+            //cout << "WESEEEEEELLLT L HENNAAAAAA     " << numOfEntityToControl << endl;
             CameraControllerComponentControllers = CameraControllerComponentControllersTemp; // map for each camera controller component of the glfw key numbers
             /*cout << "HEREEEEEEEEEEEEEEEEEEEEE" << endl
                  << endl
@@ -281,8 +273,8 @@ public:
             cout << CameraControllerComponentControllers[i]["left"] << endl;
             cout << CameraControllerComponentControllers[i]["jump"] << endl;
             cout << CameraControllerComponentControllers[i]["crouch"] << endl;*/
-            cout << endl
-                 << "THE INDEX ISSSSSSSSSSSSSS  " << i << endl;
+            /* cout << endl
+                 << "THE INDEX ISSSSSSSSSSSSSS  " << i << endl;*/
         }
     }
 };

@@ -9,18 +9,22 @@
 #define STB_INCLUDE_IMPLEMENTATION
 #include <stb/stb_include.h>
 
-void gameTemp::ShaderProgram::create() {
+void gameTemp::ShaderProgram::create()
+{
     //Create Shader Program
     program = glCreateProgram();
 }
 
-void gameTemp::ShaderProgram::destroy() {
+void gameTemp::ShaderProgram::destroy()
+{
     //Delete Shader Program
-    if(program != 0) glDeleteProgram(program);
+    if (program != 0)
+        glDeleteProgram(program);
     program = 0;
 }
 
-bool gameTemp::ShaderProgram::attach(const std::string &filename, GLenum type) const {
+bool gameTemp::ShaderProgram::attach(const std::string &filename, GLenum type) const
+{
     // first, we use C++17 filesystem library to get the directory (parent) path of the file.
     // the parent path will be sent to stb_include to search for files referenced by any "#include" preprocessor command.
     auto file_path = std::filesystem::path(filename);
@@ -33,7 +37,8 @@ bool gameTemp::ShaderProgram::attach(const std::string &filename, GLenum type) c
     auto source = stb_include_file(&(file_path_string[0]), nullptr, path_to_includes, error);
 
     // Check if any loading errors happened
-    if (source == nullptr) {
+    if (source == nullptr)
+    {
         std::cerr << "ERROR: " << error << std::endl;
         return false;
     }
@@ -47,13 +52,14 @@ bool gameTemp::ShaderProgram::attach(const std::string &filename, GLenum type) c
     // lengths (const GLint*): an array of string lengths for each string in the third parameter. if null is passed,
     //                          then the function will deduce the lengths automatically by searching for '\0'.
     glShaderSource(shaderID, 1, &source, nullptr); //Send shader source code
-    glCompileShader(shaderID); //Compile the shader code
+    glCompileShader(shaderID);                     //Compile the shader code
     free(source);
 
     //Check and log for any error in the compilation process
     GLint status;
     glGetShaderiv(shaderID, GL_COMPILE_STATUS, &status);
-    if (!status) {
+    if (!status)
+    {
         GLint length;
         glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &length);
         char *logStr = new char[length];
@@ -66,18 +72,20 @@ bool gameTemp::ShaderProgram::attach(const std::string &filename, GLenum type) c
     }
 
     glAttachShader(program, shaderID); //Attach shader to program
-    glDeleteShader(shaderID); //Delete shader (the shader is already attached to the program so its object is no longer needed)
+    glDeleteShader(shaderID);          //Delete shader (the shader is already attached to the program so its object is no longer needed)
     return true;
 }
 
-bool gameTemp::ShaderProgram::link() const {
+bool gameTemp::ShaderProgram::link() const
+{
     //Link
     glLinkProgram(program);
 
     //Check and log for any error in the linking process
     GLint status;
     glGetProgramiv(program, GL_LINK_STATUS, &status);
-    if (!status) {
+    if (!status)
+    {
         GLint length;
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
         char *logStr = new char[length];

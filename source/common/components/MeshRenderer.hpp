@@ -16,7 +16,7 @@ class MeshRenderer : public Component
 private:
     Material *material;
     gameTemp::Mesh *pMesh;
-    static MeshRenderer *CreationFromBase();
+    static MeshRenderer *CreationFromBase(gameTemp::Mesh *myMesh, Material *myMaterial);
 
 public:
     MeshRenderer(Material *toBeAssignedMaterial, gameTemp::Mesh *pMesh);
@@ -27,7 +27,7 @@ public:
 
     void setMesh(gameTemp::Mesh *pMesh);
     //
-    static void ReadData(string inputFile, int numOfEntities, vector<Material *> materialClassVec, vector<MeshRenderer *> &tcVector);
+    void static ReadData(string inputPath, int numOfEntities, map<string, gameTemp::Mesh> &models, vector<Material *> &materialVec, vector<MeshRenderer *> &meshRendVector);
 
     ~MeshRenderer() {}
 };

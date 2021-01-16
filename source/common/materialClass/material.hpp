@@ -32,15 +32,18 @@ private:
     ObjectProperties *objProp;
     gameTemp::ShaderProgram *shaderPtr;
     map<std::string, uniform> uniformsMap;
-    vector<gameTemp::Texture*> texture;
-    vector<gameTemp::Sampler*> sampler;
+    vector<gameTemp::Texture *> texture;
+    vector<gameTemp::Sampler *> sampler;
+    //Creation from base function
+    static Material *CreationFromBase(gameTemp::ShaderProgram *myProgram, ObjectProperties *objPtr, vector<gameTemp ::Texture *> &recTexVec, vector<gameTemp ::Sampler *> &recSamplerVec);
 
 public:
     Material(gameTemp::ShaderProgram *specifiedShader);
 
     void setShaderProgram(gameTemp::ShaderProgram *specifiedShader);
     void setObjProp(ObjectProperties *obj);
-    void addTextureAndSampler(gameTemp::Texture* texture,gameTemp::Sampler* sampler = nullptr);
+    void addTexture(gameTemp::Texture *texture);
+    void addSampler(gameTemp::Sampler *sampler = nullptr);
     static void setIndex(int num1);
 
     template <class T>
@@ -48,12 +51,14 @@ public:
 
     gameTemp::ShaderProgram *getShaderProgram();
     ObjectProperties *getObjProp();
-    vector<gameTemp::Texture*> getTexture();
-    vector<gameTemp::Sampler*> getSampler();
+    vector<gameTemp::Texture *> getTexture();
+    vector<gameTemp::Sampler *> getSampler();
     int getIndex();
 
     void setProgramUniforms();
 
+    //Read Data function
+    static void ReadData(string inputFilePath, std::unordered_map<std::string, gameTemp::Texture *> &texMap, vector<gameTemp::Sampler *> &recSamplerVector, map<string, gameTemp::ShaderProgram> &programs, vector<Material *> &materialVec);
     ~Material();
 };
 

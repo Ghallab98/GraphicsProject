@@ -14,6 +14,33 @@
         }
       }
     ],
+    "Meshes": [
+      {
+        "name": "cuboid",
+        "isLoadable": false,
+        "colored": true,
+        "center": [],
+        "size": []
+      },
+      {
+        "name": "sphere",
+        "isLoadable": false,
+        "colored": true,
+        "center": [],
+        "radius": 0.48
+      },
+      {
+        "name": "plane",
+        "isLoadable": false,
+        "resolution":[],
+        "colored": false,
+        "center": [],
+        "size": [],
+        "texture offset":[0,0],
+        "texture tiling":[100,100]
+        
+      }
+    ],
     "Textures":[
       {
         "texture1":{
@@ -49,11 +76,36 @@
           "color2":[16,16,16,225]
         }
       }
+    ],
+    "Samplers":[
+      {
+        "sampler1":{
+          "magnification":"0x2601",
+          "minification":"0x2703",
+          "wrapt":"0x2901",
+          "wraps":"0x2901",
+          "max_anisotropy":true,
+          "anistropy":1.0,
+          "border_color":[0,0,0,1]
+        }
+      },
+      {
+        "sampler2":{
+          "magnification":"0x2601",
+          "minification":"0x2703",
+          "wrapt":"0x2901",
+          "wraps":"0x2901",
+          "max_anisotropy":true,
+          "anistropy":1.0,
+          "border_color":[0,0,0,1]
+
+        }
+      }
     ]
   },
   "World":{
-      "NumberOfEntities": 6,
-      "NumberOfCameraEntities":1,
+      "NumberOfEntities": 5,
+      "NumberOfCameraEntities":2,
       "Camera Controllers":{
         "Array":[
           {
@@ -69,6 +121,125 @@
           }
         ]
       },
+      "Materials":[
+        {
+          "material1":{
+            "texrures Refrence":[
+              {
+                "texture ref":"moon"
+              }
+            ],
+            "samplers Refrence":[
+              {
+                "sampler ref":1
+              }
+            ],
+            "object Property":{
+              "Culling":{
+                "enabled":false,
+                "face to cull":"BACK",
+                "winding direction":"CCW"
+              },
+              "Blending":{
+                "enabled":false,
+                "type":"Constant",
+                "src color":[],
+                "dest color":[],
+                "constClr":[0.25,1.0,0.75,0.5]
+
+              }
+            },
+            "shader name":"shader2"
+          }
+        },
+        {
+          "material2":{
+            "texrures Refrence":[
+              {
+                "texture ref":"color-grid"
+              }
+            ],
+            "samplers Refrence":[
+              {
+                "sampler ref":1
+              }
+            ],
+            "object Property":{
+              "Culling":{
+                "enabled":false,
+                "face to cull":"BACK",
+                "winding direction":"CCW"
+              },
+              "Blending":{
+                "enabled":false,
+                "type":"Constant",
+                "src color":[],
+                "dest color":[],
+                "constClr":[0.25,1.0,0.75,0.5]
+
+              }
+            },
+            "shader name":"shader2"
+          }
+        },
+        {
+          "material3":{
+            "texrures Refrence":[
+              {
+                "texture ref":"checkerboard"
+              }
+            ],
+            "samplers Refrence":[
+              {
+                "sampler ref":2
+              }
+            ],
+            "object Property":{
+              "Culling":{
+                "enabled":false,
+                "face to cull":"BACK",
+                "winding direction":"CCW"
+              },
+              "Blending":{
+                "enabled":false,
+                "type":"Constant",
+                "src color":[],
+                "dest color":[],
+                "constClr":[0.25,1.0,0.75,0.5]
+
+              }
+            },
+            "shader name":"shader2"
+          }
+        },
+        {
+          "material4":{
+            "texrures Refrence":[
+              
+            ],
+            "samplers Refrence":[
+              
+            ],
+            "object Property":{
+              "Culling":{
+                "enabled":true,
+                "face to cull":"BACK",
+                "winding direction":"CCW"
+              },
+              "Blending":{
+                "enabled":true,
+                "type":"Not-Constant",
+                "src color":[],
+                "dest color":[],
+                "constClr":[0.25,1.0,0.75,0.5]
+
+              }
+            },
+            "shader name":"shader1"
+          }
+        }
+
+      ],
       "entity1": {
         "camera":false,
         "entityParentNum": null,
@@ -77,9 +248,9 @@
           "rotation": [ 0, 0, 0 ],
           "scale": [ 2, 2, 2 ]
         },
-        "Material":{
-          "Textures Arr":["texture2"],
-          "Samplers Arr":[]
+        "Mesh Renderer":{
+          "material": 2,
+          "mesh":"cuboid"
         }
       },
       "entity2": {
@@ -90,9 +261,9 @@
           "rotation": [ 0, 0, 0 ],
           "scale": [ 1, 1, 1 ]
         },
-        "Material":{
-          "Textures Arr":["texture2"],
-          "Samplers Arr":[]
+        "Mesh Renderer":{
+          "material": 2,
+          "mesh":"cuboid"
         }
       },
       "entity3": {
@@ -103,9 +274,9 @@
           "rotation": [ 0, 0, 0 ],
           "scale": [ 2, 2, 2 ]
         },
-        "Material":{
-          "Textures Arr":["texture1"],
-          "Samplers Arr":[]
+        "Mesh Renderer":{
+          "material": 1,
+          "mesh":"sphere"
         }
       },
       "entity4":{
@@ -116,9 +287,9 @@
           "rotation": [ 0, 0, 0 ],
           "scale": [ 2, 2, 2 ]
         },
-        "Material":{
-          "Textures Arr":["none"],
-          "Samplers Arr":[]
+        "Mesh Renderer":{
+          "material": 4,
+          "mesh":"sphere"
         }
       },
       "entity5":{
@@ -129,9 +300,9 @@
           "rotation": [ 0, 0, 0 ],
           "scale": [ 500, 1, 500 ]
         },
-        "Material":{
-          "Textures Arr":["texture3"],
-          "Samplers Arr":[]
+        "Mesh Renderer":{
+          "material": 3,
+          "mesh":"plane"
         }
       },
       "entity6":{
@@ -146,12 +317,7 @@
           "Eye Position" :[10,10,10],
           "Target":[0,0,0],
           "Up Direction":[0,1,0]
-        },
-        "Material":{
-          "Textures":[],
-          "Samplers":[]
         }
-
       },
       "entity7":{
         "camera":true,
@@ -165,10 +331,6 @@
           "Eye Position" :[10,10,10],
           "Target":[0,0,0],
           "Up Direction":[0,1,0]
-        },
-        "Material":{
-          "Textures":[],
-          "Samplers":[]
         }
 
       }

@@ -195,8 +195,7 @@ void gameTemp::mesh_utils::Cuboid(Mesh& mesh,
     mesh.setElementData(elements);
 };
 
-void gameTemp::mesh_utils::Sphere(gameTemp::Mesh& mesh, const glm::ivec2& segments, bool colored,
-            const glm::vec3& center, float radius,
+void gameTemp::mesh_utils::Sphere(gameTemp::Mesh& mesh,bool colored,const glm::vec3& center, float radius, const glm::ivec2& segments,
             const glm::vec2& texture_offset, const glm::vec2& texture_tiling){
 
     std::vector<gameTemp::Vertex> vertices;

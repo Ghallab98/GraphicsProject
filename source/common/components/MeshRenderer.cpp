@@ -34,22 +34,33 @@ MeshRenderCommand MeshRenderer::getRenderCommand(const glm::mat4 &cameraMatrix)
 }
 
 //
-/*MeshRenderer *MeshRenderer::CreationFromBase()
+MeshRenderer *MeshRenderer::CreationFromBase(gameTemp::Mesh *myMesh, Material *myMaterial)
 {
-}*/
-
-void MeshRenderer::ReadData(string inputFile, int numOfEntities, vector<Material *> materialClassVec, vector<MeshRenderer *> &tcVector)
+    MeshRenderer *meshPtr = new MeshRenderer(myMaterial, myMesh);
+    return meshPtr;
+}
+//Read Data
+void MeshRenderer::ReadData(string inputPath, int numOfEntities, map<string, gameTemp::Mesh> &models, vector<Material *> &materialVec, vector<MeshRenderer *> &meshRendVector)
 {
     Json::Value data;
-    std::ifstream people_file(inputFile, std::ifstream::binary);
+    std::ifstream people_file(inputPath, std::ifstream::binary);
     people_file >> data;
     string entity = "entity";
     string entityTemp = "entity";
-    for (int num = 1; num <= numOfEntities; num++)
+    for (int pos = 1; pos <= numOfEntities; pos++)
     {
-        entity += to_string(num);
-
-        //last line in the for loop
+        entity += to_string(pos);
+        if (data["World"][entity]["Mesh Renderer"])
+        {
+            int materialNum = data["World"][entity]["Mesh Renderer"]["material"].asInt() - 1;
+            string meshName = data["World"][entity]["Mesh Renderer"]["mesh"].asString();
+            meshRendVector.push_back(CreationFromBase(&models[meshName], materialVec[materialNum]));
+        }
+        else
+        {
+            meshRendVector.push_back(nullptr);
+        }
+        //last line
         entity = entityTemp;
     }
 }
