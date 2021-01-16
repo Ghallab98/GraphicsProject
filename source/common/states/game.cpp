@@ -33,7 +33,7 @@ class GameState : public State
     vector<CameraComponent *> camVector;
     vector<bool> isEntityCamera;
     //
-    vector<Entity *> currentCameraTempVec;
+    vector<Entity *> currentCameraTempVecCtrl;
     Entity *currentCamera;
     vector<int> cameraCtrlPos; //camera controller position in entities array
     //
@@ -199,16 +199,17 @@ public:
         //THIS BLOCK IS AFTER ATTACHING CAMERA COMPONENT TO ENTITIES FOR USAGE IN CAMERA CONTROLLER CONSTRUCTOR
         //--Camera Controller Component
         CameraControllerComponent::ReadData(path, entities, camControllerVector, app, cameraCtrlPos, CameraControllerComponentControllers);
+        //cout << "The camera ctrl pos size isss  " << cameraCtrlPos.size() << endl;
 
         int itIndex = 0;
         for (int i = 0; i < camControllerVector.size(); i++)
         {
-            currentCameraTempVec.push_back(entities[cameraCtrlPos[itIndex]]);
+            currentCameraTempVecCtrl.push_back(entities[cameraCtrlPos[itIndex]]);
             entities[cameraCtrlPos[itIndex]]->addComponent(camControllerVector[i]);
             itIndex++;
         }
         //-- SET THE CURRENT CAMERA AS THE FIRST CAMERA ENTITY IN THE VECTOR AND THE CURRENT CAMERA INDEX IN THE VECTOR TO 0 (CHANGED ACCORDING TO THE LOGIC IN THE GAME)
-        currentCamera = currentCameraTempVec[0];
+        currentCamera = currentCameraTempVecCtrl[0];
         currentCameraIndex = 0;
         //
 
@@ -284,7 +285,34 @@ public:
         //Reset the static number in Material class to 0
         Material toDestroy(nullptr);
         toDestroy.setIndex(0);
-
+        //Destroy Transformation Component Vector
+        for (int i = 0; i < tcVector.size(); i++)
+        {
+            delete tcVector[i];
+        }
+        //Destroy Mesh Renderer Vector
+        for (int i = 0; i < meshRenderVector.size(); i++)
+        {
+            delete meshRenderVector[i];
+        }
+        //Destroy Camera Components Vector and the isCameraEntity vector will be deleted automatically
+        for (int i = 0; i < camVector.size(); i++)
+        {
+            delete camVector[i];
+        }
+        // Delete the current Camera Entity
+        delete currentCamera;
+        //Delete the Vector of cameras that is controlled by Camera/Movement Controller
+        for (int i = 0; i < currentCameraTempVecCtrl.size(); i++)
+        {
+            delete currentCameraTempVecCtrl[i];
+        }
+        //Delete Camera Controllers Vector
+        for (int i = 0; i < camControllerVector.size(); i++)
+        {
+            delete camControllerVector[i];
+        }
+        //CameraControllerComponentControllers will be automatically deleted
         //Destroy Textures
         for (auto &it : textures)
         {
@@ -294,7 +322,11 @@ public:
         //Destroy Samplers
         for (int i = 0; i < sampVec.size(); i++)
             delete sampVec[i];
-
+        //Delete Material Vectors
+        for (int i = 0; i < materialVec.size(); i++)
+        {
+            delete materialVec[i];
+        }
         // Destroy entities
         for (int i = 0, numEntities = entities.size(); i < numEntities; i++)
             delete entities[i];
