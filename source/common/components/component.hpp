@@ -43,8 +43,8 @@ public:
         numOfEntites = data["World"]["NumberOfEntities"].asInt();
         numOfCamEntities = data["World"]["NumberOfCameraEntities"].asInt();
         numOfCamController = data["World"]["Camera Controllers"]["Array"].size();
-        cout << endl
-             << "Numer of camera controller are " << numOfCamController << endl;
+        /*cout << endl
+             << "Numer of camera controller are " << numOfCamController << endl;*/
     }
 };
 

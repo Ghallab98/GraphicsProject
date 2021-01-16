@@ -1,7 +1,3 @@
-//
-// Created by Karim on 1/3/2021.
-//
-
 #include "light.hpp"
 
 Light::Light(LightType type, bool enabled = true, glm::vec3 color = {1, 1, 1},

@@ -1,7 +1,3 @@
-//
-// Created by Karim on 1/3/2021.
-//
-
 #ifndef LIGHT_HPP
 #define LIGHT_HPP
 

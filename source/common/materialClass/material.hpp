@@ -11,7 +11,6 @@
 #include <typeinfo>
 #include <shader.hpp>
 #include <vector>
-#include "./uniformType.hpp"
 #include "./objectProperties.cpp"
 #include "../texture2D.hpp"
 #include "../sampler.hpp"
