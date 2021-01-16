@@ -1,89 +1,139 @@
 #include "light.hpp"
 
-Light::Light(LightType type, bool enabled = true, glm::vec3 color = {1, 1, 1},
-             Attenuation attenuation = {0.0f, 0.0f, 1.0f},
-             spotAngle spot_angle = {glm::quarter_pi<float>(), glm::half_pi<float>()})
-{
-    this->type = type;
-    this->enabled = enabled;
-    this->color = color;
-    this->attenuation = attenuation;
-    this->spot_angle = spot_angle;
-}
-
-void Light::setType(LightType type)
+LightComponent::LightComponent(LightType type = LightType::DIRECTIONAL)
 {
     this->type = type;
 }
 
-void Light::setDirection(glm::vec3 direction)
+void LightComponent::setType(LightType type)
+{
+    this->type = type;
+}
+
+void LightComponent::setDirection(glm::vec3 direction)
 {
     this->direction = direction;
 }
 
-void Light::setPosition(glm::vec3 position)
+void LightComponent::setPosition(glm::vec3 position)
 {
     this->position = position;
 }
 
-void Light::setSpotAngle(SpotAngle s = {glm::quarter_pi<float>(), glm::half_pi<float>()})
+void LightComponent::setSpotAngle(SpotAngle s)
 {
     this->spot_angle.inner = s.inner;
     this->spot_angle.outer = s.outer;
 }
 
-void Light::setAttenuation(Attenuation a = {0.0f, 0.0f, 1.0f})
+void LightComponent::setAttenuation(Attenuation a)
 {
     this->attenuation.constant = a.constant;
     this->attenuation.linear = a.linear;
     this->attenuation.quadratic = a.quadratic;
 }
 
-LightType Light::getType() const
+LightType LightComponent::getType() const
 {
     return this->type;
 }
 
-glm::vec3 Light::getPosition() const
+void LightComponent::setColor(glm::vec3 color)
+{
+    this->color = color;
+}
+
+glm::vec3 LightComponent::getPosition() const
 {
     return this->position;
 }
 
-glm::vec3 Light::getDirection() const
+glm::vec3 LightComponent::getColor() const
+{
+    return this->color;
+}
+
+glm::vec3 LightComponent::getDirection() const
 {
     return this->direction;
 }
 
-Attenuation Light::getAttenuation() const
+Attenuation LightComponent::getAttenuation() const
 {
     return this->attenuation;
 }
 
-SpotAngle Light::getSpotAngle() const
+SpotAngle LightComponent::getSpotAngle() const
 {
     return this->spot_angle;
 }
 
-bool Light::isEnabled() const
+bool LightComponent::isEnabled() const
 {
     return this->enabled;
 }
 
-void Light::enable()
+void LightComponent::enable()
 {
     this->enabled = true;
 }
 
-void Light::disable()
+void LightComponent::disable()
 {
     this->enabled = false;
 }
 
-int Light::getComponentType()
+int LightComponent::getComponentType()
 {
     return LIGHT_COMPONENT;
 }
-//
-Light *Light::CreationFromBase()
+
+LightComponent::~LightComponent() {}
+
+void LightComponent::configureShader(int light_index, glm::mat4 cameraMatrix, ShaderProgram *program)
 {
+    if (!enabled)
+        return;
+
+    program->set("light_count", light_index + 1);
+    std::string prefix;
+    switch (type)
+    {
+    case LightType::SKYLIGHT:
+        program->set("sky_light.top_color", this->top_color);
+        program->set("sky_light.middle_color", this->middle_color);
+        program->set("sky_light.bottom_color", this->bottom_color);
+        break;
+    case LightType::DIRECTIONAL:
+        prefix = "lights[" + std::to_string(light_index) + "].";
+        program->set(prefix + "type", static_cast<int>(this->type));
+        program->set(prefix + "color", this->color);
+        program->set(prefix + "direction", glm::normalize(this->direction));
+        break;
+    case LightType::POINT:
+        prefix = "lights[" + std::to_string(light_index) + "].";
+        program->set(prefix + "type", static_cast<int>(this->type));
+        program->set(prefix + "color", this->color);
+        program->set(prefix + "position", this->position);
+        program->set(prefix + "attenuation_constant", this->attenuation.constant);
+        program->set(prefix + "attenuation_linear", this->attenuation.linear);
+        program->set(prefix + "attenuation_quadratic", this->attenuation.quadratic);
+        break;
+    case LightType::SPOT:
+        prefix = "lights[" + std::to_string(light_index) + "].";
+        program->set(prefix + "type", static_cast<int>(this->type));
+        program->set(prefix + "color", this->color);
+        program->set(prefix + "position", this->position);
+        program->set(prefix + "direction", glm::normalize(this->direction));
+        program->set(prefix + "attenuation_constant", this->attenuation.constant);
+        program->set(prefix + "attenuation_linear", this->attenuation.linear);
+        program->set(prefix + "attenuation_quadratic", this->attenuation.quadratic);
+        program->set(prefix + "inner_angle", this->spot_angle.inner);
+        program->set(prefix + "outer_angle", this->spot_angle.outer);
+        break;
+    }
 }
+
+// LightComponent *LightComponent::CreationFromBase()
+// {
+// }

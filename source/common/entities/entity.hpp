@@ -9,7 +9,7 @@ class TransformationComponent;
 class CameraComponent;
 class CameraControllerComponent;
 class MeshRenderer;
-class Light;
+class LightComponent;
 
 class Entity
 {
@@ -24,7 +24,7 @@ public:
     CameraComponent *getCameraComponent();
     CameraControllerComponent *getCameraComponentController();
     MeshRenderer *getMeshRendrer();
-    Light *getLightComponent();
+    LightComponent *getLightComponent();
     ~Entity();
 };
 

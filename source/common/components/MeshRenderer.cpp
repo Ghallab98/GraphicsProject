@@ -23,8 +23,8 @@ gameTemp::Mesh *MeshRenderer::getMesh()
 
 MeshRenderCommand MeshRenderer::getRenderCommand(const glm::mat4 &cameraMatrix)
 {
-    glm::mat4 transformation = cameraMatrix * myEntity->getTransformationComponent()->getTransformationMatrix();
-    glm::vec4 tranformed_origin = transformation * glm::vec4(0, 0, 0, 1);
+    glm::mat4 transformation = myEntity->getTransformationComponent()->getTransformationMatrix();
+    glm::vec4 tranformed_origin = cameraMatrix * transformation * glm::vec4(0, 0, 0, 1);
 
     return {
         material,

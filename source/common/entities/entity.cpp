@@ -47,11 +47,11 @@ MeshRenderer *Entity::getMeshRendrer()
     return nullptr;
 }
 
-Light *Entity::getLightComponent()
+LightComponent *Entity::getLightComponent()
 {
     for (int i = 0, numComponenets = components.size(); i < numComponenets; i++)
         if (components[i]->getComponentType() == LIGHT_COMPONENT)
-            return dynamic_cast<Light *>(components[i]);
+            return dynamic_cast<LightComponent *>(components[i]);
 
     return nullptr;
 }

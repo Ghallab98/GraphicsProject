@@ -23,6 +23,19 @@ void gameTemp::ShaderProgram::destroy()
     program = 0;
 }
 
+void gameTemp::ShaderProgram::enableLightEffect()
+{
+    this->LightEnabled = true;
+}
+void gameTemp::ShaderProgram::disableLightEffect()
+{
+    this->LightEnabled = false;
+}
+bool gameTemp::ShaderProgram::isLightNeeded() const
+{
+    return this->LightEnabled;
+}
+
 bool gameTemp::ShaderProgram::attach(const std::string &filename, GLenum type) const
 {
     // first, we use C++17 filesystem library to get the directory (parent) path of the file.

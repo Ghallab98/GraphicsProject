@@ -7,7 +7,8 @@
 #include "../../../vendor/jsoncpp/include/json/value.h"
 #include "../../../vendor/jsoncpp/include/json/json.h"
 #include <fstream>
-
+using std::map;
+using std::vector;
 //
 #include "../texture/texture2D.hpp"
 #include <states/state.cpp>
@@ -42,7 +43,7 @@ class GameState : public State
     std::unordered_map<std::string, gameTemp::Texture *> textures;
     vector<gameTemp::Sampler *> sampVec;
     //Private fns
-    static void ShaderInitializition(string inputFilepath, int &numOfShaders, vector<string> &programsName, vector<string> &vertexShaderPath, vector<string> &fragmentShaderPath)
+    static void ShaderInitializition(string inputFilepath, int &numOfShaders, vector<string> &programsName, vector<string> &vertexShaderPath, vector<string> &fragmentShaderPath, vector<bool> &isLightNeededVector)
     {
         string shaderName = "shader";
         string shaderNameTemp = "shader";
@@ -54,12 +55,21 @@ class GameState : public State
         //
         for (int pos = 1; pos <= shadersNum; pos++)
         {
+            bool isLightNeeded = false;
             shaderName += to_string(pos);
             programsName.push_back(shaderName);
             string vxPath = data["Resources"]["Shaders"][pos - 1][shaderName]["vertex"].asString();
             string frgPath = data["Resources"]["Shaders"][pos - 1][shaderName]["fragment"].asString();
             vertexShaderPath.push_back(vxPath);
             fragmentShaderPath.push_back(frgPath);
+            if (data["Resources"]["Shaders"][pos - 1][shaderName]["isLightNeeded"])
+            {
+                if (data["Resources"]["Shaders"][pos - 1][shaderName]["isLightNeeded"].asBool() == true)
+                {
+                    isLightNeeded = true;
+                }
+            }
+            isLightNeededVector.push_back(isLightNeeded);
             //last line
             shaderName = shaderNameTemp;
         }
@@ -155,8 +165,9 @@ public:
         vector<string> programsName;
         vector<string> vertexShaderPath;
         vector<string> fragmentShaderPath;
+        vector<bool> isLightNeededVector;
         int numOfShaders;
-        ShaderInitializition(path, numOfShaders, programsName, vertexShaderPath, fragmentShaderPath);
+        ShaderInitializition(path, numOfShaders, programsName, vertexShaderPath, fragmentShaderPath, isLightNeededVector);
         MeshInitializition(path, models);
         for (int i = 0; i < numOfShaders; i++)
         {
@@ -164,6 +175,10 @@ public:
             programs[programsName[i]].attach(vertexShaderPath[i], GL_VERTEX_SHADER);
             programs[programsName[i]].attach(fragmentShaderPath[i], GL_FRAGMENT_SHADER);
             programs[programsName[i]].link();
+            if (isLightNeededVector[i]) //shader takes light
+            {
+                programs[programsName[i]].enableLightEffect();
+            }
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////
@@ -275,15 +290,12 @@ public:
         glm::mat4 camera_matrix = currentCamera->getCameraComponent()->getVPMatrix();
         //
 
-        rendererSystem.update(camera_matrix);
-        rendererSystem.draw();
+        rendererSystem.update(camera_matrix, programs);
+        rendererSystem.draw(currentCamera);
     }
 
     void onExit() override
     {
-        //Reset the static number in Material class to 0
-        Material toDestroy(nullptr);
-        toDestroy.setIndex(0);
         //Destroy Transformation Component Vector
         for (int i = 0; i < tcVector.size(); i++)
         {

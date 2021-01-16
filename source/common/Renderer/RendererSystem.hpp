@@ -3,8 +3,9 @@
 
 #include <vector>
 #include <algorithm>
-
+#include <string>
 #include <entities/entity.hpp>
+#include <light.cpp>
 #include <Renderer/MeshRenderCommand.hpp>
 #include <shader.hpp>
 
@@ -17,6 +18,9 @@ class RendererSystem
 
     void handleCulling(struct Culling *cull)
     {
+        if (!cull)
+            return;
+
         if (!(cull->enabled))
         {
             glDisable(GL_CULL_FACE);
@@ -39,6 +43,9 @@ class RendererSystem
 
     void handleBlending(struct Blending *blend)
     {
+        if (!blend)
+            return;
+
         if (!(blend->enabled))
         {
             glDisable(GL_BLEND);
@@ -60,27 +67,6 @@ class RendererSystem
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
     }
-    void handleTexture(Material *mtr)
-    {
-        vector<gameTemp::Texture *> allTextures = mtr->getTexture();
-        vector<gameTemp::Sampler *> allSampler = mtr->getSampler();
-        for (int j = 0; j < allTextures.size(); j++)
-        {
-            GLuint texture = allTextures[j]->getTexture();
-            int i = mtr->getIndex();
-            glActiveTexture(GL_TEXTURE0 + i + j);
-            glBindTexture(GL_TEXTURE_2D, texture);
-
-            if (allSampler[j] != nullptr)
-            {
-                GLuint sampler = allSampler[j]->getSampler();
-                glBindSampler(i + j, sampler);
-                mtr->getShaderProgram()->set("sampler", i + j);
-            }
-            else
-                mtr->getShaderProgram()->set("sampler", 0);
-        }
-    }
 
 public:
     RendererSystem() : entities(nullptr) {}
@@ -96,11 +82,23 @@ public:
         this->entities = Entities;
     }
 
-    void update(glm::mat4 cameraMatrix)
+    void update(glm::mat4 cameraMatrix, map<string, ShaderProgram> &programs)
     {
+        int light_index = 0;
         renderCommands.clear();
         for (int i = 0, numEntities = entities->size(); i < numEntities; i++)
         {
+            LightComponent *lightComponent = (*entities)[i]->getLightComponent();
+            if (lightComponent)
+            {
+                for (auto &it : programs)
+                {
+                    if (it.second.isLightNeeded())
+                        lightComponent->configureShader(light_index, cameraMatrix, &(it.second));
+                }
+                light_index++;
+            }
+
             MeshRenderer *meshRenderer = (*entities)[i]->getMeshRendrer();
             if (!meshRenderer)
                 continue;
@@ -111,7 +109,7 @@ public:
         std::sort(std::begin(renderCommands), std::end(renderCommands));
     }
 
-    void draw()
+    void draw(Entity *currentCamera)
     {
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -119,16 +117,17 @@ public:
         {
             gameTemp::ShaderProgram *program = renderCommands[i].material->getShaderProgram();
             glUseProgram(*program);
-
             renderCommands[i].material->setProgramUniforms();
-            program->set("transform", renderCommands[i].transformation);
+            program->set("object_to_world", renderCommands[i].transformation);
+            program->set("object_to_world_inv_transpose", glm::inverse(renderCommands[i].transformation), true);
+            program->set("view_projection", currentCamera->getCameraComponent()->getVPMatrix());
+            program->set("camera_position", currentCamera->getCameraComponent()->getEyePosition());
 
             ObjectProperties *objProp = renderCommands[i].material->getObjProp();
-
             handleCulling(objProp->getCull());
             handleBlending(objProp->getBlend());
-            handleTexture(renderCommands[i].material);
 
+            renderCommands[i].material->activateUnitTextures();
             renderCommands[i].mesh->draw();
         }
     }

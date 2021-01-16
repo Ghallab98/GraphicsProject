@@ -14,47 +14,53 @@
 #include "./objectProperties.cpp"
 #include "../texture/texture2D.hpp"
 #include "../sampler.hpp"
+
+using gameTemp::Sampler;
+using gameTemp::ShaderProgram;
+using gameTemp::Texture;
 using std::any;
 using std::map;
+using std::string;
 using std::vector;
+//
 struct uniform
 {
     any data;
     const type_info &typeId;
 };
 
+struct unitTexture
+{
+    Texture *texture = nullptr;
+    Sampler *sampler = nullptr;
+    string name;
+};
+//
 class Material
 {
 private:
-    static int num;
-    int i;
     ObjectProperties *objProp;
     gameTemp::ShaderProgram *shaderPtr;
     map<std::string, uniform> uniformsMap;
-    vector<gameTemp::Texture *> texture;
-    vector<gameTemp::Sampler *> sampler;
+    vector<unitTexture> unitTextures;
     //Creation from base function
-    static Material *CreationFromBase(gameTemp::ShaderProgram *myProgram, ObjectProperties *objPtr, vector<gameTemp ::Texture *> &recTexVec, vector<gameTemp ::Sampler *> &recSamplerVec);
+    static Material *CreationFromBase(gameTemp::ShaderProgram *myProgram, ObjectProperties *objPtr, vector<gameTemp ::Texture *> &recTexVec, vector<gameTemp ::Sampler *> &recSamplerVec, vector<string> unitTextureNameVec);
 
 public:
     Material(gameTemp::ShaderProgram *specifiedShader);
 
     void setShaderProgram(gameTemp::ShaderProgram *specifiedShader);
     void setObjProp(ObjectProperties *obj);
-    void addTexture(gameTemp::Texture *texture);
-    void addSampler(gameTemp::Sampler *sampler = nullptr);
-    static void setIndex(int num1);
+    void addUnitTexture(unitTexture unit_texture);
 
     template <class T>
     void AddUniform(std::string name, T *value);
 
     gameTemp::ShaderProgram *getShaderProgram();
     ObjectProperties *getObjProp();
-    vector<gameTemp::Texture *> getTexture();
-    vector<gameTemp::Sampler *> getSampler();
-    int getIndex();
 
     void setProgramUniforms();
+    void activateUnitTextures();
 
     //Read Data function
     static void ReadData(string inputFilePath, std::unordered_map<std::string, gameTemp::Texture *> &texMap, vector<gameTemp::Sampler *> &recSamplerVector, map<string, gameTemp::ShaderProgram> &programs, vector<Material *> &materialVec);

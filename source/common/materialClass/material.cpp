@@ -1,50 +1,20 @@
 #include "./material.hpp"
 
-int Material ::num = 0;
 Material::Material(gameTemp::ShaderProgram *specifiedShader)
 {
     shaderPtr = specifiedShader;
-    i = num;
 }
 
 void Material::setShaderProgram(gameTemp::ShaderProgram *specifiedShader)
 {
     shaderPtr = specifiedShader;
 }
-
-void Material ::addTexture(gameTemp::Texture *texture)
+//
+void Material::addUnitTexture(unitTexture unit_texture)
 {
-    if (texture != nullptr)
-    {
-        this->texture.push_back(texture);
-        num++;
-    }
+    unitTextures.push_back(unit_texture);
 }
-void Material ::addSampler(gameTemp::Sampler *sampler)
-{
-    this->sampler.push_back(sampler);
-}
-
-void Material ::setIndex(int num1)
-{
-    num = num1;
-}
-
-int Material ::getIndex()
-{
-    return this->i;
-}
-
-vector<gameTemp::Texture *> Material ::getTexture()
-{
-    return this->texture;
-}
-
-vector<gameTemp::Sampler *> Material ::getSampler()
-{
-    return this->sampler;
-}
-
+//
 gameTemp::ShaderProgram *Material::getShaderProgram()
 {
     return shaderPtr;
@@ -99,9 +69,34 @@ void Material::setProgramUniforms()
             shaderPtr->set(key, *(std::any_cast<bool *>(uniform.data)));
             continue;
         }
+        else if (uniform.typeId == typeid(int))
+        {
+            shaderPtr->set(key, *(std::any_cast<int *>(uniform.data)));
+            continue;
+        }
     }
 }
 
+void Material::activateUnitTextures()
+{
+    for (int i = 0, numTextures = unitTextures.size(); i < numTextures; i++)
+    {
+
+        int texture = unitTextures[i].texture->getTexture();
+        glActiveTexture(GL_TEXTURE0 + texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        if (unitTextures[i].sampler != nullptr)
+        {
+            glBindSampler(texture, unitTextures[i].sampler->getSampler());
+            shaderPtr->set("material." + unitTextures[i].name, texture);
+        }
+        else
+        {
+            shaderPtr->set("material." + unitTextures[i].name, texture);
+        }
+    }
+}
 void Material::setObjProp(ObjectProperties *obj)
 {
     this->objProp = obj;
@@ -117,22 +112,23 @@ Material::~Material()
 }
 // Creation From Base Fn
 //shader program , objProp ptr, vector of shaders , vector of samplers
-Material *Material::CreationFromBase(gameTemp::ShaderProgram *myProgram, ObjectProperties *objPtr, vector<gameTemp ::Texture *> &recTexVec, vector<gameTemp ::Sampler *> &recSamplerVec)
+Material *Material::CreationFromBase(gameTemp::ShaderProgram *myProgram, ObjectProperties *objPtr, vector<gameTemp ::Texture *> &recTexVec, vector<gameTemp ::Sampler *> &recSamplerVec, vector<string> unitTextureNameVec)
 {
     Material *matPtr = new Material(myProgram);
     matPtr->setObjProp(objPtr);
     for (int i = 0; i < recTexVec.size(); i++)
     {
-        //cout << "BLAAA " << recTexVec[i] << "   " << recSamplerVec[i] << endl;
-        matPtr->addTexture(recTexVec[i]);
-        matPtr->addSampler(recSamplerVec[i]);
+        unitTexture extractedUnitTex;
+        extractedUnitTex.texture = recTexVec[i];
+        extractedUnitTex.sampler = recSamplerVec[i];
+        extractedUnitTex.name = unitTextureNameVec[i];
+        matPtr->addUnitTexture(extractedUnitTex);
     }
     return matPtr;
 }
 //Read Data Fn
 void Material::ReadData(string inputFilePath, std::unordered_map<std::string, gameTemp::Texture *> &texMap, vector<gameTemp::Sampler *> &recSamplerVector, map<string, gameTemp::ShaderProgram> &programs, vector<Material *> &materialVec)
 {
-
     vector<ObjectProperties *> objCreatedVector;
     //
     Json::Value data;
@@ -146,24 +142,96 @@ void Material::ReadData(string inputFilePath, std::unordered_map<std::string, ga
     {
         ObjectProperties *objPtr;
         vector<string> texNameVector;
+        vector<string> uniformNameVector;
         vector<int> samplerPosVector;
         vector<gameTemp::Texture *> filledTexVec;
         vector<gameTemp::Sampler *> filledSamplerVec;
         materialRead += to_string(pos);
-        int texRefSize = data["World"]["Materials"][pos - 1][materialRead]["texrures Refrence"].size();
-        int sampRefSize = data["World"]["Materials"][pos - 1][materialRead]["samplers Refrence"].size();
+        int texRefSize = data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"].size();
         string shaderName = data["World"]["Materials"][pos - 1][materialRead]["shader name"].asString();
         //Adding for this Material a vector of textures
         for (int i = 0; i < texRefSize; i++)
         {
-            string texName = data["World"]["Materials"][pos - 1][materialRead]["texrures Refrence"][i]["texture ref"].asString();
-            texNameVector.push_back(texName);
-        }
-        //Adding for this Material a vector of samplers
-        for (int i = 0; i < sampRefSize; i++)
-        {
-            int samplerpos = (data["World"]["Materials"][pos - 1][materialRead]["samplers Refrence"][i]["sampler ref"].asInt()) - 1;
-            samplerPosVector.push_back(samplerpos);
+            if (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["name"].asString() == "emissive_map")
+            {
+                string exTexName = data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["texture ref"].asString();
+                uniformNameVector.push_back("emissive_map");
+                texNameVector.push_back(exTexName);
+                int samplerpos;
+                if (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["sampler ref"])
+                {
+                    samplerpos = (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["sampler ref"].asInt()) - 1;
+                }
+                else
+                {
+                    samplerpos = -1;
+                }
+                samplerPosVector.push_back(samplerpos);
+            }
+            else if (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["name"].asString() == "albedo_map")
+            {
+                string exTexName = data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["texture ref"].asString();
+                uniformNameVector.push_back("albedo_map");
+                texNameVector.push_back(exTexName);
+                int samplerpos;
+                if (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["sampler ref"])
+                {
+                    samplerpos = (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["sampler ref"].asInt()) - 1;
+                }
+                else
+                {
+                    samplerpos = -1;
+                }
+                samplerPosVector.push_back(samplerpos);
+            }
+            else if (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["name"].asString() == "specular_map")
+            {
+                string exTexName = data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["texture ref"].asString();
+                uniformNameVector.push_back("specular_map");
+                texNameVector.push_back(exTexName);
+                int samplerpos;
+                if (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["sampler ref"])
+                {
+                    samplerpos = (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["sampler ref"].asInt()) - 1;
+                }
+                else
+                {
+                    samplerpos = -1;
+                }
+                samplerPosVector.push_back(samplerpos);
+            }
+            else if (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["name"].asString() == "roughness_map")
+            {
+                string exTexName = data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["texture ref"].asString();
+                uniformNameVector.push_back("roughness_map");
+                texNameVector.push_back(exTexName);
+                int samplerpos;
+                if (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["sampler ref"])
+                {
+                    samplerpos = (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["sampler ref"].asInt()) - 1;
+                }
+                else
+                {
+                    samplerpos = -1;
+                }
+                samplerPosVector.push_back(samplerpos);
+            }
+            else if (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["name"].asString() == "ambient_occlusion_map")
+            {
+                string exTexName = data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["texture ref"].asString();
+                uniformNameVector.push_back("ambient_occlusion_map");
+                texNameVector.push_back(exTexName);
+                int samplerpos;
+                if (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["sampler ref"])
+                {
+                    samplerpos = (data["World"]["Materials"][pos - 1][materialRead]["textures and samplers Reference"][i]["sampler ref"].asInt()) - 1;
+                }
+                else
+                {
+                    samplerpos = -1;
+                }
+                samplerPosVector.push_back(samplerpos);
+            }
         }
         //Extracting object Poperties
         //--if there is an object property
@@ -184,20 +252,15 @@ void Material::ReadData(string inputFilePath, std::unordered_map<std::string, ga
             for (int l = 0; l < srcClrSize; l++)
             {
                 srcClrArr[l] = data["World"]["Materials"][pos - 1][materialRead]["object Property"]["Blending"]["src color"][l].asFloat();
-                //cout << srcClrArr[l] << endl;
             }
             for (int l = 0; l < dstClrSize; l++)
             {
                 dstClrArr[l] = data["World"]["Materials"][pos - 1][materialRead]["object Property"]["Blending"]["dest color"][l].asFloat();
-                //cout << dstClrArr[l] << endl;
             }
             for (int l = 0; l < constClrSize; l++)
             {
                 constClrArr[l] = data["World"]["Materials"][pos - 1][materialRead]["object Property"]["Blending"]["constClr"][l].asFloat();
-                //cout << constClrArr[l] << endl;
             }
-            /*cout << isCull << faceToCull << windingDirection << isBlend << blendType << srcClrSize << dstClrSize << constClrSize << endl
-                 << endl;*/
             glm::vec4 srcClrVec = {srcClrArr[0], srcClrArr[1], srcClrArr[2], srcClrArr[3]};
             glm::vec4 destClrVec = {dstClrArr[0], dstClrArr[1], dstClrArr[2], dstClrArr[3]};
             glm::vec4 constClrVec = {constClrArr[0], constClrArr[1], constClrArr[2], constClrArr[3]};
@@ -212,28 +275,19 @@ void Material::ReadData(string inputFilePath, std::unordered_map<std::string, ga
         for (int p = 0; p < texNameVector.size(); p++)
         {
             filledTexVec.push_back(texMap[texNameVector[p]]);
-            if (p < samplerPosVector.size())
-            {
-                filledSamplerVec.push_back(recSamplerVector[p]);
-            }
-            else
+            if (samplerPosVector[p] == -1) // texture doesnot have a sample
             {
                 filledSamplerVec.push_back(nullptr);
             }
+            else
+            {
+                filledSamplerVec.push_back(recSamplerVector[samplerPosVector[p]]);
+            }
         }
         //
-        /* cout << "The Material is  " << materialRead << endl;
-        for (int p = 0; p < filledTexVec.size(); p++)
-        {
-            cout << "Texture   " << p + 1 << " is " << filledTexVec[p] << endl;
-        }
-        for (int p = 0; p < filledSamplerVec.size(); p++)
-        {
-            cout << "Sampler Number  " << p + 1 << " is " << filledSamplerVec[p] << endl;
-        }*/
-        //
-        materialVec.push_back(CreationFromBase(&programs[shaderName], objPtr, filledTexVec, filledSamplerVec));
+        materialVec.push_back(CreationFromBase(&programs[shaderName], objPtr, filledTexVec, filledSamplerVec, uniformNameVector));
         //last line
         materialRead = materialReadTemp;
     }
+    cout << "MATERIAAAAALLLLL IS DOEEEEE   " << endl;
 }

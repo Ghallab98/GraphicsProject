@@ -50,6 +50,7 @@ namespace gameTemp
 
         glm::ivec2 loadImage(const char *filename);
         void checkerBoard(glm::ivec2 size, glm::ivec2 patternSize, gameTemp::Color color1, gameTemp::Color color2);
+        void singleColor(Color color, glm::ivec2 size = {1, 1});
         Texture(Texture const &) = delete;
         Texture &operator=(Texture const &) = delete;
         //Read Data

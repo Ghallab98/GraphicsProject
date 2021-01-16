@@ -51,6 +51,26 @@ glm::ivec2 gameTemp::Texture::loadImage(const char *filename)
     this->height = size.y;
     return size;
 }
+void gameTemp::Texture::singleColor(gameTemp::Color color, glm::ivec2 size)
+{
+    //Allocate array for texture data
+    auto *data = new Color[size.x * size.y];
+    //Fill array with the same color
+    std::fill_n(data, size.x * size.y, color);
+    //Bind the texture such that we upload the image data to its storage
+    glBindTexture(GL_TEXTURE_2D, this->texture);
+    //Set Unpack Alignment to 4-byte (it means that each row takes multiple of 4 bytes in memory)
+    //Note: this is not necessary since:
+    //- Alignment is 4 by default
+    //- Alignment of 1 or 2 will still work correctly but 8 will cause problems
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    //Send data to texture
+    //NOTE: the internal format is set to GL_RGBA8 so every pixel contains 4 bytes, one for each channel
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    //Generate Mipmaps after loading the texture
+    glGenerateMipmap(GL_TEXTURE_2D);
+    delete[] data;
+}
 
 void gameTemp::Texture::checkerBoard(glm::ivec2 size, glm::ivec2 patternSize, gameTemp::Color color1, gameTemp::Color color2)
 {
