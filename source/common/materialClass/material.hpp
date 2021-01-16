@@ -12,7 +12,7 @@
 #include <shader.hpp>
 #include <vector>
 #include "./objectProperties.cpp"
-#include "../texture2D.hpp"
+#include "../texture/texture2D.hpp"
 #include "../sampler.hpp"
 using std::any;
 using std::map;

@@ -4,13 +4,12 @@
 #include <vector>
 #include <map>
 #include <string.h>
-#include "../../vendor/jsoncpp/include/json/value.h"
-#include "../../vendor/jsoncpp/include/json/json.h"
+#include "../../../vendor/jsoncpp/include/json/value.h"
+#include "../../../vendor/jsoncpp/include/json/json.h"
 #include <fstream>
 
 //
-#include <texture/texture-utils.h>
-#include "../texture2D.hpp"
+#include "../texture/texture2D.hpp"
 #include <states/state.cpp>
 #include <Renderer/RendererSystem.hpp>
 #include <glm/glm.hpp>

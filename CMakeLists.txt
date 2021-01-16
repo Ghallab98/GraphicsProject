@@ -40,7 +40,6 @@ set(COMMON_SOURCES
         source/common/application.cpp
         source/common/shader.cpp
         source/common/mesh/mesh-utils.cpp
-        source/common/texture/texture-utils.cpp
         source/common/texture/screenshot.cpp
         )
 
@@ -53,7 +52,7 @@ set(COMPONENTS_SOURCES
         source/common/components/cameraControllerComponent.hpp
         source/common/components/cameraComponent.hpp
         source/common/components/component.hpp
-        source/common/texture2D.cpp source/common/texture2D.hpp source/common/sampler.cpp source/common/sampler.hpp)
+        source/common/texture/texture2D.cpp source/common/texture/texture2D.hpp source/common/sampler.cpp source/common/sampler.hpp)
 
 
 # Define the directories in which to search for the included headers

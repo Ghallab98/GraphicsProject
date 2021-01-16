@@ -1,4 +1,5 @@
 #include "texture2D.hpp"
+#define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 void gameTemp::Texture::create(bool Active_Mipmap, int mipmapLevel, int width, int height, int unpack, const char *filename)
 {

@@ -5,11 +5,11 @@
 #include <iostream>
 #include <glad/gl.h>
 #include <glm/vec2.hpp>
-#include <iostream>
 #include "../../vendor/jsoncpp/include/json/value.h"
 #include "../../vendor/jsoncpp/include/json/json.h"
 #include <fstream>
 #include <string.h>
+#include <algorithm>
 #include <vector>
 #include <unordered_map>
 using namespace std;
@@ -18,8 +18,7 @@ namespace gameTemp
     class Texture
     {
     private:
-        GLuint texture = -1;
-        //enum textureType;
+        GLuint texture;
         bool Active_Mipmap;
         int mipmapLevel;
         int width;
