@@ -15,6 +15,8 @@ using std::string;
 #include <cameraControllerComponent.hpp>
 #include <transformationComponent.hpp>
 #include <light.hpp>
+#include <movemenetController.hpp>
+#include <movemenetController.cpp>
 #include <entities/entity.cpp>
 
 #include <application.hpp>

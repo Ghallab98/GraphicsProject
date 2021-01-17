@@ -10,6 +10,7 @@ class CameraComponent;
 class CameraControllerComponent;
 class MeshRenderer;
 class LightComponent;
+class MovementControllerComponenet;
 
 class Entity
 {
@@ -25,6 +26,8 @@ public:
     CameraControllerComponent *getCameraComponentController();
     MeshRenderer *getMeshRendrer();
     LightComponent *getLightComponent();
+    MovementControllerComponenet *getMovementController();
+
     ~Entity();
 };
 

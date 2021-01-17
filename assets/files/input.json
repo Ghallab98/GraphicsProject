@@ -496,11 +496,11 @@
       "entity6":{
         "camera":true,
         "light":false,
-        "entityParentNum": null,
+        "entityParentNum": 2,
         "Transformation Component": {
-          "position": [ 0, 0, 0 ],
+          "position": [ 10, 10, 10 ],
           "rotation": [ 0, 0, 0 ],
-          "scale": [ 0, 0, 0 ]
+          "scale": [ 1, 1, 1 ]
         },
         "Camera Component" :{
           "Eye Position" :[10,10,10],
@@ -512,6 +512,11 @@
         "camera":true,
         "light":false,
         "entityParentNum": null,
+        "Transformation Component": {
+          "position": [ 10, 10, 10 ],
+          "rotation": [ 0, 0, -1 ],
+          "scale": [ 1, 1, 1 ]
+        },
         "Camera Component" :{
           "Eye Position" :[10,10,10],
           "Target":[0,0,0],
@@ -524,7 +529,7 @@
         "light":true,
         "entityParentNum": null,
         "Transformation Component": {
-          "position": [ 0, 0, 0 ],
+          "position": [ 10, 10, 10 ],
           "rotation": [ 0, 0, 0 ],
           "scale": [ 0, 0, 0 ]
         },
@@ -558,7 +563,7 @@
         "Transformation Component": {
           "position": [ 0, 0, 0 ],
           "rotation": [ 0, 0, 0 ],
-          "scale": [ 0, 0, 0 ]
+          "scale":[ 0, 0, 0 ]
         },
         "Light Component" :{
           "type":"point",

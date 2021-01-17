@@ -63,10 +63,14 @@ public:
         transformChildren(this, transformationMatrix);
     }
 
+    glm::vec3 getTranslation()
+    {
+        return glm::vec3(transformationMatrix[3][0], transformationMatrix[3][1], transformationMatrix[3][2]);
+    }
+
     void transformChildren(TransformationComponent *parent, glm::mat4 &transformationMatrix)
     {
         parent->transformationMatrix *= transformationMatrix;
-
         for (int i = 0, numChild = parent->children.size(); i < numChild; i++)
             transformChildren(parent->children[i], transformationMatrix);
     }

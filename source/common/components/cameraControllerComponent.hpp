@@ -23,7 +23,6 @@ private:
     CameraComponent *camera;
 
     float yaw, pitch;
-    glm::vec3 position;
 
     float yaw_sensitivity, pitch_sensitivity, fov_sensitivity;
     glm::vec3 position_sensitivity;
@@ -54,7 +53,6 @@ public:
         position_sensitivity = {3.0f, 3.0f, 3.0f};
         fov_sensitivity = glm::pi<float>() / 10;
 
-        position = camera->getEyePosition();
         auto direction = camera->getDirection();
         yaw = glm::atan(-direction.z, direction.x);
         float base_length = glm::sqrt(direction.x * direction.x + direction.z * direction.z);
@@ -75,7 +73,7 @@ public:
         }
     }
 
-    void update(double delta_time, int recFront, int recBack, int recRight, int recLeft, int recJump, int recCrouch)
+    void update(double deltaTime, int recFront, int recBack, int recRight, int recLeft, int recJump, int recCrouch)
     {
         if (app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && !mouse_locked)
         {
@@ -110,44 +108,46 @@ public:
         glm::vec3 current_sensitivity = this->position_sensitivity;
         if (app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT))
             current_sensitivity *= speedup_factor;
+
+        glm::vec3 translation = {0.0f, 0.0f, 0.0f};
         if (recFront > 0)
         {
             if (app->getKeyboard().isPressed(recFront))
-                position += front * ((float)delta_time * current_sensitivity.z);
+                translation += front * ((float)deltaTime * current_sensitivity.z);
         }
         if (recBack > 0)
         {
             if (app->getKeyboard().isPressed(recBack))
-                position -= front * ((float)delta_time * current_sensitivity.z);
+                translation -= front * ((float)deltaTime * current_sensitivity.z);
         }
         if (recJump > 0)
         {
             if (app->getKeyboard().isPressed(recJump))
-                position += up * ((float)delta_time * current_sensitivity.y);
+                translation += up * ((float)deltaTime * current_sensitivity.y);
         }
         if (recCrouch > 0)
         {
             if (app->getKeyboard().isPressed(recCrouch))
-                position -= up * ((float)delta_time * current_sensitivity.y);
+                translation -= up * ((float)deltaTime * current_sensitivity.y);
         }
         if (recRight > 0)
         {
             if (app->getKeyboard().isPressed(recRight))
-                position += right * ((float)delta_time * current_sensitivity.x);
+                translation += right * ((float)deltaTime * current_sensitivity.x);
         }
         if (recLeft > 0)
         {
             if (app->getKeyboard().isPressed(recLeft))
-                position -= right * ((float)delta_time * current_sensitivity.x);
+                translation -= right * ((float)deltaTime * current_sensitivity.x);
         }
 
         camera->setDirection(glm::vec3(glm::cos(yaw), 0, -glm::sin(yaw)) * glm::cos(pitch) + glm::vec3(0, glm::sin(pitch), 0));
-        camera->setEyePosition(position);
+        myEntity->getTransformationComponent()->transform(translation);
+        camera->updateEyePosition();
     }
 
     [[nodiscard]] float getYaw() const { return yaw; }
     [[nodiscard]] float getPitch() const { return pitch; }
-    [[nodiscard]] glm::vec3 getPosition() const { return position; }
 
     [[nodiscard]] float getYawSensitivity() const { return yaw_sensitivity; }
     [[nodiscard]] float getPitchSensitivity() const { return pitch_sensitivity; }
@@ -168,11 +168,6 @@ public:
         else if (_pitch < -v)
             _pitch = -v;
         this->pitch = _pitch;
-    }
-
-    void setPosition(glm::vec3 _pos)
-    {
-        this->position = _pos;
     }
 
     void setYawSensitivity(float sensitivity) { this->yaw_sensitivity = sensitivity; }

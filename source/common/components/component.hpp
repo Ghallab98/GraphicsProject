@@ -15,6 +15,7 @@ using namespace std;
 #define CONTROLLER_COMPONENT 2
 #define MESH_RENDERER_COMPONENT 3
 #define LIGHT_COMPONENT 4
+#define MOVEMENT_CONTROLLER_COMPONENT 5
 
 class Entity;
 class TransformationComponent;
@@ -22,7 +23,7 @@ class TransformationComponent;
 class Component
 {
 protected:
-    Entity *myEntity;
+    Entity *myEntity = nullptr;
 
 public:
     Component() {}

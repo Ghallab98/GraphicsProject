@@ -103,7 +103,6 @@ void LightComponent::configureShader(int light_index, glm::mat4 cameraMatrix, Sh
         program->set("sky_light.top_color", this->top_color);
         program->set("sky_light.middle_color", this->middle_color);
         program->set("sky_light.bottom_color", this->bottom_color);
-        cout << "STILL NO PROBLEM IN LIGHT" << endl;
         break;
     case LightType::DIRECTIONAL:
         prefix = "lights[" + std::to_string(light_index) + "].";

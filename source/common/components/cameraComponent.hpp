@@ -23,17 +23,18 @@ private:
 
     glm::mat4 V{}, P{}, VP{};
     //Creation from Base
-    static CameraComponent *CreationFromBase(glm::vec3 myeyePos, glm::vec3 mydirection, glm::vec3 mytarget)
+    static CameraComponent *CreationFromBase(glm::vec3 mydirection, glm::vec3 mytarget)
     {
-        CameraComponent *camComp = new CameraComponent(myeyePos, mydirection, mytarget);
+        CameraComponent *camComp = new CameraComponent(mydirection, mytarget);
         return camComp;
     }
 
 public:
-    CameraComponent(glm::vec3 myeyePos, glm::vec3 mydirection, glm::vec3 mytarget)
+    CameraComponent(glm::vec3 mydirection, glm::vec3 mytarget)
     {
         dirtyFlags = V_DIRTY | P_DIRTY | VP_DIRTY;
-        setEyePosition(myeyePos);
+        updateEyePosition();
+
         setUp(mydirection);
         setTarget(mytarget);
     }
@@ -89,13 +90,17 @@ public:
         }
     }
 
-    void setEyePosition(glm::vec3 eye)
+    void updateEyePosition()
     {
-        if (this->eye != eye)
-        {
+        if (!(myEntity) || !(myEntity->getTransformationComponent()))
+            return;
 
+        glm::vec3 newEye = myEntity->getTransformationComponent()->getTranslation();
+
+        if (this->eye != newEye)
+        {
             dirtyFlags |= V_DIRTY | VP_DIRTY;
-            this->eye = eye;
+            this->eye = newEye;
         }
     }
 
@@ -164,7 +169,6 @@ public:
     [[nodiscard]] float getAspectRatio() const { return aspect_ratio; }
     [[nodiscard]] float getNearPlane() const { return near; }
     [[nodiscard]] float getFarPlane() const { return far; }
-    [[nodiscard]] glm::vec3 getEyePosition() const { return eye; }
     [[nodiscard]] glm::vec3 getDirection() const { return direction; }
     [[nodiscard]] glm::vec3 getOriginalUp() const { return up; }
 
@@ -256,7 +260,7 @@ public:
                 }
                 glm::vec3 upVec(up[0], up[1], up[2]);
                 //Call of Creation
-                cameraVector.push_back(CreationFromBase(eyePosVec, upVec, targetVec));
+                cameraVector.push_back(CreationFromBase(upVec, targetVec));
                 isCameraEntity.push_back(true);
             }
             else

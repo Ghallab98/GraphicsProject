@@ -88,6 +88,9 @@ public:
         renderCommands.clear();
         for (int i = 0, numEntities = entities->size(); i < numEntities; i++)
         {
+            auto moveController = entities[i]->getMovementController();
+            if (moveController)
+                moveController->update(deltaTime);
             LightComponent *lightComponent = (*entities)[i]->getLightComponent();
             if (lightComponent)
             {
@@ -121,7 +124,7 @@ public:
             program->set("object_to_world", renderCommands[i].transformation);
             program->set("object_to_world_inv_transpose", glm::inverse(renderCommands[i].transformation), true);
             program->set("view_projection", currentCamera->getCameraComponent()->getVPMatrix());
-            program->set("camera_position", currentCamera->getCameraComponent()->getEyePosition());
+            program->set("camera_position", currentCamera->getTransformationComponent()->getTranslation());
 
             ObjectProperties *objProp = renderCommands[i].material->getObjProp();
             handleCulling(objProp->getCull());

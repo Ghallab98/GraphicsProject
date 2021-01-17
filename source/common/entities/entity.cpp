@@ -56,6 +56,15 @@ LightComponent *Entity::getLightComponent()
     return nullptr;
 }
 
+MovementControllerComponenet *Entity::getMovementController()
+{
+    for (int i = 0, numComponenets = components.size(); i < numComponenets; i++)
+        if (components[i]->getComponentType() == MOVEMENT_CONTROLLER_COMPONENT)
+            return dynamic_cast<MovementControllerComponenet *>(components[i]);
+
+    return nullptr;
+}
+
 Entity::~Entity()
 {
     for (int i = 0, numComponenets = components.size(); i < numComponenets; i++)

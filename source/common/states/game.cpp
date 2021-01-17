@@ -198,6 +198,7 @@ public:
             entities.push_back(new Entity);
         }
         //--Transformation Component
+        TransformationComponent::ReadData(path, numOfEntities, tcVector);
         TransformationComponent::ReadData(path, numOfEntities + numOfCamEntities + numOfLights, tcVector);
         //--Camera Component
         CameraComponent ::ReadData(path, numOfEntities + numOfCamEntities + numOfLights, camVector, isEntityCamera);
@@ -263,6 +264,22 @@ public:
         skyLightMaterial->AddUniform<float>("exposure", new float(2.0));
 
         entities[skyLightIndexInEntitiesVec]->addComponent(new MeshRenderer(skyLightMaterial, &models["cuboid"]));
+
+        // Movement controller
+        auto moveController = new MovementControllerComponenet(app);
+        moveController->addAnimation(KEYS);
+        moveController->addAnimation(ROTATION);
+        map<string, int> controllerKeys;
+        controllerKeys["speedUp"] = GLFW_KEY_LEFT_SHIFT;
+        controllerKeys["forward"] = GLFW_KEY_W;
+        controllerKeys["backward"] = GLFW_KEY_S;
+        controllerKeys["up"] = GLFW_KEY_E;
+        controllerKeys["down"] = GLFW_KEY_F;
+        controllerKeys["right"] = GLFW_KEY_D;
+        controllerKeys["left"] = GLFW_KEY_A;
+        moveController->setControllerKeys(controllerKeys);
+        entities[1]->addComponent(moveController);
+
         // -- Initializing GL
         rendererSystem.setEntitiesVector(&entities);
     }
@@ -286,21 +303,9 @@ public:
         int left = CameraControllerComponentControllers[currentCameraIndex]["left"];
         int jump = CameraControllerComponentControllers[currentCameraIndex]["jump"];
         int crouch = CameraControllerComponentControllers[currentCameraIndex]["crouch"];
-        /*cout << "The front is " << front << endl
-             << endl;
-        cout << "The back is " << back << endl
-             << endl;
-        cout << "The right is " << right << endl
-             << endl;
-        cout << "The left is " << left << endl
-             << endl;
-        cout << "The jump is " << jump << endl
-             << endl;
-        cout << "The crouch is " << crouch << endl
-             << endl;*/
+        //
         currentCamera->getCameraComponentController()->update(deltaTime, front, back, right, left, jump, crouch);
         glm::mat4 camera_matrix = currentCamera->getCameraComponent()->getVPMatrix();
-        //
 
         rendererSystem.update(camera_matrix, programs);
         rendererSystem.draw(currentCamera);
@@ -308,33 +313,24 @@ public:
 
     void onExit() override
     {
+        //Destroy Entities and it destroys its components
+        for (int j = 0; j < entities.size(); j++)
+        {
+            delete entities[j];
+        }
+
+        entities.clear();
         //Destroy Transformation Component Vector
-        for (int i = 0; i < tcVector.size(); i++)
-        {
-            delete tcVector[i];
-        }
+        tcVector.clear();
+        //Destroy Light
+        lightVec.clear();
         //Destroy Mesh Renderer Vector
-        for (int i = 0; i < meshRenderVector.size(); i++)
-        {
-            delete meshRenderVector[i];
-        }
+        meshRenderVector.clear();
         //Destroy Camera Components Vector and the isCameraEntity vector will be deleted automatically
-        for (int i = 0; i < camVector.size(); i++)
-        {
-            delete camVector[i];
-        }
-        // Delete the current Camera Entity
-        delete currentCamera;
-        //Delete the Vector of cameras that is controlled by Camera/Movement Controller
-        for (int i = 0; i < currentCameraTempVecCtrl.size(); i++)
-        {
-            delete currentCameraTempVecCtrl[i];
-        }
+        camVector.clear();
         //Delete Camera Controllers Vector
-        for (int i = 0; i < camControllerVector.size(); i++)
-        {
-            delete camControllerVector[i];
-        }
+        camControllerVector.clear();
+
         //CameraControllerComponentControllers will be automatically deleted
         //Destroy Textures
         for (auto &it : textures)
@@ -345,17 +341,12 @@ public:
         //Destroy Samplers
         for (int i = 0; i < sampVec.size(); i++)
             delete sampVec[i];
+        sampVec.clear();
         //Delete Material Vectors
         for (int i = 0; i < materialVec.size(); i++)
         {
             delete materialVec[i];
         }
-        // Destroy entities
-        for (int i = 0, numEntities = entities.size(); i < numEntities; i++)
-            delete entities[i];
-
-        entities.clear();
-
         // Destory mesh models
         for (auto it = models.begin(); it != models.end(); ++it)
             it->second.destroy();
