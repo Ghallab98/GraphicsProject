@@ -307,7 +307,7 @@ public:
         currentCamera->getCameraComponentController()->update(deltaTime, front, back, right, left, jump, crouch);
         glm::mat4 camera_matrix = currentCamera->getCameraComponent()->getVPMatrix();
 
-        rendererSystem.update(camera_matrix, programs);
+        rendererSystem.update(camera_matrix, programs, deltaTime);
         rendererSystem.draw(currentCamera);
     }
 

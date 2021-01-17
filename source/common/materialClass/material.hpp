@@ -44,7 +44,7 @@ private:
     map<std::string, uniform> uniformsMap;
     vector<unitTexture> unitTextures;
     //Creation from base function
-    static Material *CreationFromBase(gameTemp::ShaderProgram *myProgram, ObjectProperties *objPtr, vector<gameTemp ::Texture *> &recTexVec, vector<gameTemp ::Sampler *> &recSamplerVec, vector<string> unitTextureNameVec);
+    static Material *CreationFromBase(gameTemp::ShaderProgram *myProgram, ObjectProperties *objPtr, vector<gameTemp ::Texture *> &recTexVec, vector<gameTemp ::Sampler *> &recSamplerVec, vector<string> &unitTextureNameVec, vector<string> &recUniformsVec, vector<vector<float>> &recValues);
 
 public:
     Material(gameTemp::ShaderProgram *specifiedShader);

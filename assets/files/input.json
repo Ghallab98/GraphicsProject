@@ -262,6 +262,24 @@
                 "sampler ref":1
               }
             ],
+            "uniforms":[
+              {
+                "name":"albedo_tint",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"specular_tint",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"emissive_tint",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"roughness_range",
+                "value":[0.0, 1.0]
+              }
+            ],
             "object Property":{
               "Culling":{
                 "enabled":false,
@@ -307,6 +325,24 @@
                 "name" : "ambient_occlusion_map",
                 "texture ref":"white",
                 "sampler ref":1
+              }
+            ],
+            "uniforms":[
+              {
+                "name":"albedo_tint",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"specular_tint",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"emissive_tint",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"roughness_range",
+                "value":[0.0, 1.0]
               }
             ],
             "object Property":{
@@ -356,6 +392,24 @@
                 "sampler ref":1
               }
             ],
+            "uniforms":[
+              {
+                "name":"albedo_tint",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"specular_tint",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"emissive_tint",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"roughness_range",
+                "value":[0.0, 1.0]
+              }
+            ],
             "object Property":{
               "Culling":{
                 "enabled":false,
@@ -401,6 +455,24 @@
                 "name" : "ambient_occlusion_map",
                 "texture ref":"white",
                 "sampler ref":1
+              }
+            ],
+            "uniforms":[
+              {
+                "name":"albedo_tint",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"specular_tint",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"emissive_tint",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"roughness_range",
+                "value":[0.0, 1.0]
               }
             ],
             "object Property":{
@@ -553,7 +625,7 @@
         "Light Component" :{
           "type":"directional",
           "direction":[-1,-1,-1],
-          "color":[1,0,0]
+          "color":[0.5,0.5,0.5]
         }
        },
       "entity10":{
@@ -567,8 +639,8 @@
         },
         "Light Component" :{
           "type":"point",
-          "color":[1,1,1],
-          "position":[6,1,5],
+          "color":[1,0,1],
+          "position":[0,1,5],
           "Attenuation":[0,0,1]
         }
       }

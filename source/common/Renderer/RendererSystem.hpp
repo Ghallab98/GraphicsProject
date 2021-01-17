@@ -82,13 +82,13 @@ public:
         this->entities = Entities;
     }
 
-    void update(glm::mat4 cameraMatrix, map<string, ShaderProgram> &programs)
+    void update(glm::mat4 cameraMatrix, map<string, ShaderProgram> &programs, double deltaTime)
     {
         int light_index = 0;
         renderCommands.clear();
         for (int i = 0, numEntities = entities->size(); i < numEntities; i++)
         {
-            auto moveController = entities[i]->getMovementController();
+            auto moveController = (*entities)[i]->getMovementController();
             if (moveController)
                 moveController->update(deltaTime);
             LightComponent *lightComponent = (*entities)[i]->getLightComponent();
