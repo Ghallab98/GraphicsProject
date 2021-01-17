@@ -108,6 +108,7 @@
   "World":{
       "NumberOfEntities": 5,
       "NumberOfCameraEntities":2,
+      "NumberOfLightEntities":4,
       "Camera Controllers":{
         "Array":[
           {
@@ -240,6 +241,7 @@
       ],
       "entity1": {
         "camera":false,
+        "light":false,
         "entityParentNum": null,
         "Transformation Component": {
           "position": [ -2, 1, -2 ],
@@ -253,6 +255,7 @@
       },
       "entity2": {
         "camera":false,
+        "light":false,
         "entityParentNum": 1,
         "Transformation Component": {
           "position": [ 2, 2, -2 ],
@@ -266,6 +269,7 @@
       },
       "entity3": {
         "camera":false,
+        "light":false,
         "entityParentNum": 2,
         "Transformation Component": {
           "position": [ -2, 1, 2 ],
@@ -279,6 +283,7 @@
       },
       "entity4":{
         "camera":false,
+        "light":false,
         "entityParentNum": null,
         "Transformation Component": {
           "position": [ -2, 2, -2 ],
@@ -292,6 +297,7 @@
       },
       "entity5":{
         "camera":false,
+        "light":false,
         "entityParentNum": null,
         "Transformation Component": {
           "position": [ 0, 0, 0 ],
@@ -305,6 +311,7 @@
       },
       "entity6":{
         "camera":true,
+        "light":false,
         "entityParentNum": null,
         "Transformation Component": {
           "position": [ 0, 0, 0 ],
@@ -319,18 +326,81 @@
       },
       "entity7":{
         "camera":true,
+        "light":false,
         "entityParentNum": null,
-        "Transformation Component": {
-          "position": [ 0, 0, 0 ],
-          "rotation": [ 0, 0, 0 ],
-          "scale": [ 0, 0, 0 ]
-        },
         "Camera Component" :{
           "Eye Position" :[10,10,10],
           "Target":[0,0,0],
           "Up Direction":[0,1,0]
         }
 
+      },
+      "entity8":{
+        "camera":false,
+        "light":true,
+        "entityParentNum": null,
+        "Transformation Component": {
+          "position": [ 0, 0, 0 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 0, 0, 0 ]
+        },
+        "Light Component" :{
+          "type":"sky",
+          "top-color":[0.25,0.3,0.5],
+          "middle-color":[0.35,0.35,0.4],
+          "bottom-color":[0.25,0.25,0.25]
+        }
+
+      },
+      "entity9":{
+        "camera":false,
+        "light":true,
+        "entityParentNum": null,
+        "Transformation Component": {
+          "position": [ 0, 0, 0 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 0, 0, 0 ]
+        },
+        "Light Component" :{
+          "type":"spot",
+          "color":[1,1,1],
+          "position":[0,1,5],
+          "direction":[-1,-1,-1],
+          "Attenuation":[0,0,1],
+          "spot":[0,0.3]
+        }
+      },
+      "entity10":{
+        "camera":false,
+        "light":true,
+        "entityParentNum": null,
+        "Transformation Component": {
+          "position": [ 0, 0, 0 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 0, 0, 0 ]
+        },
+        "Light Component" :{
+          "type":"directional",
+          "direction":[-1,-1,-1],
+          "color":[1,1,1]
+        }
+       },
+      "entity11":{
+        "camera":false,
+        "light":true,
+        "entityParentNum": null,
+        "Transformation Component": {
+          "position": [ 0, 0, 0 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 0, 0, 0 ]
+        },
+        "Light Component" :{
+          "type":"point",
+          "color":[1,1,1],
+          "position":[0,1,5],
+          "Attenuation":[0,0,1]
+        }
       }
+
     }
 }

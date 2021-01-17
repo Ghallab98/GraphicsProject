@@ -34,7 +34,7 @@ public:
         myEntity = entity;
     }
     //
-    static void ReadData(std::string inputFilepath, int &numOfEntites, int &numOfCamEntities, int &numOfCamController) // to be called from the Game.cpp
+    static void ReadData(std::string inputFilepath, int &numOfEntites, int &numOfCamEntities, int &numOfCamController, int &numOfLights) // to be called from the Game.cpp
     {
 
         Json::Value data;
@@ -43,8 +43,7 @@ public:
         numOfEntites = data["World"]["NumberOfEntities"].asInt();
         numOfCamEntities = data["World"]["NumberOfCameraEntities"].asInt();
         numOfCamController = data["World"]["Camera Controllers"]["Array"].size();
-        /*cout << endl
-             << "Numer of camera controller are " << numOfCamController << endl;*/
+        numOfLights = data["World"]["NumberOfLightEntities"].asInt();
     }
 };
 

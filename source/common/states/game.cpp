@@ -25,6 +25,9 @@ class GameState : public State
     vector<Entity *> entities;
     vector<TransformationComponent *> tcVector;
     vector<MeshRenderer *> meshRenderVector;
+    //Light vector
+    vector<LightComponent *> lightVec;
+    vector<bool> isEntityLight;
     //Camera Controller Vars
     vector<CameraControllerComponent *> camControllerVector;
     vector<map<string, int>> CameraControllerComponentControllers; //map for each camera controller of the keys
@@ -185,30 +188,25 @@ public:
         int numOfEntities = 0;
         int numOfCamEntities = 0;
         int numOfCamCtrls = 0;
-        Component::ReadData(path, numOfEntities, numOfCamEntities, numOfCamCtrls);
-        /*cout << endl
-             << endl
-             << "Number of entitess " << numOfEntities << endl;
-        cout << endl
-             << endl
-             << "Number of Camera entitess " << numOfCamEntities << endl;
-        cout << endl
-             << "Numbbbbber of camera controller are " << numOfCamCtrls << endl;*/
-        //Creation of Entites and Camera Entites
-        for (int i = 0; i < numOfEntities + numOfCamEntities; i++)
+        int numOfLights = 0;
+        Component::ReadData(path, numOfEntities, numOfCamEntities, numOfCamCtrls, numOfLights);
+        //Creation of Entites and Camera Entites and Light entities
+        for (int i = 0; i < numOfEntities + numOfCamEntities + numOfLights; i++)
         {
             entities.push_back(new Entity);
         }
         //--Transformation Component
-        TransformationComponent::ReadData(path, numOfEntities + numOfCamEntities, tcVector);
+        TransformationComponent::ReadData(path, numOfEntities + numOfCamEntities + numOfLights, tcVector);
         //--Camera Component
-        CameraComponent ::ReadData(path, numOfEntities + numOfCamEntities, camVector, isEntityCamera);
-
-        //ATTCHAING OF ALL TRANSOFRMATION COMPONENTS AND CAMERA COMPONENTS TO ENTITES+CAMERA ENTITES
-        for (int index = 0; index < numOfEntities + numOfCamEntities; index++)
+        CameraComponent ::ReadData(path, numOfEntities + numOfCamEntities + numOfLights, camVector, isEntityCamera);
+        //--Light Component
+        LightComponent ::ReadData(path, numOfEntities + numOfCamEntities + numOfLights, lightVec, isEntityLight);
+        //ATTCHAING OF ALL TRANSOFRMATION COMPONENTS AND CAMERA COMPONENTS AND LIGHT COMPONENTS TO ENTITES+
+        for (int index = 0; index < numOfEntities + numOfCamEntities + numOfLights; index++)
         {
             entities[index]->addComponent(tcVector[index]);
             entities[index]->addComponent(camVector[index]);
+            entities[index]->addComponent(lightVec[index]);
         }
         //THIS BLOCK IS AFTER ATTACHING CAMERA COMPONENT TO ENTITIES FOR USAGE IN CAMERA CONTROLLER CONSTRUCTOR
         //--Camera Controller Component
