@@ -103,6 +103,7 @@ void LightComponent::configureShader(int light_index, glm::mat4 cameraMatrix, Sh
         program->set("sky_light.top_color", this->top_color);
         program->set("sky_light.middle_color", this->middle_color);
         program->set("sky_light.bottom_color", this->bottom_color);
+        cout << "STILL NO PROBLEM IN LIGHT" << endl;
         break;
     case LightType::DIRECTIONAL:
         prefix = "lights[" + std::to_string(light_index) + "].";
@@ -192,7 +193,7 @@ LightComponent *LightComponent::CreationPointFromBase(glm::vec3 clrVec, glm::vec
     return pointLightComp;
 }
 //ReadData
-void LightComponent::ReadData(string filePath, int numOfEntities, vector<LightComponent *> &lightVec, vector<bool> &isEntityLight)
+void LightComponent::ReadData(string filePath, int numOfEntities, vector<LightComponent *> &lightVec, vector<bool> &isEntityLight, int &skyLightIndexInEntitiesVec)
 {
     Json::Value data;
     std::ifstream people_file(filePath, std::ifstream::binary);
@@ -210,6 +211,7 @@ void LightComponent::ReadData(string filePath, int numOfEntities, vector<LightCo
                 string lightType = data["World"][entity]["Light Component"]["type"].asString();
                 if (lightType == "sky")
                 {
+                    skyLightIndexInEntitiesVec = pos - 1;
                     float topClr[3] = {0.0, 0.0, 0.0};
                     float midClr[3] = {0.0, 0.0, 0.0};
                     float btClr[3] = {0.0, 0.0, 0.0};

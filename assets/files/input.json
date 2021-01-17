@@ -5,14 +5,32 @@
           "shader1":{
           "vertex":"assets/shaders/transform.vert",
           "fragment":"assets/shaders/tint.frag",
-          "isLightNeeded":false
+          "isLightNeeded":false,
+          "name":"main"
         }
       },
         {
           "shader2":{
           "vertex":"assets/shaders/texture/transform.vert",
           "fragment":"assets/shaders/texture/texture.frag",
-          "isLightNeeded":false
+          "isLightNeeded":false,
+          "name":"texture"
+        } 
+      },
+      {
+        "shader3":{
+          "vertex":"assets/shaders/Light/sky_transform.vert",
+          "fragment":"assets/shaders/Light/sky.frag",
+          "isLightNeeded":false,
+          "name":"sky"
+        }
+      },
+      {
+        "shader4":{
+          "vertex":"assets/shaders/Light/light_transform.vert",
+          "fragment":"assets/shaders/Light/light_array.frag",
+          "isLightNeeded":true,
+          "name":"light"
         }
       }
     ],
@@ -20,14 +38,14 @@
       {
         "name": "cuboid",
         "isLoadable": false,
-        "colored": true,
+        "colored": false,
         "center": [],
         "size": []
       },
       {
         "name": "sphere",
         "isLoadable": false,
-        "colored": true,
+        "colored": false,
         "center": [],
         "radius": 0.48
       },
@@ -77,6 +95,96 @@
           "color1":[255,255,255,255],
           "color2":[16,16,16,225]
         }
+      },
+      {
+        "texture4":{
+          "isLoaded":false,
+          "name":"checkerboard_albedo",
+          "size":[256,256],
+          "patternSize":[128,128],
+          "color1":[255,255,255,255],
+          "color2":[16,16,16,225]
+        }
+      },
+      {
+        "texture5":{
+          "isLoaded":false,
+          "name":"checkerboard_specular",
+          "size":[256,256],
+          "patternSize":[128,128],
+          "color1":[0, 0, 0, 255],
+          "color2":[255, 255, 255, 255]
+        }
+      },
+      {
+        "texture6":{
+          "isLoaded":false,
+          "name":"checkerboard_roughness",
+          "size":[256,256],
+          "patternSize":[128,128],
+          "color1":[255, 255, 255, 255],
+          "color2":[64, 64, 64, 255]
+        }
+      },
+      {
+        "texture7":{
+          "isLoaded":true,
+          "name":"metal_albedo",
+          "active_MipMap":true,
+          "mipMapLevel":0,
+          "width":256,
+          "height":128,
+          "unPack": 0,
+          "path":"assets/images/materials/metal/albedo.jpg"
+        }
+      },
+      {
+        "texture8":{
+          "isLoaded":true,
+          "name":"metal_specular",
+          "active_MipMap":true,
+          "mipMapLevel":0,
+          "width":256,
+          "height":128,
+          "unPack": 0,
+          "path":"assets/images/materials/metal/specular.jpg"
+        }
+      },
+      {
+        "texture9":{
+          "isLoaded":true,
+          "name":"metal_roughness",
+          "active_MipMap":true,
+          "mipMapLevel":0,
+          "width":256,
+          "height":128,
+          "unPack": 0,
+          "path":"assets/images/materials/metal/roughness.jpg"
+        }
+      },
+      {
+        "texture10":{
+          "isLoaded":true,
+          "name":"black",
+          "active_MipMap":true,
+          "mipMapLevel":0,
+          "width":256,
+          "height":128,
+          "unPack": 0,
+          "path":"assets/images/black.jpg"
+        }
+      },
+      {
+        "texture11":{
+          "isLoaded":true,
+          "name":"white",
+          "active_MipMap":true,
+          "mipMapLevel":0,
+          "width":256,
+          "height":128,
+          "unPack": 0,
+          "path":"assets/images/white.jpg"
+        }
       }
     ],
     "Samplers":[
@@ -108,7 +216,7 @@
   "World":{
       "NumberOfEntities": 5,
       "NumberOfCameraEntities":2,
-      "NumberOfLightEntities":4,
+      "NumberOfLightEntities":3,
       "Camera Controllers":{
         "Array":[
           {
@@ -137,6 +245,21 @@
                 "name" : "albedo_map",
                 "texture ref":"moon",
                 "sampler ref":1
+              },
+              {
+                "name" : "specular_map",
+                "texture ref":"metal_specular",
+                "sampler ref":1
+              },
+              {
+                "name" : "roughness_map",
+                "texture ref":"metal_roughness",
+                "sampler ref":1
+              },
+              {
+                "name" : "ambient_occlusion_map",
+                "texture ref":"white",
+                "sampler ref":1
               }
             ],
             "object Property":{
@@ -154,7 +277,7 @@
 
               }
             },
-            "shader name":"shader2"
+            "shader name":"light"
           }
         },
         {
@@ -162,12 +285,27 @@
             "textures and samplers Reference":[
               {
                 "name" : "emissive_map",
-                "texture ref":"moon",
+                "texture ref":"black",
                 "sampler ref":1
               },
               {
                 "name" : "albedo_map",
-                "texture ref":"moon",
+                "texture ref":"metal_albedo",
+                "sampler ref":1
+              },
+              {
+                "name" : "specular_map",
+                "texture ref":"metal_specular",
+                "sampler ref":1
+              },
+              {
+                "name" : "roughness_map",
+                "texture ref":"metal_roughness",
+                "sampler ref":1
+              },
+              {
+                "name" : "ambient_occlusion_map",
+                "texture ref":"white",
                 "sampler ref":1
               }
             ],
@@ -186,7 +324,7 @@
 
               }
             },
-            "shader name":"shader2"
+            "shader name":"light"
           }
         },
         {
@@ -194,7 +332,27 @@
             "textures and samplers Reference":[
               {
                 "name" : "emissive_map",
-                "texture ref":"moon",
+                "texture ref":"black",
+                "sampler ref":1
+              },
+              {
+                "name" : "albedo_map",
+                "texture ref":"checkerboard_albedo",
+                "sampler ref":1
+              },
+              {
+                "name" : "specular_map",
+                "texture ref":"checkerboard_specular",
+                "sampler ref":1
+              },
+              {
+                "name" : "roughness_map",
+                "texture ref":"checkerboard_roughness",
+                "sampler ref":1
+              },
+              {
+                "name" : "ambient_occlusion_map",
+                "texture ref":"white",
                 "sampler ref":1
               }
             ],
@@ -213,12 +371,38 @@
 
               }
             },
-            "shader name":"shader2"
+            "shader name":"light"
           }
         },
         {
           "material4":{
-            "textures and samplers Reference":[],
+            "textures and samplers Reference":[
+              {
+                "name" : "emissive_map",
+                "texture ref":"black",
+                "sampler ref":1
+              },
+              {
+                "name" : "albedo_map",
+                "texture ref":"metal_albedo",
+                "sampler ref":1
+              },
+              {
+                "name" : "specular_map",
+                "texture ref":"metal_specular",
+                "sampler ref":1
+              },
+              {
+                "name" : "roughness_map",
+                "texture ref":"metal_roughness",
+                "sampler ref":1
+              },
+              {
+                "name" : "ambient_occlusion_map",
+                "texture ref":"white",
+                "sampler ref":1
+              }
+            ],
             "object Property":{
               "Culling":{
                 "enabled":true,
@@ -234,7 +418,7 @@
 
               }
             },
-            "shader name":"shader1"
+            "shader name":"light"
           }
         }
 
@@ -362,30 +546,12 @@
           "scale": [ 0, 0, 0 ]
         },
         "Light Component" :{
-          "type":"spot",
-          "color":[1,1,1],
-          "position":[0,1,5],
-          "direction":[-1,-1,-1],
-          "Attenuation":[0,0,1],
-          "spot":[0,0.3]
-        }
-      },
-      "entity10":{
-        "camera":false,
-        "light":true,
-        "entityParentNum": null,
-        "Transformation Component": {
-          "position": [ 0, 0, 0 ],
-          "rotation": [ 0, 0, 0 ],
-          "scale": [ 0, 0, 0 ]
-        },
-        "Light Component" :{
           "type":"directional",
           "direction":[-1,-1,-1],
-          "color":[1,1,1]
+          "color":[1,0,0]
         }
        },
-      "entity11":{
+      "entity10":{
         "camera":false,
         "light":true,
         "entityParentNum": null,
@@ -397,7 +563,7 @@
         "Light Component" :{
           "type":"point",
           "color":[1,1,1],
-          "position":[0,1,5],
+          "position":[6,1,5],
           "Attenuation":[0,0,1]
         }
       }

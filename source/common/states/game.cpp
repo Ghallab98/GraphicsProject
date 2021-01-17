@@ -26,6 +26,7 @@ class GameState : public State
     vector<TransformationComponent *> tcVector;
     vector<MeshRenderer *> meshRenderVector;
     //Light vector
+    int skyLightIndexInEntitiesVec = -1;
     vector<LightComponent *> lightVec;
     vector<bool> isEntityLight;
     //Camera Controller Vars
@@ -60,7 +61,8 @@ class GameState : public State
         {
             bool isLightNeeded = false;
             shaderName += to_string(pos);
-            programsName.push_back(shaderName);
+            string actualShaderName = data["Resources"]["Shaders"][pos - 1][shaderName]["name"].asString();
+            programsName.push_back(actualShaderName);
             string vxPath = data["Resources"]["Shaders"][pos - 1][shaderName]["vertex"].asString();
             string frgPath = data["Resources"]["Shaders"][pos - 1][shaderName]["fragment"].asString();
             vertexShaderPath.push_back(vxPath);
@@ -200,7 +202,7 @@ public:
         //--Camera Component
         CameraComponent ::ReadData(path, numOfEntities + numOfCamEntities + numOfLights, camVector, isEntityCamera);
         //--Light Component
-        LightComponent ::ReadData(path, numOfEntities + numOfCamEntities + numOfLights, lightVec, isEntityLight);
+        LightComponent ::ReadData(path, numOfEntities + numOfCamEntities + numOfLights, lightVec, isEntityLight, skyLightIndexInEntitiesVec);
         //ATTCHAING OF ALL TRANSOFRMATION COMPONENTS AND CAMERA COMPONENTS AND LIGHT COMPONENTS TO ENTITES+
         for (int index = 0; index < numOfEntities + numOfCamEntities + numOfLights; index++)
         {
@@ -240,16 +242,28 @@ public:
             entities[l]->addComponent(meshRenderVector[l]);
         }
         ///////////////////////////////////////////////////////////////////////
-        glm::vec4 *tintVec = new glm::vec4(1, 1, 1, 0.8);
-        glm::vec4 *tintVec2 = new glm::vec4(0.96, 0.9, 0.64, 1);
-        materialVec[0]->AddUniform<glm::vec4>("tint", tintVec);
-        materialVec[1]->AddUniform<glm::vec4>("tint", tintVec);
-        materialVec[2]->AddUniform<glm::vec4>("tint", tintVec2);
-        materialVec[3]->AddUniform<glm::vec4>("tint", tintVec);
+        for (int i = 0; i < 4; i++)
+        {
+            materialVec[i]->AddUniform<glm::vec3>("material.albedo_tint", new glm::vec3(1.0f, 1.0f, 1.0f));
+            materialVec[i]->AddUniform<glm::vec3>("material.specular_tint", new glm::vec3(1.0f, 1.0f, 1.0f));
+            materialVec[i]->AddUniform<glm::vec3>("material.emissive_tint", new glm::vec3(1.0f, 1.0f, 1.0f));
+            materialVec[i]->AddUniform<glm::vec2>("material.roughness_range", new glm::vec2(0.0f, 1.0f));
+        }
         ///////////////////////////////////////////////////////////////////////
+        /////////////////SKYLIGHT////////////////////////
+        Material *skyLightMaterial = new Material(&programs["sky"]);
+        entities[skyLightIndexInEntitiesVec]->addComponent(new TransformationComponent(nullptr));
+        entities[skyLightIndexInEntitiesVec]->addComponent(new LightComponent(LightType::SKYLIGHT));
+        ObjectProperties *skyLightProperties = new ObjectProperties(true, FacetoCull::FRONT, CCW, false, Constant, glm::vec4(0, 0, 0, 0), glm::vec4(0, 0, 0, 0), glm::vec4(0, 0, 0, 0));
 
+        skyLightMaterial->setObjProp(skyLightProperties);
+        skyLightMaterial->AddUniform<glm::vec3>("sky_light.top_color", new glm::vec3(0.25f, 0.3f, 0.5f));
+        skyLightMaterial->AddUniform<glm::vec3>("sky_light.middle_color", new glm::vec3(0.35f, 0.35f, 0.4f));
+        skyLightMaterial->AddUniform<glm::vec3>("sky_light.bottom_color", new glm::vec3(0.25f, 0.25f, 0.25f));
+        skyLightMaterial->AddUniform<float>("exposure", new float(2.0));
+
+        entities[skyLightIndexInEntitiesVec]->addComponent(new MeshRenderer(skyLightMaterial, &models["cuboid"]));
         // -- Initializing GL
-        glUseProgram(programs[programsName[1]]);
         rendererSystem.setEntitiesVector(&entities);
     }
 

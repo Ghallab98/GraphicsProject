@@ -77,7 +77,7 @@ public:
     void configureShader(int light_index, glm::mat4 cameraMatrix, ShaderProgram *program);
 
     //
-    static void ReadData(string filePath, int numOfEntities, vector<LightComponent *> &lightVec, vector<bool> &isEntityLight);
+    static void ReadData(string filePath, int numOfEntities, vector<LightComponent *> &lightVec, vector<bool> &isEntityLight, int &skyLightIndexInEntitiesVec);
 
     ~LightComponent();
 };

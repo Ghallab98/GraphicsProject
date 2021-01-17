@@ -123,9 +123,6 @@ void gameTemp::Texture::ReadData(string inputPath, unordered_map<string, gameTem
     string textureRead = "texture";
     string textureReadTemp = "texture";
     int numberofTextures = data["Resources"]["Textures"].size();
-    /*cout << "Number of textures are   " << numberofTextures << endl
-         << endl
-         << endl;*/
     for (int pos = 1; pos <= numberofTextures; pos++)
     {
         textureRead += to_string(pos);
