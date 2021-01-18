@@ -48,6 +48,10 @@ class GameApp : public gameTemp::Application
             {
                 goToState(new GameState(this));
             }
+            else if (currState->getName() == "gameOver")
+            {
+                goToState(new MenuState(this));
+            }
         }
 
         if (keyboard.justPressed(GLFW_KEY_ESCAPE))
@@ -58,7 +62,7 @@ class GameApp : public gameTemp::Application
             }
             else
             {
-                if (currState)
+                if (currState || currState->getName() == "gameOver")
                     currState->onExit();
 
                 currState = nullptr;

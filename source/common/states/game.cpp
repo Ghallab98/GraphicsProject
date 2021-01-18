@@ -216,7 +216,6 @@ public:
         //THIS BLOCK IS AFTER ATTACHING CAMERA COMPONENT TO ENTITIES FOR USAGE IN CAMERA CONTROLLER CONSTRUCTOR
         //--Camera Controller Component
         CameraControllerComponent::ReadData(path, entities, camControllerVector, app, cameraCtrlPos, CameraControllerComponentControllers);
-        //cout << "The camera ctrl pos size isss  " << cameraCtrlPos.size() << endl;
 
         int itIndex = 0;
         for (int i = 0; i < camControllerVector.size(); i++)
@@ -272,9 +271,9 @@ public:
         controllerKeys["right"] = GLFW_KEY_D;
         controllerKeys["left"] = GLFW_KEY_A;
         moveController->setControllerKeys(controllerKeys);
-        moveController->setMovementLimits({-5, 5, -5, 5, -5, 5});
-        entities[2]->addComponent(moveController);
-        entities[2]->getTransformationComponent()->setBoundsRadius(2);
+        moveController->setMovementLimits({-1000, 1000, 0, 20, -1, 8});
+        entities[9]->addComponent(moveController);
+        entities[9]->getTransformationComponent()->setBoundsRadius(2);
         entities[0]->getTransformationComponent()->setBoundsRadius(2);
         rendererSystem.setEntitiesVector(&entities);
     }
@@ -299,8 +298,6 @@ public:
         int jump = CameraControllerComponentControllers[currentCameraIndex]["jump"];
         int crouch = CameraControllerComponentControllers[currentCameraIndex]["crouch"];
         //
-
-        //cout << "Overlap: " << entities[2]->getTransformationComponent()->doOverlap(entities[0]->getTransformationComponent()) << endl;
 
         currentCamera->getCameraComponentController()->update(deltaTime, front, back, right, left, jump, crouch);
         glm::mat4 camera_matrix = currentCamera->getCameraComponent()->getVPMatrix();

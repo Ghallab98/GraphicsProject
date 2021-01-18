@@ -76,6 +76,11 @@
         "path":"assets/resources/models/tree/trunk wood.obj"
       },
       {
+        "name":"cup",
+        "isLoadable":true,
+        "path":"assets/resources/models/cup/WinnerCup.obj"
+      },
+      {
         "name":"bike",
         "isLoadable":true,
         "path":"assets/resources/models/bike/bike.obj"
@@ -90,70 +95,6 @@
       {
         "texture1":{
           "isLoaded":true,
-          "name":"moon",
-          "active_MipMap":true,
-          "mipMapLevel":0,
-          "width":256,
-          "height":128,
-          "unPack": 0,
-          "path":"assets/images/moon.jpg"
-        }
-      },
-      {
-        "texture2":{
-          "isLoaded":true,
-          "name":"color-grid",
-          "active_MipMap":true,
-          "mipMapLevel":0,
-          "width":256,
-          "height":128,
-          "unPack": 0,
-          "path":"assets/images/color-grid.png"
-        }
-      },
-      {
-        "texture3":{
-          "isLoaded":false,
-          "name":"checkerboard",
-          "size":[256,256],
-          "patternSize":[128,128],
-          "color1":[255,255,255,255],
-          "color2":[16,16,16,225]
-        }
-      },
-      {
-        "texture4":{
-          "isLoaded":false,
-          "name":"checkerboard_albedo",
-          "size":[256,256],
-          "patternSize":[128,128],
-          "color1":[255,255,255,255],
-          "color2":[16,16,16,225]
-        }
-      },
-      {
-        "texture5":{
-          "isLoaded":false,
-          "name":"checkerboard_specular",
-          "size":[256,256],
-          "patternSize":[128,128],
-          "color1":[0, 0, 0, 255],
-          "color2":[255, 255, 255, 255]
-        }
-      },
-      {
-        "texture6":{
-          "isLoaded":false,
-          "name":"checkerboard_roughness",
-          "size":[256,256],
-          "patternSize":[128,128],
-          "color1":[255, 255, 255, 255],
-          "color2":[64, 64, 64, 255]
-        }
-      },
-      {
-        "texture7":{
-          "isLoaded":true,
           "name":"metal_albedo",
           "active_MipMap":true,
           "mipMapLevel":0,
@@ -164,7 +105,7 @@
         }
       },
       {
-        "texture8":{
+        "texture2":{
           "isLoaded":true,
           "name":"metal_specular",
           "active_MipMap":true,
@@ -176,7 +117,7 @@
         }
       },
       {
-        "texture9":{
+        "texture3":{
           "isLoaded":true,
           "name":"metal_roughness",
           "active_MipMap":true,
@@ -188,7 +129,7 @@
         }
       },
       {
-        "texture10":{
+        "texture4":{
           "isLoaded":true,
           "name":"black",
           "active_MipMap":true,
@@ -200,7 +141,7 @@
         }
       },
       {
-        "texture11":{
+        "texture5":{
           "isLoaded":true,
           "name":"white",
           "active_MipMap":true,
@@ -212,7 +153,7 @@
         }
       },
       {
-        "texture12":{
+        "texture6":{
           "isLoaded":true,
           "name":"water",
           "active_MipMap":true,
@@ -224,7 +165,7 @@
         }
       },
       {
-        "texture13":{
+        "texture7":{
           "isLoaded":true,
           "name":"bridge",
           "active_MipMap":true,
@@ -236,7 +177,7 @@
         }
       },
       {
-        "texture14":{
+        "texture8":{
           "isLoaded":true,
           "name":"tree",
           "active_MipMap":true,
@@ -248,7 +189,7 @@
         }
       },
       {
-        "texture15":{
+        "texture9":{
           "isLoaded":true,
           "name":"BlackAndGold",
           "active_MipMap":true,
@@ -260,7 +201,7 @@
         }
       },
       {
-        "texture16":{
+        "texture10":{
           "isLoaded":true,
           "name":"monkey",
           "active_MipMap":true,
@@ -299,13 +240,13 @@
     ]
   },
   "World":{
-      "NumberOfEntities": 9,
+      "NumberOfEntities": 13,
       "NumberOfCameraEntities":2,
       "NumberOfLightEntities":3,
       "Camera Controllers":{
         "Array":[
           {
-            "Number of Entity to Control":10,
+            "Number of Entity to Control":14,
             "Keys":{
               "Front":"up",
               "Back":"down",
@@ -662,8 +603,76 @@
             },
             "shader name":"light"
           }
-        }
+        },
+        {
+          "material6":{
+            "textures and samplers Reference":[
+              {
+                "name" : "emissive_map",
+                "texture ref":"black",
+                "sampler ref":1
+              },
+              {
+                "name" : "albedo_map",
+                "texture ref":"metal_albedo",
+                "sampler ref":1
+              },
+              {
+                "name" : "specular_map",
+                "texture ref":"metal_specular",
+                "sampler ref":1
+              },
+              {
+                "name" : "roughness_map",
+                "texture ref":"metal_roughness",
+                "sampler ref":1
+              },
+              {
+                "name" : "ambient_occlusion_map",
+                "texture ref":"white",
+                "sampler ref":1
+              }
+            ],
+            "uniforms":[
+              {
+                "name":"material.albedo_tint",
+                "type":"vec3",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"material.specular_tint",
+                "type":"vec3",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"material.emissive_tint",
+                "type":"vec3",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"material.roughness_range",
+                "type":"vec2",
+                "value":[0.0, 1.0]
+              }
+            ],
+            "object Property":{
+              "Culling":{
+                "enabled":true,
+                "face to cull":"BACK",
+                "winding direction":"CCW"
+              },
+              "Blending":{
+                "enabled":true,
+                "type":"Not-Constant",
+                "src color":[],
+                "dest color":[],
+                "constClr":[0.25,1.0,0.75,0.5]
 
+              }
+            },
+            "shader name":"light"
+          }
+        }
       ],
       "entity1":{
         "name":"bridge",
@@ -741,6 +750,66 @@
         }
       },
       "entity6": {
+        "name":"cup",
+        "camera":false,
+        "light":false,
+        "entityParentNum": 1,
+        "Transformation Component": {
+          "position": [ 5, 1.35, -0.94 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 0.001, 0.001, 0.001 ]
+        },
+        "Mesh Renderer":{
+          "material": 6,
+          "mesh":"cup"
+        }
+      },
+      "entity7": {
+        "name":"cup",
+        "camera":false,
+        "light":false,
+        "entityParentNum": 1,
+        "Transformation Component": {
+          "position": [ 10, 1.35, -0.24 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 0.001, 0.001, 0.001 ]
+        },
+        "Mesh Renderer":{
+          "material": 6,
+          "mesh":"cup"
+        }
+      },
+      "entity8": {
+        "name":"cup",
+        "camera":false,
+        "light":false,
+        "entityParentNum": 1,
+        "Transformation Component": {
+          "position": [ 15, 1.35, -0.64 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 0.001, 0.001, 0.001 ]
+        },
+        "Mesh Renderer":{
+          "material": 6,
+          "mesh":"cup"
+        }
+      },
+      "entity9": {
+        "name":"cup",
+        "camera":false,
+        "light":false,
+        "entityParentNum": 1,
+        "Transformation Component": {
+          "position": [ 20, 1.35, -1.14 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 0.001, 0.001, 0.001 ]
+        },
+        "Mesh Renderer":{
+          "material": 6,
+          "mesh":"cup"
+        }
+      },
+      "entity10": {
         "name":"bike",
         "camera":false,
         "light":false,
@@ -755,22 +824,22 @@
           "mesh":"bike"
         }
       },
-      "entity7":{
+      "entity11":{
         "name":"monkey",
         "camera":false,
         "light":false,
-        "entityParentNum": 6,
+        "entityParentNum": 1,
         "Transformation Component": {
-          "position": [-9, 9,-9],
+          "position": [-3,  1.15,-0.64],
           "rotation": [ -1.5, 0, 1.5 ],
-          "scale": [ 0.0333, 0.0333, 0.2 ]
+          "scale": [ 0.01, 0.01, 0.01 ]
         },
         "Mesh Renderer":{
           "material": 5,
           "mesh":"monkey"
         }
       },
-      "entity8": {
+      "entity12": {
         "name":"maboy",
         "camera":false,
         "light":false,
@@ -785,7 +854,7 @@
           "mesh":"boy"
         }
       },
-      "entity9":{
+      "entity13":{
         "name":"sea",
         "camera":false,
         "light":false,
@@ -800,10 +869,10 @@
           "mesh":"plane"
         }
       },
-      "entity10":{
+      "entity14":{
         "camera":true,
         "light":false,
-        "entityParentNum": 6,
+        "entityParentNum": 10,
         "Transformation Component": {
           "position": [ 10, 10, 10 ],
           "rotation": [ 0, 0, 0 ],
@@ -815,7 +884,7 @@
           "Up Direction":[0,1,0]
         }
       },
-      "entity11":{
+      "entity15":{
         "camera":true,
         "light":false,
         "entityParentNum": null,
@@ -831,7 +900,7 @@
         }
 
       },
-      "entity12":{
+      "entity16":{
         "camera":false,
         "light":true,
         "entityParentNum": null,
@@ -848,7 +917,7 @@
         }
 
       },
-      "entity13":{
+      "entity17":{
         "camera":false,
         "light":true,
         "entityParentNum": null,
@@ -863,7 +932,7 @@
           "color":[0.5,0.5,0.5]
         }
        },
-      "entity14":{
+      "entity18":{
         "camera":false,
         "light":true,
         "entityParentNum": null,

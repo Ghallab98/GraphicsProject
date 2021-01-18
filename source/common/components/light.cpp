@@ -223,10 +223,6 @@ void LightComponent::ReadData(string filePath, int numOfEntities, vector<LightCo
                     glm::vec3 topClrVec = {topClr[0], topClr[1], topClr[2]};
                     glm::vec3 midClrVec = {midClr[0], midClr[1], midClr[2]};
                     glm::vec3 btClrVec = {btClr[0], btClr[1], btClr[2]};
-                    /*cout << "I am the sky light  " << endl;
-                    cout << topClrVec[0] << topClrVec[1] << topClrVec[2] << endl;
-                    cout << midClrVec[0] << midClrVec[1] << midClrVec[2] << endl;
-                    cout << btClrVec[0] << btClrVec[1] << btClrVec[2] << endl;*/
                     lightVec.push_back(CreationSkyFromBase(topClrVec, midClrVec, btClrVec));
                 }
                 else if (lightType == "spot")
@@ -263,9 +259,6 @@ void LightComponent::ReadData(string filePath, int numOfEntities, vector<LightCo
                     }
                     glm::vec3 clrVec = {color[0], color[1], color[2]};
                     glm::vec3 dirVec = {direction[0], direction[1], direction[2]};
-                    /* cout << "I am  the directional light  " << endl;
-                    cout << clrVec[0] << clrVec[1] << clrVec[2] << endl;
-                    cout << dirVec[0] << dirVec[1] << dirVec[2] << endl;*/
                     lightVec.push_back(CreationDirectionalFromBase(dirVec, clrVec));
                 }
                 else if (lightType == "point")
