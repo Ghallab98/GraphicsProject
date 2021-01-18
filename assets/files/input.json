@@ -531,6 +531,7 @@
         }
       },
       "entity2": {
+        "name":"maboy",
         "camera":false,
         "light":false,
         "entityParentNum": 1,
@@ -545,6 +546,7 @@
         }
       },
       "entity3": {
+        "name":"sphere",
         "camera":false,
         "light":false,
         "entityParentNum": 2,
@@ -559,6 +561,7 @@
         }
       },
       "entity4":{
+        "name":"maboy2",
         "camera":false,
         "light":false,
         "entityParentNum": null,
@@ -573,6 +576,7 @@
         }
       },
       "entity5":{
+        "name":"maboy3",
         "camera":false,
         "light":false,
         "entityParentNum": null,
@@ -587,6 +591,7 @@
         }
       },
       "entity6":{
+        "name":"the plane",
         "camera":false,
         "light":false,
         "entityParentNum": null,

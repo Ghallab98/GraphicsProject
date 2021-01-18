@@ -191,11 +191,13 @@ public:
         int numOfCamEntities = 0;
         int numOfCamCtrls = 0;
         int numOfLights = 0;
-        Component::ReadData(path, numOfEntities, numOfCamEntities, numOfCamCtrls, numOfLights);
+        vector<string> entityNamesVec;
+        Component::ReadData(path, numOfEntities, numOfCamEntities, numOfCamCtrls, numOfLights, entityNamesVec);
         //Creation of Entites and Camera Entites and Light entities
         for (int i = 0; i < numOfEntities + numOfCamEntities + numOfLights; i++)
         {
             entities.push_back(new Entity);
+            entities[i]->setEntityName(entityNamesVec[i]);
         }
         //--Transformation Component
         TransformationComponent::ReadData(path, numOfEntities, tcVector);

@@ -11,6 +11,14 @@ void Entity::addComponent(Component *component)
     }
 }
 
+void Entity::setEntityName(std::string name)
+{
+    this->entityName = name;
+}
+std::string Entity::getName()
+{
+    return this->entityName;
+}
 TransformationComponent *Entity::getTransformationComponent()
 {
     for (int i = 0, numComponenets = components.size(); i < numComponenets; i++)

@@ -35,7 +35,7 @@ public:
         myEntity = entity;
     }
     //
-    static void ReadData(std::string inputFilepath, int &numOfEntites, int &numOfCamEntities, int &numOfCamController, int &numOfLights) // to be called from the Game.cpp
+    static void ReadData(std::string inputFilepath, int &numOfEntites, int &numOfCamEntities, int &numOfCamController, int &numOfLights, vector<string> &entitiesNameVec) // to be called from the Game.cpp
     {
 
         Json::Value data;
@@ -45,6 +45,24 @@ public:
         numOfCamEntities = data["World"]["NumberOfCameraEntities"].asInt();
         numOfCamController = data["World"]["Camera Controllers"]["Array"].size();
         numOfLights = data["World"]["NumberOfLightEntities"].asInt();
+        //Get names of entities
+        string entity = "entity";
+        string entityTemp = "entity";
+        for (int pos = 1; pos < numOfEntites + numOfCamEntities + numOfCamController + numOfLights; pos++)
+        {
+            entity += to_string(pos);
+            if (data["World"][entity]["name"])
+            {
+                string theEntityName = data["World"][entity]["name"].asString();
+                entitiesNameVec.push_back(theEntityName);
+            }
+            else
+            {
+                entitiesNameVec.push_back("no name");
+            }
+            //last line
+            entity = entityTemp;
+        }
     }
 };
 
