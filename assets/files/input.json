@@ -59,6 +59,11 @@
         "texture offset":[0,0],
         "texture tiling":[100,100]
         
+      },
+      {
+        "name":"boy",
+        "isLoadable":true,
+        "path":"assets/resources/models/boy/boy.obj"
       }
     ],
     "Textures":[
@@ -214,13 +219,13 @@
     ]
   },
   "World":{
-      "NumberOfEntities": 5,
+      "NumberOfEntities": 6,
       "NumberOfCameraEntities":2,
       "NumberOfLightEntities":3,
       "Camera Controllers":{
         "Array":[
           {
-            "Number of Entity to Control":6,
+            "Number of Entity to Control":7,
             "Keys":{
               "Front":"up",
               "Back":"down",
@@ -264,19 +269,23 @@
             ],
             "uniforms":[
               {
-                "name":"albedo_tint",
+                "name":"material.albedo_tint",
+                "type":"vec3",
                 "value":[1.0, 1.0, 1.0]
               },
               {
-                "name":"specular_tint",
+                "name":"material.specular_tint",
+                "type":"vec3",
                 "value":[1.0, 1.0, 1.0]
               },
               {
-                "name":"emissive_tint",
+                "name":"material.emissive_tint",
+                "type":"vec3",
                 "value":[1.0, 1.0, 1.0]
               },
               {
-                "name":"roughness_range",
+                "name":"material.roughness_range",
+                "type":"vec2",
                 "value":[0.0, 1.0]
               }
             ],
@@ -329,19 +338,23 @@
             ],
             "uniforms":[
               {
-                "name":"albedo_tint",
+                "name":"material.albedo_tint",
+                "type":"vec3",
                 "value":[1.0, 1.0, 1.0]
               },
               {
-                "name":"specular_tint",
+                "name":"material.specular_tint",
+                "type":"vec3",
                 "value":[1.0, 1.0, 1.0]
               },
               {
-                "name":"emissive_tint",
+                "name":"material.emissive_tint",
+                "type":"vec3",
                 "value":[1.0, 1.0, 1.0]
               },
               {
-                "name":"roughness_range",
+                "name":"material.roughness_range",
+                "type":"vec2",
                 "value":[0.0, 1.0]
               }
             ],
@@ -394,19 +407,23 @@
             ],
             "uniforms":[
               {
-                "name":"albedo_tint",
+                "name":"material.albedo_tint",
+                "type":"vec3",
                 "value":[1.0, 1.0, 1.0]
               },
               {
-                "name":"specular_tint",
+                "name":"material.specular_tint",
+                "type":"vec3",
                 "value":[1.0, 1.0, 1.0]
               },
               {
-                "name":"emissive_tint",
+                "name":"material.emissive_tint",
+                "type":"vec3",
                 "value":[1.0, 1.0, 1.0]
               },
               {
-                "name":"roughness_range",
+                "name":"material.roughness_range",
+                "type":"vec2",
                 "value":[0.0, 1.0]
               }
             ],
@@ -459,19 +476,23 @@
             ],
             "uniforms":[
               {
-                "name":"albedo_tint",
+                "name":"material.albedo_tint",
+                "type":"vec3",
                 "value":[1.0, 1.0, 1.0]
               },
               {
-                "name":"specular_tint",
+                "name":"material.specular_tint",
+                "type":"vec3",
                 "value":[1.0, 1.0, 1.0]
               },
               {
-                "name":"emissive_tint",
+                "name":"material.emissive_tint",
+                "type":"vec3",
                 "value":[1.0, 1.0, 1.0]
               },
               {
-                "name":"roughness_range",
+                "name":"material.roughness_range",
+                "type":"vec2",
                 "value":[0.0, 1.0]
               }
             ],
@@ -520,7 +541,7 @@
         },
         "Mesh Renderer":{
           "material": 2,
-          "mesh":"cuboid"
+          "mesh":"boy"
         }
       },
       "entity3": {
@@ -544,14 +565,28 @@
         "Transformation Component": {
           "position": [ -2, 2, -2 ],
           "rotation": [ 0, 0, 0 ],
-          "scale": [ 2, 2, 2 ]
+          "scale": [ 1, 1, 1 ]
         },
         "Mesh Renderer":{
           "material": 4,
-          "mesh":"sphere"
+          "mesh":"boy"
         }
       },
       "entity5":{
+        "camera":false,
+        "light":false,
+        "entityParentNum": null,
+        "Transformation Component": {
+          "position": [ 10, 10, 10 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale":[ 7, 7, 7 ]
+        },
+        "Mesh Renderer":{
+          "material": 4,
+          "mesh":"boy"
+        }
+      },
+      "entity6":{
         "camera":false,
         "light":false,
         "entityParentNum": null,
@@ -565,7 +600,7 @@
           "mesh":"plane"
         }
       },
-      "entity6":{
+      "entity7":{
         "camera":true,
         "light":false,
         "entityParentNum": 2,
@@ -580,7 +615,7 @@
           "Up Direction":[0,1,0]
         }
       },
-      "entity7":{
+      "entity8":{
         "camera":true,
         "light":false,
         "entityParentNum": null,
@@ -596,7 +631,7 @@
         }
 
       },
-      "entity8":{
+      "entity9":{
         "camera":false,
         "light":true,
         "entityParentNum": null,
@@ -613,7 +648,7 @@
         }
 
       },
-      "entity9":{
+      "entity10":{
         "camera":false,
         "light":true,
         "entityParentNum": null,
@@ -628,7 +663,7 @@
           "color":[0.5,0.5,0.5]
         }
        },
-      "entity10":{
+      "entity11":{
         "camera":false,
         "light":true,
         "entityParentNum": null,

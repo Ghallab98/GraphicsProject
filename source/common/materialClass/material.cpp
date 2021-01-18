@@ -26,52 +26,52 @@ void Material::setProgramUniforms()
     {
         if (uniform.typeId == typeid(GLfloat))
         {
-            shaderPtr->set(key, *(std::any_cast<GLfloat *>(uniform.data)));
+            shaderPtr->set(key, (std::any_cast<GLfloat>(uniform.data)));
             continue;
         }
         else if (uniform.typeId == typeid(GLint))
         {
-            shaderPtr->set(key, *(std::any_cast<GLint *>(uniform.data)));
+            shaderPtr->set(key, (std::any_cast<GLint>(uniform.data)));
             continue;
         }
         else if (uniform.typeId == typeid(GLboolean))
         {
-            shaderPtr->set(key, *(std::any_cast<GLboolean *>(uniform.data)));
+            shaderPtr->set(key, (std::any_cast<GLboolean>(uniform.data)));
             continue;
         }
         else if (uniform.typeId == typeid(glm::mat4))
         {
-            shaderPtr->set(key, *(std::any_cast<glm::mat4 *>(uniform.data)));
+            shaderPtr->set(key, (std::any_cast<glm::mat4>(uniform.data)));
             continue;
         }
         else if (uniform.typeId == typeid(glm::vec2))
         {
-            shaderPtr->set(key, *(std::any_cast<glm::vec2 *>(uniform.data)));
+            shaderPtr->set(key, (std::any_cast<glm::vec2>(uniform.data)));
             continue;
         }
         else if (uniform.typeId == typeid(glm::vec3))
         {
-            shaderPtr->set(key, *(std::any_cast<glm::vec3 *>(uniform.data)));
+            shaderPtr->set(key, (std::any_cast<glm::vec3>(uniform.data)));
             continue;
         }
         else if (uniform.typeId == typeid(glm::vec4))
         {
-            shaderPtr->set(key, *(std::any_cast<glm::vec4 *>(uniform.data)));
+            shaderPtr->set(key, (std::any_cast<glm::vec4>(uniform.data)));
             continue;
         }
         else if (uniform.typeId == typeid(float))
         {
-            shaderPtr->set(key, *(std::any_cast<float *>(uniform.data)));
+            shaderPtr->set(key, (std::any_cast<float>(uniform.data)));
             continue;
         }
         else if (uniform.typeId == typeid(bool))
         {
-            shaderPtr->set(key, *(std::any_cast<bool *>(uniform.data)));
+            shaderPtr->set(key, (std::any_cast<bool>(uniform.data)));
             continue;
         }
         else if (uniform.typeId == typeid(int))
         {
-            shaderPtr->set(key, *(std::any_cast<int *>(uniform.data)));
+            shaderPtr->set(key, (std::any_cast<int>(uniform.data)));
             continue;
         }
     }
@@ -110,9 +110,94 @@ ObjectProperties *Material::getObjProp()
 Material::~Material()
 {
 }
+void Material::ExtractUniforms(string inputFilePath, int numOfMaterials, vector<Material *> &materialVec)
+{
+    Json::Value data;
+    std::ifstream people_file(inputFilePath, std::ifstream::binary);
+    people_file >> data;
+    string materialRead = "material";
+    string materialReadTemp = "material";
+    for (int pos = 1; pos <= numOfMaterials; pos++)
+    {
+        materialRead += to_string(pos);
+        //--If there are unifroms to be extracted
+        if (data["World"]["Materials"][pos - 1][materialRead]["uniforms"])
+        {
+            int numberOfUniforms = data["World"]["Materials"][pos - 1][materialRead]["uniforms"].size();
+            //possible types to send to shader
+            glm::mat3 isMat3(-1.0f);
+            glm::mat4 isMat4(-1.0f);
+            for (int g = 0; g < numberOfUniforms; g++)
+            {
+                string uniformType = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["type"].asString();
+                string uniformName = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["name"].asString();
+
+                if (uniformType == "number")
+                {
+                    float number = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"].asFloat();
+                    materialVec[pos - 1]->AddUniform(uniformName, number);
+                }
+                else if (uniformType == "vec2")
+                {
+                    float vec2Arr[2];
+                    vec2Arr[0] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][0].asFloat();
+                    vec2Arr[1] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][1].asFloat();
+                    glm::vec2 isVec2(vec2Arr[0], vec2Arr[1]);
+
+                    materialVec[pos - 1]->AddUniform(uniformName, isVec2);
+                }
+                else if (uniformType == "vec3")
+                {
+                    float vec3Arr[3];
+                    vec3Arr[0] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][0].asFloat();
+                    vec3Arr[1] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][1].asFloat();
+                    vec3Arr[2] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][2].asFloat();
+                    glm::vec3 isVec3(vec3Arr[0], vec3Arr[1], vec3Arr[2]);
+
+                    materialVec[pos - 1]->AddUniform(uniformName, isVec3);
+                }
+                else if (uniformType == "vec4")
+                {
+                    float vec4Arr[4];
+                    vec4Arr[0] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][0].asFloat();
+                    vec4Arr[1] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][1].asFloat();
+                    vec4Arr[2] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][2].asFloat();
+                    vec4Arr[3] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][3].asFloat();
+                    glm::vec4 isVec4(vec4Arr[0], vec4Arr[1], vec4Arr[2], vec4Arr[3]);
+
+                    materialVec[pos - 1]->AddUniform(uniformName, isVec4);
+                }
+                else if (uniformType == "mat3")
+                {
+                    float mat3Arr[9];
+                    for (int c = 0; c < 9; c++)
+                    {
+                        mat3Arr[c] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][c].asFloat();
+                    }
+                    glm::mat3 isMat3(mat3Arr[0], mat3Arr[1], mat3Arr[2], mat3Arr[3], mat3Arr[4], mat3Arr[5], mat3Arr[6], mat3Arr[7], mat3Arr[8]);
+
+                    materialVec[pos - 1]->AddUniform(uniformName, isMat3);
+                }
+                else if (uniformType == "mat4")
+                {
+                    float mat4Arr[16];
+                    for (int c = 0; c < 16; c++)
+                    {
+                        mat4Arr[c] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][c].asFloat();
+                    }
+                    glm::mat4 isMat4(mat4Arr[0], mat4Arr[1], mat4Arr[2], mat4Arr[3], mat4Arr[4], mat4Arr[5], mat4Arr[6], mat4Arr[7], mat4Arr[8], mat4Arr[9], mat4Arr[10], mat4Arr[11], mat4Arr[12], mat4Arr[13], mat4Arr[14], mat4Arr[15]);
+
+                    materialVec[pos - 1]->AddUniform(uniformName, isMat4);
+                }
+            }
+        }
+        //last line
+        materialRead = materialReadTemp;
+    }
+}
 // Creation From Base Fn
-//shader program , objProp ptr, vector of shaders , vector of samplers
-Material *Material::CreationFromBase(gameTemp::ShaderProgram *myProgram, ObjectProperties *objPtr, vector<gameTemp ::Texture *> &recTexVec, vector<gameTemp ::Sampler *> &recSamplerVec, vector<string> &unitTextureNameVec, vector<string> &recUniformsVec, vector<vector<float>> &recValues)
+
+Material *Material::CreationFromBase(gameTemp::ShaderProgram *myProgram, ObjectProperties *objPtr, vector<gameTemp ::Texture *> &recTexVec, vector<gameTemp ::Sampler *> &recSamplerVec, vector<string> unitTextureNameVec)
 {
     Material *matPtr = new Material(myProgram);
     matPtr->setObjProp(objPtr);
@@ -123,19 +208,6 @@ Material *Material::CreationFromBase(gameTemp::ShaderProgram *myProgram, ObjectP
         extractedUnitTex.sampler = recSamplerVec[i];
         extractedUnitTex.name = unitTextureNameVec[i];
         matPtr->addUnitTexture(extractedUnitTex);
-    }
-    for (int i = 0; i < recUniformsVec.size(); i++)
-    {
-        if (recValues[i].size() == 3)
-        {
-            glm::vec3 *tint = new glm::vec3(recValues[i][0], recValues[i][1], recValues[i][2]);
-            matPtr->AddUniform(recUniformsVec[i], tint);
-        }
-        if (recValues[i].size() == 2)
-        {
-            glm::vec2 *tint = new glm::vec2(recValues[i][0], recValues[i][1]);
-            matPtr->AddUniform(recUniformsVec[i], tint);
-        }
     }
     return matPtr;
 }
@@ -246,65 +318,6 @@ void Material::ReadData(string inputFilePath, std::unordered_map<std::string, ga
                 samplerPosVector.push_back(samplerpos);
             }
         }
-        //Extracting Uniforms
-        int numberOfUniforms = data["World"]["Materials"][pos - 1][materialRead]["uniforms"].size();
-        vector<string> recUniformsVec;
-        vector<vector<float>> recValues(4);
-        vector<float> albedoValue(3, 1.0);
-        vector<float> specularValue(3, 1.0);
-        vector<float> emissiveValue(3, 1.0);
-        vector<float> roughnessValue = {0.0, 1.0};
-        for (int g = 0; g < numberOfUniforms; g++)
-        {
-            if (data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["name"].asString() == "albedo_tint")
-            {
-                recUniformsVec.push_back("albedo_tint");
-                if (data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"])
-                {
-                    for (int l = 0; l < albedoValue.size(); l++)
-                    {
-                        albedoValue[l] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][l].asFloat();
-                    }
-                }
-                recValues[g] = albedoValue;
-            }
-            else if (data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["name"].asString() == "specular_tint")
-            {
-                recUniformsVec.push_back("specular_tint");
-                if (data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"])
-                {
-                    for (int l = 0; l < specularValue.size(); l++)
-                    {
-                        specularValue[l] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][l].asFloat();
-                    }
-                }
-                recValues[g] = specularValue;
-            }
-            else if (data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["name"].asString() == "emissive_tint")
-            {
-                recUniformsVec.push_back("emissive_tint");
-                if (data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"])
-                {
-                    for (int l = 0; l < emissiveValue.size(); l++)
-                    {
-                        emissiveValue[l] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][l].asFloat();
-                    }
-                }
-                recValues[g] = emissiveValue;
-            }
-            else if (data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["name"].asString() == "roughness_range")
-            {
-                recUniformsVec.push_back("roughness_range");
-                if (data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"])
-                {
-                    for (int l = 0; l < roughnessValue.size(); l++)
-                    {
-                        roughnessValue[l] = data["World"]["Materials"][pos - 1][materialRead]["uniforms"][g]["value"][l].asFloat();
-                    }
-                }
-                recValues[g] = roughnessValue;
-            }
-        }
         //Extracting object Poperties
         //--if there is an object property
         if (data["World"]["Materials"][pos - 1][materialRead]["object Property"])
@@ -357,9 +370,9 @@ void Material::ReadData(string inputFilePath, std::unordered_map<std::string, ga
             }
         }
         //
-        materialVec.push_back(CreationFromBase(&programs[shaderName], objPtr, filledTexVec, filledSamplerVec, uniformNameVector, recUniformsVec, recValues));
+        materialVec.push_back(CreationFromBase(&programs[shaderName], objPtr, filledTexVec, filledSamplerVec, uniformNameVector));
         //last line
         materialRead = materialReadTemp;
     }
-    cout << "MATERIAAAAALLLLL IS DOEEEEE   " << endl;
+    ExtractUniforms(inputFilePath, numberofMaterials, materialVec);
 }

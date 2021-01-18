@@ -43,8 +43,10 @@ private:
     gameTemp::ShaderProgram *shaderPtr;
     map<std::string, uniform> uniformsMap;
     vector<unitTexture> unitTextures;
+    //Extract Unifomrs Fn
+    static void ExtractUniforms(string inputFilePath, int numOfMaterials, vector<Material *> &materialVec);
     //Creation from base function
-    static Material *CreationFromBase(gameTemp::ShaderProgram *myProgram, ObjectProperties *objPtr, vector<gameTemp ::Texture *> &recTexVec, vector<gameTemp ::Sampler *> &recSamplerVec, vector<string> &unitTextureNameVec, vector<string> &recUniformsVec, vector<vector<float>> &recValues);
+    static Material *CreationFromBase(gameTemp::ShaderProgram *myProgram, ObjectProperties *objPtr, vector<gameTemp ::Texture *> &recTexVec, vector<gameTemp ::Sampler *> &recSamplerVec, vector<string> unitTextureNameVec);
 
 public:
     Material(gameTemp::ShaderProgram *specifiedShader);
@@ -54,7 +56,7 @@ public:
     void addUnitTexture(unitTexture unit_texture);
 
     template <class T>
-    void AddUniform(std::string name, T *value);
+    void AddUniform(std::string name, T value);
 
     gameTemp::ShaderProgram *getShaderProgram();
     ObjectProperties *getObjProp();
@@ -68,7 +70,7 @@ public:
 };
 
 template <class T>
-void Material::AddUniform(std::string name, T *value)
+void Material::AddUniform(std::string name, T value)
 {
     this->uniformsMap.insert(std::pair<std::string, struct uniform>(name, {value, typeid(T)}));
 }

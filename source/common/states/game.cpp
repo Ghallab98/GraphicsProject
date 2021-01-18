@@ -242,28 +242,20 @@ public:
         {
             entities[l]->addComponent(meshRenderVector[l]);
         }
-        ///////////////////////////////////////////////////////////////////////
-        for (int i = 0; i < 4; i++)
-        {
-            materialVec[i]->AddUniform<glm::vec3>("material.albedo_tint", new glm::vec3(1.0f, 1.0f, 1.0f));
-            materialVec[i]->AddUniform<glm::vec3>("material.specular_tint", new glm::vec3(1.0f, 1.0f, 1.0f));
-            materialVec[i]->AddUniform<glm::vec3>("material.emissive_tint", new glm::vec3(1.0f, 1.0f, 1.0f));
-            materialVec[i]->AddUniform<glm::vec2>("material.roughness_range", new glm::vec2(0.0f, 1.0f));
-        }
-        ///////////////////////////////////////////////////////////////////////
         /////////////////SKYLIGHT////////////////////////
         Material *skyLightMaterial = new Material(&programs["sky"]);
         entities[skyLightIndexInEntitiesVec]->addComponent(new TransformationComponent(nullptr));
         entities[skyLightIndexInEntitiesVec]->addComponent(new LightComponent(LightType::SKYLIGHT));
         ObjectProperties *skyLightProperties = new ObjectProperties(true, FacetoCull::FRONT, CCW, false, Constant, glm::vec4(0, 0, 0, 0), glm::vec4(0, 0, 0, 0), glm::vec4(0, 0, 0, 0));
-
+        //
         skyLightMaterial->setObjProp(skyLightProperties);
-        skyLightMaterial->AddUniform<glm::vec3>("sky_light.top_color", new glm::vec3(0.25f, 0.3f, 0.5f));
-        skyLightMaterial->AddUniform<glm::vec3>("sky_light.middle_color", new glm::vec3(0.35f, 0.35f, 0.4f));
-        skyLightMaterial->AddUniform<glm::vec3>("sky_light.bottom_color", new glm::vec3(0.25f, 0.25f, 0.25f));
-        skyLightMaterial->AddUniform<float>("exposure", new float(2.0));
-
+        skyLightMaterial->AddUniform<glm::vec3>("sky_light.top_color", glm::vec3(0.25f, 0.3f, 0.5f));
+        skyLightMaterial->AddUniform<glm::vec3>("sky_light.middle_color", glm::vec3(0.35f, 0.35f, 0.4f));
+        skyLightMaterial->AddUniform<glm::vec3>("sky_light.bottom_color", glm::vec3(0.25f, 0.25f, 0.25f));
+        float lop = 2.0;
+        skyLightMaterial->AddUniform<float>("exposure", lop);
         entities[skyLightIndexInEntitiesVec]->addComponent(new MeshRenderer(skyLightMaterial, &models["cuboid"]));
+        /////////////////////////////////////////////////////
 
         // Movement controller
         auto moveController = new MovementControllerComponenet(app);
