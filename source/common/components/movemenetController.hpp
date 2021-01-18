@@ -22,7 +22,7 @@ class MovementControllerComponenet : public Component
 private:
     bool enabled = true;
     Application *app;
-    glm::vec3 position_sensitivity = {3.0f, 3.0f, 3.0f};
+    glm::vec3 position_sensitivity = {70.0f, 70.0f, 70.0f};
     float speedup_factor = 5.0f;
     vector<Animation> animations;
     map<string, int> controllerKeys;

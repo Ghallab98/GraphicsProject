@@ -123,14 +123,25 @@ void gameTemp::Texture::ReadData(string inputPath, unordered_map<string, gameTem
     string textureRead = "texture";
     string textureReadTemp = "texture";
     int numberofTextures = data["Resources"]["Textures"].size();
+    cout << endl
+         << endl
+         << "The number of texturess are   " << numberofTextures << endl;
     for (int pos = 1; pos <= numberofTextures; pos++)
     {
         textureRead += to_string(pos);
         //cout << textureRead << endl;
         bool isLoaded = data["Resources"]["Textures"][pos - 1][textureRead]["isLoaded"].asBool();
         string textureName = data["Resources"]["Textures"][pos - 1][textureRead]["name"].asString();
+        cout << endl
+             << "The texture name is     " << textureName << endl;
         if (isLoaded)
         {
+            if (textureName == "water")
+            {
+                cout << endl
+                     << endl
+                     << "Water is loadeddddd  " << endl;
+            }
             string texturePath = data["Resources"]["Textures"][pos - 1][textureRead]["path"].asString();
             //Defualt values in case not given in json file
             bool activeMipMap = true;

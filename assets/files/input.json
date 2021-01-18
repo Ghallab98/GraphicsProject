@@ -55,7 +55,7 @@
         "resolution":[],
         "colored": false,
         "center": [],
-        "size": [],
+        "size": [10,10],
         "texture offset":[0,0],
         "texture tiling":[100,100]
         
@@ -64,6 +64,26 @@
         "name":"boy",
         "isLoadable":true,
         "path":"assets/resources/models/boy/boy.obj"
+      },
+      {
+        "name":"bridge",
+        "isLoadable":true,
+        "path":"assets/resources/models/bridge/untitled.obj"
+      },
+      {
+        "name":"tree",
+        "isLoadable":true,
+        "path":"assets/resources/models/tree/trunk wood.obj"
+      },
+      {
+        "name":"bike",
+        "isLoadable":true,
+        "path":"assets/resources/models/bike/bike.obj"
+      },
+      {
+        "name":"monkey",
+        "isLoadable":true,
+        "path":"assets/resources/models/monkey/monkey.obj"
       }
     ],
     "Textures":[
@@ -190,6 +210,66 @@
           "unPack": 0,
           "path":"assets/images/white.jpg"
         }
+      },
+      {
+        "texture12":{
+          "isLoaded":true,
+          "name":"water",
+          "active_MipMap":true,
+          "mipMapLevel":0,
+          "width":256,
+          "height":128,
+          "unPack": 0,
+          "path":"assets/images/water.jpg"
+        }
+      },
+      {
+        "texture13":{
+          "isLoaded":true,
+          "name":"bridge",
+          "active_MipMap":true,
+          "mipMapLevel":0,
+          "width":256,
+          "height":128,
+          "unPack": 0,
+          "path":"assets/images/bridge.png"
+        }
+      },
+      {
+        "texture14":{
+          "isLoaded":true,
+          "name":"tree",
+          "active_MipMap":true,
+          "mipMapLevel":0,
+          "width":256,
+          "height":128,
+          "unPack": 0,
+          "path":"assets/images/tree.png"
+        }
+      },
+      {
+        "texture15":{
+          "isLoaded":true,
+          "name":"BlackAndGold",
+          "active_MipMap":true,
+          "mipMapLevel":0,
+          "width":256,
+          "height":128,
+          "unPack": 0,
+          "path":"assets/images/materials/asphalt/emissive.jpg"
+        }
+      },
+      {
+        "texture16":{
+          "isLoaded":true,
+          "name":"monkey",
+          "active_MipMap":true,
+          "mipMapLevel":0,
+          "width":256,
+          "height":128,
+          "unPack": 0,
+          "path":"assets/images/monkey.jpg"
+        }
       }
     ],
     "Samplers":[
@@ -219,13 +299,13 @@
     ]
   },
   "World":{
-      "NumberOfEntities": 6,
+      "NumberOfEntities": 9,
       "NumberOfCameraEntities":2,
       "NumberOfLightEntities":3,
       "Camera Controllers":{
         "Array":[
           {
-            "Number of Entity to Control":7,
+            "Number of Entity to Control":10,
             "Keys":{
               "Front":"up",
               "Back":"down",
@@ -243,12 +323,12 @@
             "textures and samplers Reference":[
               {
                 "name" : "emissive_map",
-                "texture ref":"moon",
+                "texture ref":"tree",
                 "sampler ref":1
               },
               {
                 "name" : "albedo_map",
-                "texture ref":"moon",
+                "texture ref":"tree",
                 "sampler ref":1
               },
               {
@@ -317,12 +397,12 @@
               },
               {
                 "name" : "albedo_map",
-                "texture ref":"metal_albedo",
+                "texture ref":"bridge",
                 "sampler ref":1
               },
               {
                 "name" : "specular_map",
-                "texture ref":"metal_specular",
+                "texture ref":"bridge",
                 "sampler ref":1
               },
               {
@@ -381,22 +461,22 @@
             "textures and samplers Reference":[
               {
                 "name" : "emissive_map",
-                "texture ref":"black",
+                "texture ref":"BlackAndGold",
                 "sampler ref":1
               },
               {
                 "name" : "albedo_map",
-                "texture ref":"checkerboard_albedo",
+                "texture ref":"BlackAndGold",
                 "sampler ref":1
               },
               {
                 "name" : "specular_map",
-                "texture ref":"checkerboard_specular",
+                "texture ref":"black",
                 "sampler ref":1
               },
               {
                 "name" : "roughness_map",
-                "texture ref":"checkerboard_roughness",
+                "texture ref":"white",
                 "sampler ref":1
               },
               {
@@ -455,12 +535,81 @@
               },
               {
                 "name" : "albedo_map",
-                "texture ref":"metal_albedo",
+                "texture ref":"water",
                 "sampler ref":1
               },
               {
                 "name" : "specular_map",
-                "texture ref":"metal_specular",
+                "texture ref":"water",
+                "sampler ref":1
+              },
+              {
+                "name" : "roughness_map",
+                "texture ref":"metal_roughness",
+                "sampler ref":1
+              },
+              {
+                "name" : "ambient_occlusion_map",
+                "texture ref":"white",
+                "sampler ref":1
+              }
+            ],
+            "uniforms":[
+              {
+                "name":"material.albedo_tint",
+                "type":"vec3",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"material.specular_tint",
+                "type":"vec3",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"material.emissive_tint",
+                "type":"vec3",
+                "value":[1.0, 1.0, 1.0]
+              },
+              {
+                "name":"material.roughness_range",
+                "type":"vec2",
+                "value":[0.0, 1.0]
+              }
+            ],
+            "object Property":{
+              "Culling":{
+                "enabled":true,
+                "face to cull":"BACK",
+                "winding direction":"CCW"
+              },
+              "Blending":{
+                "enabled":true,
+                "type":"Not-Constant",
+                "src color":[],
+                "dest color":[],
+                "constClr":[0.25,1.0,0.75,0.5]
+
+              }
+            },
+            "shader name":"light"
+          }
+        },
+        {
+          "material5":{
+            "textures and samplers Reference":[
+              {
+                "name" : "emissive_map",
+                "texture ref":"black",
+                "sampler ref":1
+              },
+              {
+                "name" : "albedo_map",
+                "texture ref":"monkey",
+                "sampler ref":1
+              },
+              {
+                "name" : "specular_map",
+                "texture ref":"black",
                 "sampler ref":1
               },
               {
@@ -516,82 +665,128 @@
         }
 
       ],
-      "entity1": {
+      "entity1":{
+        "name":"bridge",
         "camera":false,
         "light":false,
         "entityParentNum": null,
         "Transformation Component": {
-          "position": [ -2, 1, -2 ],
+          "position": [ 0, 10, 5 ],
           "rotation": [ 0, 0, 0 ],
-          "scale": [ 2, 2, 2 ]
+          "scale":[ 2, 5, 2 ]
         },
         "Mesh Renderer":{
           "material": 2,
-          "mesh":"cuboid"
+          "mesh":"bridge"
         }
       },
       "entity2": {
-        "name":"maboy",
+        "name":"tree",
         "camera":false,
         "light":false,
         "entityParentNum": 1,
+        "Transformation Component": {
+          "position": [ 3, 1.15, -0.64 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 2, 1, 2.2 ]
+        },
+        "Mesh Renderer":{
+          "material": 1,
+          "mesh":"tree"
+        }
+      },
+      "entity3": {
+        "name":"tree",
+        "camera":false,
+        "light":false,
+        "entityParentNum": 1,
+        "Transformation Component": {
+          "position": [  8, 1.15, -0.64],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 2, 1, 2.2 ]
+        },
+        "Mesh Renderer":{
+          "material": 1,
+          "mesh":"tree"
+        }
+      },
+      "entity4": {
+        "name":"tree",
+        "camera":false,
+        "light":false,
+        "entityParentNum": 1,
+        "Transformation Component": {
+          "position": [ 11, 1.15, -0.64 ],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 2, 1, 2.2 ]
+        },
+        "Mesh Renderer":{
+          "material": 1,
+          "mesh":"tree"
+        }
+      },
+      "entity5": {
+        "name":"tree",
+        "camera":false,
+        "light":false,
+        "entityParentNum": 1,
+        "Transformation Component": {
+          "position": [16, 1.15, -0.64],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [ 2, 1, 2.2 ]
+        },
+        "Mesh Renderer":{
+          "material": 1,
+          "mesh":"tree"
+        }
+      },
+      "entity6": {
+        "name":"bike",
+        "camera":false,
+        "light":false,
+        "entityParentNum": 1,
+        "Transformation Component": {
+          "position": [ 0.5, 1.15,-0.64],
+          "rotation": [ 0, 0, 0 ],
+          "scale": [0.03,0.03,0.05 ]
+        },
+        "Mesh Renderer":{
+          "material": 3,
+          "mesh":"bike"
+        }
+      },
+      "entity7":{
+        "name":"monkey",
+        "camera":false,
+        "light":false,
+        "entityParentNum": 6,
+        "Transformation Component": {
+          "position": [-9, 9,-9],
+          "rotation": [ -1.5, 0, 1.5 ],
+          "scale": [ 0.0333, 0.0333, 0.2 ]
+        },
+        "Mesh Renderer":{
+          "material": 5,
+          "mesh":"monkey"
+        }
+      },
+      "entity8": {
+        "name":"maboy",
+        "camera":false,
+        "light":false,
+        "entityParentNum": null,
         "Transformation Component": {
           "position": [ 2, 2, -2 ],
           "rotation": [ 0, 0, 0 ],
           "scale": [ 1, 1, 1 ]
         },
         "Mesh Renderer":{
-          "material": 2,
-          "mesh":"boy"
-        }
-      },
-      "entity3": {
-        "name":"sphere",
-        "camera":false,
-        "light":false,
-        "entityParentNum": 2,
-        "Transformation Component": {
-          "position": [ -2, 1, 2 ],
-          "rotation": [ 0, 0, 0 ],
-          "scale": [ 2, 2, 2 ]
-        },
-        "Mesh Renderer":{
-          "material": 1,
-          "mesh":"sphere"
-        }
-      },
-      "entity4":{
-        "name":"maboy2",
-        "camera":false,
-        "light":false,
-        "entityParentNum": null,
-        "Transformation Component": {
-          "position": [ -2, 2, -2 ],
-          "rotation": [ 0, 0, 0 ],
-          "scale": [ 1, 1, 1 ]
-        },
-        "Mesh Renderer":{
           "material": 4,
           "mesh":"boy"
         }
       },
-      "entity5":{
-        "name":"maboy3",
-        "camera":false,
-        "light":false,
-        "entityParentNum": null,
-        "Transformation Component": {
-          "position": [ 10, 10, 10 ],
-          "rotation": [ 0, 0, 0 ],
-          "scale":[ 7, 7, 7 ]
-        },
-        "Mesh Renderer":{
-          "material": 4,
-          "mesh":"boy"
-        }
-      },
-      "entity6":{
-        "name":"the plane",
+      "entity9":{
+        "name":"sea",
         "camera":false,
         "light":false,
         "entityParentNum": null,
@@ -601,14 +796,14 @@
           "scale": [ 500, 1, 500 ]
         },
         "Mesh Renderer":{
-          "material": 3,
+          "material": 4,
           "mesh":"plane"
         }
       },
-      "entity7":{
+      "entity10":{
         "camera":true,
         "light":false,
-        "entityParentNum": 2,
+        "entityParentNum": 6,
         "Transformation Component": {
           "position": [ 10, 10, 10 ],
           "rotation": [ 0, 0, 0 ],
@@ -620,7 +815,7 @@
           "Up Direction":[0,1,0]
         }
       },
-      "entity8":{
+      "entity11":{
         "camera":true,
         "light":false,
         "entityParentNum": null,
@@ -636,7 +831,7 @@
         }
 
       },
-      "entity9":{
+      "entity12":{
         "camera":false,
         "light":true,
         "entityParentNum": null,
@@ -653,7 +848,7 @@
         }
 
       },
-      "entity10":{
+      "entity13":{
         "camera":false,
         "light":true,
         "entityParentNum": null,
@@ -668,7 +863,7 @@
           "color":[0.5,0.5,0.5]
         }
        },
-      "entity11":{
+      "entity14":{
         "camera":false,
         "light":true,
         "entityParentNum": null,

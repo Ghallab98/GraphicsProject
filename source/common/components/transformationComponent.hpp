@@ -104,29 +104,29 @@ public:
             {
                 int parntEntityNum = data["World"][entity]["entityParentNum"].asInt() - 1;
                 //-- Translation
-                int posVal[3];
-                int posIndex;
+                float posVal[3];
+                float posIndex;
                 for (int j = 0; j < 3; j++)
                 {
-                    posIndex = (data["World"][entity]["Transformation Component"]["position"][j]).asInt();
+                    posIndex = (data["World"][entity]["Transformation Component"]["position"][j]).asFloat();
                     posVal[j] = posIndex;
                 }
                 glm::vec3 translation(posVal[0], posVal[1], posVal[2]);
                 //-- Rotation
-                int rotIndex;
-                int rotVal[3];
+                float rotIndex;
+                float rotVal[3];
                 for (int j = 0; j < 3; j++)
                 {
-                    rotIndex = (data["World"][entity]["Transformation Component"]["rotation"][j]).asInt();
+                    rotIndex = (data["World"][entity]["Transformation Component"]["rotation"][j]).asFloat();
                     rotVal[j] = rotIndex;
                 }
                 glm::vec3 rotation(rotVal[0], rotVal[1], rotVal[2]);
                 //-- Scaling
-                int scaleIndex;
-                int scaleVal[3];
+                float scaleIndex;
+                float scaleVal[3];
                 for (int j = 0; j < 3; j++)
                 {
-                    scaleIndex = (data["World"][entity]["Transformation Component"]["scale"][j]).asInt();
+                    scaleIndex = (data["World"][entity]["Transformation Component"]["scale"][j]).asFloat();
                     scaleVal[j] = scaleIndex;
                 }
                 glm::vec3 scale(scaleVal[0], scaleVal[1], scaleVal[2]);

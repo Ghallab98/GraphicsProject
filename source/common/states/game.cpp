@@ -200,7 +200,6 @@ public:
             entities[i]->setEntityName(entityNamesVec[i]);
         }
         //--Transformation Component
-        TransformationComponent::ReadData(path, numOfEntities, tcVector);
         TransformationComponent::ReadData(path, numOfEntities + numOfCamEntities + numOfLights, tcVector);
         //--Camera Component
         CameraComponent ::ReadData(path, numOfEntities + numOfCamEntities + numOfLights, camVector, isEntityCamera);
@@ -262,7 +261,7 @@ public:
         // Movement controller
         auto moveController = new MovementControllerComponenet(app);
         moveController->addAnimation(KEYS);
-        moveController->addAnimation(ROTATION);
+        //moveController->addAnimation(ROTATION);
         map<string, int> controllerKeys;
         controllerKeys["speedUp"] = GLFW_KEY_LEFT_SHIFT;
         controllerKeys["forward"] = GLFW_KEY_W;
@@ -272,7 +271,7 @@ public:
         controllerKeys["right"] = GLFW_KEY_D;
         controllerKeys["left"] = GLFW_KEY_A;
         moveController->setControllerKeys(controllerKeys);
-        entities[1]->addComponent(moveController);
+        entities[5]->addComponent(moveController);
 
         // -- Initializing GL
         rendererSystem.setEntitiesVector(&entities);
