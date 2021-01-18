@@ -15,11 +15,17 @@ int MovementControllerComponenet::getComponentType()
 void MovementControllerComponenet::addAnimation(Animation newAnimation)
 {
     this->animations.push_back(newAnimation);
+    std::sort(std::begin(animations), std::end(animations));
 }
 
 void MovementControllerComponenet::setControllerKeys(map<string, int> &keysMap)
 {
     this->controllerKeys = keysMap;
+}
+
+void MovementControllerComponenet::setMovementLimits(MovemenetLimits limits)
+{
+    myLimits = limits;
 }
 
 void MovementControllerComponenet::update(double deltaTime)
@@ -42,29 +48,50 @@ void MovementControllerComponenet::update(double deltaTime)
 
 void MovementControllerComponenet::updateControllerMotion(double deltaTime)
 {
-    glm::vec3 translation = {0.0f, 0.0f, 0.0f};
+    // Speedup movement
     glm::vec3 current_sensitivity = this->position_sensitivity;
-
     if (app->getKeyboard().isPressed(controllerKeys["speedUp"]))
         current_sensitivity *= speedup_factor;
 
-    if (app->getKeyboard().isPressed(controllerKeys["forward"]))
+    // Move entity
+    glm::vec3 translation = {0.0f, 0.0f, 0.0f};
+    glm::vec3 myPosition = myEntity->getTransformationComponent()->getTranslation();
+
+    if (app->getKeyboard().isPressed(controllerKeys["forward"]) &&
+        (myPosition.z + (float)deltaTime * current_sensitivity.z) < myLimits.z_end)
+    {
         translation = {translation.x, translation.y, translation.z + (float)deltaTime * current_sensitivity.z};
+    }
 
-    if (app->getKeyboard().isPressed(controllerKeys["backward"]))
+    if (app->getKeyboard().isPressed(controllerKeys["backward"]) &&
+        (myPosition.z - (float)deltaTime * current_sensitivity.z) > myLimits.z_start)
+    {
         translation = {translation.x, translation.y, translation.z - (float)deltaTime * current_sensitivity.z};
+    }
 
-    if (app->getKeyboard().isPressed(controllerKeys["up"]))
+    if (app->getKeyboard().isPressed(controllerKeys["up"]) &&
+        (myPosition.y + (float)deltaTime * current_sensitivity.y) < myLimits.y_end)
+    {
         translation = {translation.x, translation.y + (float)deltaTime * current_sensitivity.y, translation.z};
+    }
 
-    if (app->getKeyboard().isPressed(controllerKeys["down"]))
+    if (app->getKeyboard().isPressed(controllerKeys["down"]) &&
+        (myPosition.y - (float)deltaTime * current_sensitivity.y) > myLimits.y_start)
+    {
         translation = {translation.x, translation.y - (float)deltaTime * current_sensitivity.y, translation.z};
+    }
 
-    if (app->getKeyboard().isPressed(controllerKeys["right"]))
+    if (app->getKeyboard().isPressed(controllerKeys["right"]) &&
+        (myPosition.x + (float)deltaTime * current_sensitivity.x) < myLimits.x_end)
+    {
         translation = {translation.x + (float)deltaTime * current_sensitivity.x, translation.y, translation.z};
+    }
 
-    if (app->getKeyboard().isPressed(controllerKeys["left"]))
+    if (app->getKeyboard().isPressed(controllerKeys["left"]) &&
+        (myPosition.x - (float)deltaTime * current_sensitivity.x) > myLimits.x_start)
+    {
         translation = {translation.x - (float)deltaTime * current_sensitivity.x, translation.y, translation.z};
+    }
 
     myEntity->getTransformationComponent()->transform(translation);
 }

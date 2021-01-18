@@ -46,6 +46,7 @@ class GameState : public State
     vector<Material *> materialVec;
     std::unordered_map<std::string, gameTemp::Texture *> textures;
     vector<gameTemp::Sampler *> sampVec;
+
     //Private fns
     static void ShaderInitializition(string inputFilepath, int &numOfShaders, vector<string> &programsName, vector<string> &vertexShaderPath, vector<string> &fragmentShaderPath, vector<bool> &isLightNeededVector)
     {
@@ -261,7 +262,7 @@ public:
         // Movement controller
         auto moveController = new MovementControllerComponenet(app);
         moveController->addAnimation(KEYS);
-        //moveController->addAnimation(ROTATION);
+        // moveController->addAnimation(ROTATION);
         map<string, int> controllerKeys;
         controllerKeys["speedUp"] = GLFW_KEY_LEFT_SHIFT;
         controllerKeys["forward"] = GLFW_KEY_W;
@@ -271,9 +272,10 @@ public:
         controllerKeys["right"] = GLFW_KEY_D;
         controllerKeys["left"] = GLFW_KEY_A;
         moveController->setControllerKeys(controllerKeys);
-        entities[5]->addComponent(moveController);
-
-        // -- Initializing GL
+        moveController->setMovementLimits({-5, 5, -5, 5, -5, 5});
+        entities[2]->addComponent(moveController);
+        entities[2]->getTransformationComponent()->setBoundsRadius(2);
+        entities[0]->getTransformationComponent()->setBoundsRadius(2);
         rendererSystem.setEntitiesVector(&entities);
     }
 
@@ -297,6 +299,9 @@ public:
         int jump = CameraControllerComponentControllers[currentCameraIndex]["jump"];
         int crouch = CameraControllerComponentControllers[currentCameraIndex]["crouch"];
         //
+
+        //cout << "Overlap: " << entities[2]->getTransformationComponent()->doOverlap(entities[0]->getTransformationComponent()) << endl;
+
         currentCamera->getCameraComponentController()->update(deltaTime, front, back, right, left, jump, crouch);
         glm::mat4 camera_matrix = currentCamera->getCameraComponent()->getVPMatrix();
 

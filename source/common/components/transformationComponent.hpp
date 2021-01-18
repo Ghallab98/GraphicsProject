@@ -25,6 +25,8 @@ private:
     std::vector<TransformationComponent *> children;
     glm::mat4 transformationMatrix;
     glm::vec3 position;
+    float boundsSphere = 0;
+
     //TO BE CALLED FROM READ FILE IN THIS CLASS
     static TransformationComponent *CreationFromBase(TransformationComponent *parent, glm::vec3 translation, glm ::vec3 rotation, glm::vec3 scaling)
     {
@@ -61,6 +63,34 @@ public:
     {
         glm::mat4 transformationMatrix = calculateTransformationMatrix(translation, rotation, scale);
         transformChildren(this, transformationMatrix);
+    }
+
+    bool doOverlap(TransformationComponent *other)
+    {
+        glm::vec3 myPosition = this->getTranslation();
+        glm::vec3 otherPosition = other->getTranslation();
+        glm::vec3 distance = myPosition - otherPosition;
+
+        float sqrDistance = distance.x * distance.x + distance.y * distance.y + distance.z * distance.z;
+
+        float radiusSquared = boundsSphere * boundsSphere;
+        float otherRadiusSquared = other->getBoundsRadius();
+        otherRadiusSquared *= otherRadiusSquared;
+
+        if (radiusSquared + otherRadiusSquared > sqrDistance)
+            return true;
+
+        return false;
+    }
+
+    void setBoundsRadius(float radius)
+    {
+        this->boundsSphere = radius;
+    }
+
+    float getBoundsRadius()
+    {
+        return this->boundsSphere;
     }
 
     glm::vec3 getTranslation()
